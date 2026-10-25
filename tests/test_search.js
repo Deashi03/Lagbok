@@ -26,3 +26,17 @@ assert.equal(resolvedQuick(q('BrB 24:2a'),doc).para,'2a');
 assert.equal(resolvedQuick(q('BrB 24:7'),doc),null);
 assert.equal(resolvedQuick(q('BrB 30'),doc),null);
 console.log('Snabbkoder: 16 kontroller godkända');
+
+const {rankSuggestions}=require('../assets/search-core.js');
+const rankedLaws=[
+ {sfs:'1942:740',name:'Rättegångsbalken',aliases:['RB','husrannsakan','häktning']},
+ {sfs:'1974:152',name:'Regeringsformen',aliases:['RF','grundlag']},
+ {sfs:'1951:649',name:'Lagen om straff för vissa trafikbrott',aliases:['TBL','rattfylleri']}
+];
+const topic=[{term:'Husrannsakan',code:'RB 28:1'}];
+const one=rankSuggestions('R',rankedLaws,[],topic,[]);
+assert.deepEqual(one.map(x=>x.title).sort(),['Regeringsformen','Rättegångsbalken'].sort());
+assert.equal(rankSuggestions('RB',rankedLaws,[],topic,[])[0].title,'Rättegångsbalken');
+assert.equal(rankSuggestions('husr',rankedLaws,[],topic,[])[0].type,'topic');
+assert.equal(rankSuggestions('BrB 24:1',laws,[],[],[])[0].type,'quick');
+console.log('Sökrankning: 4 kontroller godkända');
