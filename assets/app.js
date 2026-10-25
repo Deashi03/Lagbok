@@ -492,7 +492,26 @@
       toast('Lagrum kopierat');
     }catch(_){toast('Det gick inte att kopiera paragrafen');}
   }
-  view.addEventListener('input',e=>{if(e.target.id==='query')onSearch(e.target.value);});
+  view.addEventListener('input',e=>{
+    if(e.target.id==='query'||e.target.id==='fap-query')onSearch(e.target.value);
+  });
+  view.addEventListener('submit',async e=>{
+    if(e.target.id!=='global-search')return;
+    e.preventDefault();
+    const field=$('#query');if(!field)return;
+    const val=field.value.trim();if(!val)return;
+    const done=await goQuick(val);
+    if(!done){onSearch(val);const sug=$('#search-suggest');if(sug)sug.hidden=true;}
+    field.blur();
+  });
+  view.addEventListener('keydown',e=>{
+    if(e.target.id==='query'&&e.key==='ArrowDown'){
+      const first=$('.suggestion');if(first){e.preventDefault();first.focus();}
+    }else if(e.target.classList.contains('suggestion')&&['ArrowDown','ArrowUp'].includes(e.key)){
+      e.preventDefault();const list=$('.suggestion'),index=list.indexOf(e.target);
+      const next=list[index+(e.key==='ArrowDown'?1:-1)];if(next)next.focus();else $('#query')?.focus();
+    }
+  });
   sheet.addEventListener('input',e=>{
     if(e.target.id==='local-query'){
       const r=route(),meta=lawById(r.sfs),doc=state.laws.get(r.sfs);
@@ -507,16 +526,19 @@
     if(e.target.dataset.setting){
       const key=e.target.dataset.setting;
       pref[key]=key==='theme'?e.target.value:Number(e.target.value);
+      if(key==='theme')pref.themeChosen=true;
       savePrefs();applyPrefs();toast('Inställning sparad');
     }
   });
   document.addEventListener('click',e=>{
     const close=e.target.closest('[data-action="close"]'); if(close){closeSheet();return;}
+    const quickAnchor=e.target.closest('[data-quick]');if(quickAnchor){e.preventDefault();goQuick(quickAnchor.dataset.quick);return;}
     const anchor=e.target.closest('a[data-link]');
     if(anchor){e.preventDefault();const dest=anchor.getAttribute('href');if(dest==='#/fap')state.query='';navigate(dest);return;}
     const btn=e.target.closest('[data-action]');
     if(!btn)return;
     const a=btn.dataset.action,k=btn.dataset.key;
+    if(a==='clear-search'){const field=$('#query');if(field){field.value='';onSearch('');field.focus();}return;}
     if(a==='fav')favToggle(k);
     if(a==='copy')copyParagraph(k);
     if(a==='note')note(k);
@@ -527,8 +549,13 @@
     if(a==='toc')toc();
     if(a==='find-local')findWithinLaw();
   });
-  $$('.bottom-nav button').forEach(b=>b.addEventListener('click',()=>{state.query='';navigate('#/'+b.dataset.tab);}));
-  $('#back').addEventListener('click',()=>{if(history.length>1)history.back();else navigate('#/home');});
+  view.addEventListener('change',e=>{
+    if(e.target.id==='jump-para'){
+      const r=route();if(e.target.value)navigate(urlFor(r.sfs,r.chapter,searchCore.paraKey(e.target.value)));
+    }
+  });
+  $('.bottom-nav button').forEach(b=>b.addEventListener('click',()=>{state.query='';navigate('#/'+b.dataset.tab);}));
+  $('#back').addEventListener('click',()=>{if(history.length>1)history.back();else navigate('#/catalog');});
   $('#menu-button').addEventListener('click',()=>sheet.hidden?menu():closeSheet());
   $('#toc-button').addEventListener('click',toc);
   $('#in-law-search').addEventListener('click',findWithinLaw);
@@ -547,7 +574,7 @@
       view.innerHTML='<div class="page"><div class="empty">Författningskatalogen kunde inte laddas. Försök igen med internetanslutning.</div></div>';
       return;
     }
-    if(!location.hash)history.replaceState(null,'','#/home');
+    if(!location.hash||location.hash==='#/home'||location.hash==='#/search')history.replaceState(null,'','#/catalog');
     render(true);
     if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
   }
