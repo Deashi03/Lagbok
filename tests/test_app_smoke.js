@@ -92,7 +92,10 @@ async function submit(q){
  await settle();
  assert.match(el.sheet.innerHTML,/Förhandsvisning/);
  assert.match(el.sheet.innerHTML,/Det andra lagrummet/);
- listeners['document.click'][0]({target:action('toc')});
+ listeners['document.click'][0]({target:{
+   dataset:{action:'toc'},
+   closest(selector){return selector==='[data-action]'?this:null}
+ }});
  await settle();
  assert.equal(el.sheet.dataset.kind,'toc');
  assert.match(el.sheet.innerHTML,/toc-paragraphs/);
