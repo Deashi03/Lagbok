@@ -425,27 +425,28 @@
     },
     {
       "sfs": "1996:381",
-      "name": "Domstolsförordningen",
+      "name": "Förordningen med tingsrättsinstruktion",
       "type": "förordning",
       "aliases": [
-        "domstolsförordning"
+        "tingsrättsinstruktion",
+        "tingsrätt"
       ],
       "chaptered": false,
       "area": "process",
-      "check": "domstolsförordning",
+      "check": "tingsrättsinstruktion",
       "available": false
     },
     {
       "sfs": "2015:743",
-      "name": "Åklagarförordningen",
+      "name": "Förordningen med instruktion för Åklagarmyndigheten",
       "type": "förordning",
       "aliases": [
-        "ÅF",
-        "åklagarförordning"
+        "åklagarmyndigheten",
+        "åklagare"
       ],
       "chaptered": false,
       "area": "process",
-      "check": "åklagarförordning",
+      "check": "instruktion för åklagarmyndigheten",
       "available": false
     },
     {
@@ -495,15 +496,16 @@
     },
     {
       "sfs": "1991:2041",
-      "name": "Lagen om rättspsykiatrisk undersökning",
+      "name": "Lagen om särskild personutredning i brottmål",
       "type": "lag",
       "aliases": [
+        "personutredning",
         "rättspsykiatrisk undersökning",
         "RPU"
       ],
       "chaptered": false,
       "area": "process",
-      "check": "rättspsykiatrisk undersökning",
+      "check": "särskild personutredning",
       "available": false
     },
     {
