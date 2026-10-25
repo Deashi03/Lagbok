@@ -1,6 +1,6 @@
 {
   "version": "0.7",
-  "generated": "2026-10-25T22:52:16+00:00",
+  "generated": "2026-10-25T23:40:58+00:00",
   "source": "Sveriges riksdag, Riksdagens öppna data",
   "laws": [
     {
@@ -47,7 +47,7 @@
         "RO",
         "riksdagsordning"
       ],
-      "chaptered": false,
+      "chaptered": true,
       "check": "riksdagsordning",
       "section": "grundlagar"
     },
@@ -150,7 +150,8 @@
       ],
       "chaptered": false,
       "check": "handelsbalk",
-      "section": "balkar"
+      "section": "balkar",
+      "available": false
     },
     {
       "sfs": "1915:218",
@@ -160,7 +161,7 @@
         "AvtL",
         "avtalslag"
       ],
-      "chaptered": false,
+      "chaptered": true,
       "check": "avtal",
       "section": "balkar",
       "parent": "1736:0123 2"
@@ -352,7 +353,7 @@
         "VF",
         "vapenförordning"
       ],
-      "chaptered": false,
+      "chaptered": true,
       "check": "vapenförordning",
       "section": "balkar",
       "parent": "1962:700"
@@ -790,7 +791,8 @@
       ],
       "chaptered": false,
       "check": "kamerabevakningsförordning",
-      "section": "polis"
+      "section": "polis",
+      "available": false
     },
     {
       "sfs": "2018:1177",
@@ -837,7 +839,7 @@
         "KBL",
         "kustbevakning"
       ],
-      "chaptered": false,
+      "chaptered": true,
       "check": "kustbevakningslag",
       "section": "polis"
     },
@@ -872,7 +874,7 @@
         "LSO",
         "räddningstjänst"
       ],
-      "chaptered": false,
+      "chaptered": true,
       "check": "skydd mot olyckor",
       "section": "polis"
     },
@@ -908,7 +910,7 @@
         "KKF",
         "körkortsförordning"
       ],
-      "chaptered": false,
+      "chaptered": true,
       "check": "körkortsförordning",
       "section": "trafik"
     },
@@ -919,7 +921,7 @@
       "aliases": [
         "fordonslag"
       ],
-      "chaptered": false,
+      "chaptered": true,
       "check": "fordonslag",
       "section": "trafik"
     },
@@ -1024,7 +1026,7 @@
         "UtlF",
         "utlänningsförordning"
       ],
-      "chaptered": false,
+      "chaptered": true,
       "check": "utlänningsförordning",
       "section": "forvaltning"
     },
@@ -1036,7 +1038,7 @@
         "LSK",
         "utlänningskontroll"
       ],
-      "chaptered": false,
+      "chaptered": true,
       "check": "utlänningar",
       "section": "forvaltning"
     },
@@ -1131,7 +1133,7 @@
         "SoL",
         "socialtjänst"
       ],
-      "chaptered": false,
+      "chaptered": true,
       "check": "socialtjänstlag",
       "section": "vard"
     },
@@ -1143,7 +1145,7 @@
         "HSL",
         "hälso- och sjukvård"
       ],
-      "chaptered": false,
+      "chaptered": true,
       "check": "hälso- och sjukvårdslag",
       "section": "vard"
     }
