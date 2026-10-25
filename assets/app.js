@@ -46,6 +46,7 @@
     closeSheet();
     const dest = hash || '#/catalog';
     if(!dest.startsWith('#/law/'))state.focus=false;
+    else state.focus=pref.focusReader==='on';
     if ((location.hash || '#/home') === dest && !replace) { render(); return; }
     if (replace) history.replaceState(null,'',dest);
     else history.pushState(null,'',dest);
@@ -454,6 +455,7 @@
   }
   async function render(reset){
     const r=route();state.current=r;
+    if(r.page==='law'&&pref.focusReader==='on')state.focus=true;
     document.documentElement.dataset.focus=(state.focus&&r.page==='law')?'true':'false';
     const tab = ['catalog','saved'].includes(r.page)?r.page:null;
     $$('.bottom-nav button').forEach(b=>{b.classList.toggle('active',b.dataset.tab===tab);b.setAttribute('aria-current',b.dataset.tab===tab?'page':'false');});
@@ -592,6 +594,23 @@
       toast('Lagrum kopierat');
     }catch(_){toast('Det gick inte att kopiera paragrafen');}
   }
+  let readerScrollPending=false;
+  view.addEventListener('scroll',()=>{
+    if(route().page!=='law'||readerScrollPending||typeof view.querySelectorAll!=='function')return;
+    readerScrollPending=true;
+    requestAnimationFrame(()=>{
+      readerScrollPending=false;
+      const paragraphs=view.querySelectorAll('.paragraph');
+      if(!paragraphs||!paragraphs.length)return;
+      const top=view.getBoundingClientRect().top+80;
+      for(const el of paragraphs){
+        if(el.getBoundingClientRect().bottom>top){
+          state.visibleParagraph=el.dataset.paragraph;
+          break;
+        }
+      }
+    });
+  },{passive:true});
   view.addEventListener('input',e=>{
     if(e.target.id==='query'||e.target.id==='fap-query')onSearch(e.target.value);
   });
@@ -619,7 +638,7 @@
     }
     if(e.target.id==='toc-query'){
       const r=route(),meta=lawById(r.sfs),doc=state.laws.get(r.sfs);
-      if(doc&&meta){$('#toc-results').innerHTML=tocEntries(meta,doc,r,e.target.value);sheet.scrollTop=0;}
+      if(doc&&meta){$('#toc-results').innerHTML=tocEntries(meta,doc,r,e.target.value);$('#toc-results').scrollTop=0;}
     }
   });
   document.addEventListener('change',e=>{
