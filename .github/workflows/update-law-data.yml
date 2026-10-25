@@ -1,32 +1,57 @@
 name: Kontrollera lagändringar
 on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/update-law-data.yml'
+      - 'scripts/import_laws.py'
+      - 'data/catalog.json'
   schedule:
     - cron: '35 4 * * 1-5'
   workflow_dispatch:
 permissions:
   contents: write
   pull-requests: write
+concurrency:
+  group: sfs-import
+  cancel-in-progress: false
 jobs:
   import:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
       - name: Parser tests
         run: python -m unittest discover -s tests -v
-      - name: Fetch statutes from Riksdagen
+      - name: Fetch statutes
         run: python scripts/import_laws.py
-      - name: Open review pull request
+      - name: Bootstrap initial corpus
+        if: github.event_name == 'push'
+        run: |
+          if [ -d data/laws ]; then
+            echo "Data already in repository; changes require pull-request review."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/catalog.json data/laws
+          git commit -m "data: initial validated SFS import"
+          git push origin HEAD:main
+      - name: Propose changes for legal review
+        if: github.event_name != 'push'
         uses: peter-evans/create-pull-request@v7
         with:
           branch: automation/sfs-updates
           title: 'Granska importerade och ändrade SFS-författningar'
           commit-message: 'data: import SFS from Riksdagen'
           body: |
-            Kontrollera officiell lagtext, ikraftträdande, övergångsbestämmelser
-            och alternativa lydelser. Automatiskt hämtad data är inte juridiskt granskad.
+            Kontrollera lagtext, ikraftträdande, övergångsbestämmelser och
+            alternativa lydelser. Detta är automatiskt hämtad text och
+            är INTE fullständigt juridiskt kvalitetssäkrad.
           add-paths: |
             data/catalog.json
             data/laws/*.json
