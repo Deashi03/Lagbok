@@ -19,3 +19,6 @@ jobs:
           python -m unittest discover -s tests -v
           node --check assets/app.js
           python -m json.tool data/catalog.json > /dev/null
+
+      - name: Testa snabbkoder
+        run: node tests/test_search.js

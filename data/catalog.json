@@ -1,5 +1,5 @@
 {
-  "version": 1,
+  "version": "0.2",
   "generated": "2026-10-25T20:05:25+00:00",
   "source": "Sveriges riksdag, Riksdagens öppna data",
   "laws": [
@@ -13,7 +13,8 @@
         "processrätt",
         "husrannsakan",
         "häktning"
-      ]
+      ],
+      "chaptered": true
     },
     {
       "sfs": "1962:700",
@@ -23,7 +24,8 @@
         "BrB",
         "brottsbalk",
         "straffrätt"
-      ]
+      ],
+      "chaptered": true
     },
     {
       "sfs": "1984:387",
@@ -32,7 +34,8 @@
       "aliases": [
         "PL",
         "polislag"
-      ]
+      ],
+      "chaptered": false
     },
     {
       "sfs": "1947:948",
@@ -41,7 +44,8 @@
       "aliases": [
         "FuK",
         "förundersökningskungörelse"
-      ]
+      ],
+      "chaptered": false
     },
     {
       "sfs": "1998:1276",
@@ -50,7 +54,8 @@
       "aliases": [
         "TrF",
         "trafikförordning"
-      ]
+      ],
+      "chaptered": true
     },
     {
       "sfs": "1951:649",
@@ -60,7 +65,8 @@
         "TBL",
         "trafikbrottslagen",
         "rattfylleri"
-      ]
+      ],
+      "chaptered": false
     },
     {
       "sfs": "2009:400",
@@ -69,7 +75,8 @@
       "aliases": [
         "OSL",
         "sekretess"
-      ]
+      ],
+      "chaptered": true
     },
     {
       "sfs": "2017:900",
@@ -77,7 +84,8 @@
       "type": "lag",
       "aliases": [
         "FL"
-      ]
+      ],
+      "chaptered": false
     },
     {
       "sfs": "1964:167",
@@ -86,7 +94,8 @@
       "aliases": [
         "LUL",
         "unga lagöverträdare"
-      ]
+      ],
+      "chaptered": false
     },
     {
       "sfs": "1976:511",
@@ -96,7 +105,8 @@
         "LOB",
         "berusning",
         "omhändertagande"
-      ]
+      ],
+      "chaptered": false
     },
     {
       "sfs": "1993:1617",
@@ -105,7 +115,8 @@
       "aliases": [
         "OL",
         "allmän ordning"
-      ]
+      ],
+      "chaptered": true
     },
     {
       "sfs": "1968:64",
@@ -114,7 +125,8 @@
       "aliases": [
         "NSL",
         "narkotikabrott"
-      ]
+      ],
+      "chaptered": false
     },
     {
       "sfs": "1996:67",
@@ -122,7 +134,8 @@
       "type": "lag",
       "aliases": [
         "vapen"
-      ]
+      ],
+      "chaptered": true
     },
     {
       "sfs": "1974:152",
@@ -131,7 +144,8 @@
       "aliases": [
         "RF",
         "grundlag"
-      ]
+      ],
+      "chaptered": true
     }
   ],
   "fap": [
@@ -149,7 +163,9 @@
         "sanering",
         "spray"
       ],
-      "url": "https://polisen.se/lagar-och-regler/polismyndighetens-forfattningssamling/2/"
+      "url": "https://polisen.se/lagar-och-regler/polismyndighetens-forfattningssamling/2/",
+      "pdfUrl": "https://polisen.se/cbd117566a2bb00756459427ac0a347a/siteassets/forfattningssamling/fap-nummer/fap104-04-sammanstalld/",
+      "pdfVersion": "Sammanställd informationsversion"
     },
     {
       "id": "FAP 776-01",
@@ -163,7 +179,9 @@
         "taktik",
         "OC"
       ],
-      "url": "https://polisen.se/lagar-och-regler/polismyndighetens-forfattningssamling/2/"
+      "url": "https://polisen.se/lagar-och-regler/polismyndighetens-forfattningssamling/2/",
+      "pdfUrl": "https://polisen.se/4ca6d1e3d93a966fe0102f302476b013/siteassets/forfattningssamling/fap-nummer/fap776-01-pmfs2016-09/",
+      "pdfVersion": "Grundföreskrift"
     },
     {
       "id": "FAP 104-07",
@@ -175,7 +193,9 @@
         "taser",
         "våldsanvändning"
       ],
-      "url": "https://polisen.se/lagar-och-regler/polismyndighetens-forfattningssamling/2/"
+      "url": "https://polisen.se/lagar-och-regler/polismyndighetens-forfattningssamling/2/",
+      "pdfUrl": "https://polisen.se/c908c8b576d1206abd6e942631b7d0ec/siteassets/forfattningssamling/fap-nummer/fap104-07-sammanstalld/",
+      "pdfVersion": "Sammanställd informationsversion"
     },
     {
       "id": "FAP 104-09",
@@ -186,7 +206,9 @@
         "expanderbar batong",
         "våldsanvändning"
       ],
-      "url": "https://polisen.se/lagar-och-regler/polismyndighetens-forfattningssamling/2/"
+      "url": "https://polisen.se/lagar-och-regler/polismyndighetens-forfattningssamling/2/",
+      "pdfUrl": "https://polisen.se/36bd1843ce0c8f0fc0ab9c1f51777c25/siteassets/forfattningssamling/fap-nummer/fap104-09-pmfs2019-05/",
+      "pdfVersion": "Grundföreskrift"
     },
     {
       "id": "FAP 104-06",
@@ -198,7 +220,9 @@
         "ljudgranat",
         "insats"
       ],
-      "url": "https://polisen.se/lagar-och-regler/polismyndighetens-forfattningssamling/2/"
+      "url": "https://polisen.se/lagar-och-regler/polismyndighetens-forfattningssamling/2/",
+      "pdfUrl": "https://polisen.se/da1b056ec284bffc4e3625088e684b38/siteassets/forfattningssamling/fap-nummer/fap104-06-sammanstalld/",
+      "pdfVersion": "Sammanställd informationsversion"
     },
     {
       "id": "FAP 104-01",
@@ -212,7 +236,9 @@
         "polislagen 10",
         "fordon"
       ],
-      "url": "https://polisen.se/lagar-och-regler/polismyndighetens-forfattningssamling/2/"
+      "url": "https://polisen.se/lagar-och-regler/polismyndighetens-forfattningssamling/2/",
+      "pdfUrl": "https://polisen.se/0adb9b17f281a48c9ad91c587affc72d/siteassets/forfattningssamling/fap-nummer/fap104-01-sammanstalld/",
+      "pdfVersion": "Sammanställd informationsversion"
     },
     {
       "id": "FAP 102-01",
@@ -225,7 +251,9 @@
         "förvar",
         "frihetsberövande"
       ],
-      "url": "https://polisen.se/lagar-och-regler/polismyndighetens-forfattningssamling/2/"
+      "url": "https://polisen.se/lagar-och-regler/polismyndighetens-forfattningssamling/2/",
+      "pdfUrl": "https://polisen.se/8aa56c5ea9910290850b9bbf96dda2e9/siteassets/forfattningssamling/fap-nummer/fap102-01-sammanstalld/",
+      "pdfVersion": "Sammanställd informationsversion"
     },
     {
       "id": "FAP 261-01",
@@ -237,7 +265,9 @@
         "trafik",
         "bot"
       ],
-      "url": "https://polisen.se/lagar-och-regler/polismyndighetens-forfattningssamling/2/"
+      "url": "https://polisen.se/lagar-och-regler/polismyndighetens-forfattningssamling/2/",
+      "pdfUrl": "https://polisen.se/857e3733dc008e475b2dda20f704b4a6/siteassets/forfattningssamling/fap-nummer/fap261-01-pmfs2020-09/",
+      "pdfVersion": "Grundföreskrift"
     },
     {
       "id": "FAP 104-05",
@@ -248,7 +278,9 @@
         "tjänstevapen",
         "hantering av vapen"
       ],
-      "url": "https://polisen.se/lagar-och-regler/polismyndighetens-forfattningssamling/"
+      "url": "https://polisen.se/lagar-och-regler/polismyndighetens-forfattningssamling/",
+      "pdfUrl": "https://polisen.se/a493dd1df2c7c1e9cefb30a29216c0fe/siteassets/forfattningssamling/fap-nummer/fap104-05-pmfs2026-10/",
+      "pdfVersion": "Grundföreskrift"
     },
     {
       "id": "FAP 761-01",
@@ -259,7 +291,9 @@
         "aspirant",
         "polisutbildning"
       ],
-      "url": "https://polisen.se/lagar-och-regler/polismyndighetens-forfattningssamling/"
+      "url": "https://polisen.se/lagar-och-regler/polismyndighetens-forfattningssamling/",
+      "pdfUrl": "https://polisen.se/e264ff479d1fedaf1e569be8db77cfef/siteassets/forfattningssamling/fap-nummer/fap761-01-pmfs-2024-05/",
+      "pdfVersion": "Grundföreskrift"
     },
     {
       "id": "FAP 473-01",
@@ -271,7 +305,9 @@
         "signalement",
         "fotografering"
       ],
-      "url": "https://polisen.se/lagar-och-regler/polismyndighetens-forfattningssamling/"
+      "url": "https://polisen.se/lagar-och-regler/polismyndighetens-forfattningssamling/",
+      "pdfUrl": "https://polisen.se/3b729d5ef32fac1f58aa69bfcb641ff7/siteassets/forfattningssamling/fap-nummer/fap473-01-pmfs2025-08/",
+      "pdfVersion": "Grundföreskrift"
     }
   ],
   "fapCheckedAt": "2026-10-25"
