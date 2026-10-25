@@ -1,0 +1,32 @@
+name: Kontrollera lagändringar
+on:
+  schedule:
+    - cron: '35 4 * * 1-5'
+  workflow_dispatch:
+permissions:
+  contents: write
+  pull-requests: write
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Parser tests
+        run: python -m unittest discover -s tests -v
+      - name: Fetch statutes from Riksdagen
+        run: python scripts/import_laws.py
+      - name: Open review pull request
+        uses: peter-evans/create-pull-request@v7
+        with:
+          branch: automation/sfs-updates
+          title: 'Granska importerade och ändrade SFS-författningar'
+          commit-message: 'data: import SFS from Riksdagen'
+          body: |
+            Kontrollera officiell lagtext, ikraftträdande, övergångsbestämmelser
+            och alternativa lydelser. Automatiskt hämtad data är inte juridiskt granskad.
+          add-paths: |
+            data/catalog.json
+            data/laws/*.json
