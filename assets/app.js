@@ -554,7 +554,7 @@
       const r=route();if(e.target.value)navigate(urlFor(r.sfs,r.chapter,searchCore.paraKey(e.target.value)));
     }
   });
-  $('.bottom-nav button').forEach(b=>b.addEventListener('click',()=>{state.query='';navigate('#/'+b.dataset.tab);}));
+  $$('.bottom-nav button').forEach(b=>b.addEventListener('click',()=>{state.query='';navigate('#/'+b.dataset.tab);}));
   $('#back').addEventListener('click',()=>{if(history.length>1)history.back();else navigate('#/catalog');});
   $('#menu-button').addEventListener('click',()=>sheet.hidden?menu():closeSheet());
   $('#toc-button').addEventListener('click',toc);
