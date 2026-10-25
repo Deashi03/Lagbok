@@ -17,6 +17,8 @@ assert.deepEqual([q('RB 28:1').chapter,q('RB 28:1').para],['28','1']);
 assert.deepEqual([q('FuK 12').chapter,q('FuK 12').para],['0','12']);
 assert.deepEqual([q('PL 10').chapter,q('PL 10').para],['0','10']);
 assert.equal(q('FAP 104-4').fap.id,'FAP 104-04');
+assert.deepEqual([q('rb 23 8b').chapter,q('rb 23 8b').para],['23','8b']);
+assert.deepEqual([q('RB 23 8 b').chapter,q('RB 23 8 b').para],['23','8b']);
 assert.equal(q('husrannsakan'),null);
 assert.equal(q('BrB 24:'),null);
 assert.equal(q('BrB 1a'),null);

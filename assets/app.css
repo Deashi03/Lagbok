@@ -60,7 +60,7 @@ button,input,textarea,select{font:inherit}button{cursor:pointer;touch-action:man
 .source-disclosure summary{cursor:pointer;font-size:11px;color:var(--secondary);padding:6px 0}
 .source-disclosure p{line-height:1.5;margin:6px 0}
 .statute-body{margin-top:19px}.reader-subhead{font-size:15px;line-height:1.4;font-weight:710;margin:22px 0 7px;color:var(--accent)}
-.reader-subhead.editorial{font-size:13px;color:var(--secondary)}.reader-subhead.editorial:after{content:"Redaktionell rubrik";font-size:10px;font-weight:450;margin-left:6px}
+
 .paragraph{padding:17px 0 20px;scroll-margin-top:50px;border-bottom:1px solid var(--border)}
 .paragraph:target{background:linear-gradient(90deg,#E8EFE8,transparent)}
 .paragraph-header{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:11px;min-height:36px}
@@ -206,8 +206,6 @@ html[data-focus="true"] .bottom-nav{display:none}
 .reader-section{font-family:Georgia,"Iowan Old Style",serif;font-size:19px;font-weight:600;color:var(--text);margin:30px 0 4px;line-height:1.3}
 .reader-subhead{scroll-margin-top:50px;padding-top:6px;border-top:1px solid var(--border)}
 .statute-body>.reader-subhead:first-child{border-top:0;margin-top:4px}
-.reader-subhead.editorial{font-size:15px;color:var(--accent)}
-.reader-subhead.editorial:after{content:"Redaktionell rubrik";display:block;font-size:10px;font-weight:500;color:var(--secondary);margin:3px 0 0;letter-spacing:.04em;text-transform:uppercase}
 .paragraph.repealed{display:flex;gap:10px;align-items:baseline;padding:9px 0;color:var(--secondary)}
 .paragraph.repealed .paragraph-num{font-size:16px;color:var(--secondary)}
 .repealed-text{font-size:13px}
@@ -288,3 +286,66 @@ details.area>summary{list-style:none;cursor:pointer}details.area>summary::-webki
 details.area[open]>.area-title:after{content:"⌃"}
 .area-count{font-size:11px;color:var(--secondary);font-weight:600;margin-left:6px;letter-spacing:0}
 .offline-areas{margin-top:8px}.offline-areas .button{font-size:11px;padding:7px 9px}
+
+/* 0.7 – katalog i lagbokens ordning */
+.children{border-bottom:1px solid var(--border)}
+.children>summary{list-style:none;cursor:pointer}.children>summary::-webkit-details-marker{display:none}
+.children-toggle{display:flex;align-items:center;gap:6px;padding:9px 2px 11px 14px;font-size:12px;font-weight:650;color:var(--accent)}
+.children-toggle span{color:var(--secondary);font-weight:500}
+.children-toggle:after{content:"⌄";margin-left:auto;color:var(--secondary);font-size:15px}
+.children[open]>.children-toggle:after{content:"⌃"}
+.children-list{margin:0 0 8px 12px;border-left:2px solid var(--soft-green)}
+.child-row{min-height:50px;padding:9px 1px 9px 12px}.child-row .row-title{font-size:13.5px;font-weight:600}.child-row:last-child{border-bottom:0}
+.continue-row{display:flex;align-items:center;gap:10px;margin:18px 0 4px;padding:12px 14px;border-radius:12px;background:var(--soft);text-decoration:none;color:var(--text)}
+.continue-row .row-sub{margin-top:3px}
+/* 0.7 – kopplingar, penna, anteckningar, jämförelse, övergångsbestämmelser */
+.toast{display:flex;align-items:center;gap:12px}
+.toast-undo{border:0;background:transparent;color:#F6E58D;font-weight:750;font-size:13px;padding:4px 2px;text-decoration:underline}
+.links-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.link-chip{border:1px solid var(--border);background:var(--panel);color:var(--accent);border-radius:999px;padding:6px 10px;font-size:12px;font-weight:650;text-align:left;line-height:1.3;cursor:pointer}
+.link-chip:active{background:var(--soft)}
+.link-chip.regulation{border-color:var(--wine);color:var(--wine);background:transparent}
+.link-chip.complements{border-color:var(--wine);color:var(--wine);background:var(--soft)}
+.regulation-title{color:var(--wine)}
+.relations{margin:10px 0 4px}.relation-line{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:6px 0}
+.relation-line>span{font-size:11px;font-weight:700;color:var(--wine);text-transform:uppercase;letter-spacing:.05em;margin-right:2px}
+.relation-line .chip{border-color:var(--wine);color:var(--wine)}
+.pen-toggle{white-space:nowrap}.pen-toggle.on{background:var(--wine)!important;color:#FFFDF9!important;border-radius:999px;padding:6px 10px!important}
+html[data-pen="on"] .paragraph-content{cursor:text;-webkit-user-select:none;user-select:none}
+html[data-pen="on"] .paragraph-content .law-ref{pointer-events:none}
+mark.pen-anchor{background:transparent;color:inherit;outline:2px dashed var(--wine);outline-offset:1px;border-radius:2px}
+.pen-bar .pen-hint{font-size:12px;color:var(--secondary);max-width:92px;line-height:1.25}
+.hl-pop{position:fixed;z-index:40;background:var(--panel);border:1px solid var(--border);border-radius:14px;box-shadow:0 10px 30px #10241740;padding:10px}
+.hl-pop-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.hl-pop-button{border:0;background:var(--soft);color:var(--accent);border-radius:999px;padding:8px 11px;font-size:12px;font-weight:680}
+.hl-pop-button.danger{color:var(--wine)}
+.hl-pop-note{margin-top:8px;display:flex;gap:8px;align-items:flex-end}.hl-pop-note[hidden]{display:none}
+.hl-pop-note textarea{flex:1;min-height:52px;border:1px solid var(--border);border-radius:9px;padding:8px;font-size:14px;background:var(--panel);color:var(--text)}
+.note-inline{margin-top:10px;border:1px solid var(--wine);border-radius:12px;padding:10px;background:var(--panel)}
+.note-input{width:100%;border:0;outline:0;resize:vertical;font-size:15px;line-height:1.5;background:transparent;color:var(--text);min-height:70px}
+.note-actions{display:flex;justify-content:space-between;align-items:center;margin-top:6px}
+.paragraph-note{display:block;width:100%;margin-top:10px;padding:9px 11px;border:0;border-left:3px solid var(--wine);background:var(--soft);border-radius:0 9px 9px 0;color:var(--text);font-size:13.5px;line-height:1.5;white-space:pre-wrap;text-align:left}
+.note-label{display:block;font-size:10px;font-weight:750;text-transform:uppercase;letter-spacing:.06em;color:var(--wine);margin-bottom:2px}
+.diff-legend{font-size:11px;color:var(--secondary);margin:2px 0 8px}
+del.diff-del,.diff-legend .diff-del{color:var(--wine);text-decoration:line-through;text-decoration-thickness:1.5px;background:#79404E14}
+ins.diff-ins,.diff-legend .diff-ins{color:var(--accent);text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:2px;background:#285B4614}
+.paragraph-content.diff{white-space:normal}
+.plain-version summary{font-size:12px;color:var(--secondary);padding:8px 0;cursor:pointer}
+.transitions{margin:18px 0 6px;border:1px solid var(--border);border-radius:12px;padding:0 13px}
+.transitions>summary{list-style:none;cursor:pointer;padding:12px 0;font-weight:700;font-size:14px;color:var(--accent);display:flex;gap:8px;align-items:baseline}
+.transitions>summary::-webkit-details-marker{display:none}.transitions>summary span{font-size:11px;font-weight:500;color:var(--secondary)}
+.transition{border-top:1px solid var(--border);padding:10px 0}.transition-sfs{font-size:11px;font-weight:750;color:var(--wine);letter-spacing:.04em;margin-bottom:4px}
+.transition .paragraph-content{font-size:calc(14px * var(--fontscale))}
+.continue-row.compact{margin:12px 0 4px}.continue-icon{font-size:20px;color:var(--accent);width:24px;text-align:center}
+.marks-tools{margin-bottom:6px}.small-search{min-height:42px}.small-search input{min-height:40px;font-size:15px}
+.chip.active{background:var(--accent);color:#FFFDF9;border-color:var(--accent)}
+.chip .hl-dot{width:10px;height:10px;margin-right:5px}
+button.chip{cursor:pointer;font-family:inherit}
+.marks-group{margin-top:12px}.marks-law{font-size:12px;font-weight:720;color:var(--secondary);margin:0 0 4px}
+.note-dot{width:14px;text-align:center;color:var(--wine);flex-shrink:0}.note-text{color:var(--text)}
+.search-filters{margin:4px 0 10px}
+@media print{
+  .topbar,.bottom-nav,.actions,.reader-context,.para-menu-button,.links-row,.return-chip,.hl-bar,.toast,.collection-head .link-button{display:none!important}
+  html,body,.app-shell,#view{height:auto!important;overflow:visible!important;background:#fff!important;box-shadow:none!important}
+  .paragraph{break-inside:avoid}mark.hl{background:none!important;text-decoration:underline}
+}

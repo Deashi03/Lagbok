@@ -18,3 +18,8 @@ const esc=s=>s.replace(/</g,'&lt;');
  assert.equal(snippet('Den som hotar någon annan med brottslig gärning',['hot'],esc),'Den som <mark>hotar</mark> någon annan med brottslig gärning');
  console.log('Sökindex: prefixsökning, rangordning och utdrag godkända');
 })().catch(e=>{console.error(e);process.exitCode=1;});
+const {expand}=require('../assets/search-index.js');
+assert.deepEqual(expand(['lob']),['berusad']);
+assert.deepEqual(expand(['snatteri']),['ringa','stold']);
+assert.deepEqual(expand(['stold']),['stold']);
+(async()=>{const r=await index.query('lob');assert.ok(r.hits.some(h=>h.sfs==='1976:511'),'LOB-synonym ska ge LOB');console.log('Sökindex: synonymer godkända');})();

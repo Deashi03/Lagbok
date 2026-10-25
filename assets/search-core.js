@@ -29,7 +29,7 @@
     });
     candidates.sort((a,b)=>b.length-a.length);
     for(const item of candidates){
-      const chapPara=/^(\d{1,3})\s*(?::|\.|\s+kap(?:itel)?\.?\s*)\s*(\d+\s*[a-z]?)\s*§?$/i.exec(item.rest);
+      const chapPara=/^(\d{1,3})(?:\s*(?::|\.|\s+kap(?:itel)?\.?\s*)\s*|\s+)(\d+\s*[a-z]?)\s*§?$/i.exec(item.rest);
       if(chapPara&&item.meta.chaptered){
         return {type:'law',meta:item.meta,chapter:chapPara[1],para:paraKey(chapPara[2])};
       }

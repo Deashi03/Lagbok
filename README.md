@@ -52,3 +52,14 @@ Läsaren har en enda innehållsknapp, utan föregående/nästa länkar eller ver
 ### Lägga till en lag
 1. Lägg till en post i `data/catalog.json` med `sfs`, `name`, `type`, `aliases`, `area` och `check` (ett ord som måste finnas i Riksdagens titel).
 2. Kör arbetsflödet *Kontrollera lagändringar*. Det hämtar lagen, bygger om `data/index` och öppnar en pull request med en ändringsrapport när lagtexten har ändrats.
+
+## Version 0.7
+- **Lagbokens ordning:** katalogen följer Sveriges Rikes Lag. Först grundlagarna, sedan balkarna, var och en med sina anslutande lagar och förordningar (t.ex. BrB → NSL, TBL, knivlagen; RB → FuK, delgivningslagen, häkteslagen), därefter polis, trafik, förvaltning och socialrätt. Ordningen styrs av `data/catalog.json` (`section` och `parent`).
+- **91 författningar** (tidigare 58), bl.a. riksdagsordningen, vapen-, fängelse-, häktes-, körkorts-, utlännings-, alkohol- och sekretessförordningarna, polisens instruktion, LKN, LSO, LBE, fordonslagen, passlagen, socialtjänstlagen och HSL. Handelsbalken och kamerabevakningsförordningen finns inte i Riksdagens öppna data och saknas därför.
+- **Kopplingar lag ↔ förordning:** under paragrafen visas *Kompletteras av …* (t.ex. RB 23:1 → FuK 1, 1 a §) och i förordningen *Kompletterar …*. Kopplingarna kommer dels från förordningarnas egna hänvisningar, dels från `data/relations.json` (kontrolleras av `tests/test_relations.js`). Lagens startsida visar anslutande förordningar.
+- **Övergångsbestämmelser** ligger i en egen hopfälld del sist i lagen i stället för i sista paragrafens text.
+- **Markeringar:** *Penna* i läsvyn – tryck på första och sista ordet. Tryck på en markering för färg, anteckning och borttagning direkt på plats. *Ångra* efter varje ändring. Senaste färgen kommer ihåg.
+- **Anteckningar** skrivs direkt under paragrafen och sparas automatiskt. Under *Sparat* samlas markeringar och anteckningar per författning med sökning och färgfilter.
+- **Jämför lydelser:** kommande lydelse visas med struken och ny text.
+- **Fortsätt läsa**, **snabbhopp** (⌕ överallt, t.ex. ”rb 23 8b”), **sökfilter** (BrB m.fl., RB m.fl., Polis, Mina samlingar), synonymer (”LOB”, ”rattfylla”) och samlingar som text eller PDF.
+- Texten ”Redaktionell rubrik” är borttagen. Kvalitetskontroller vid import: minskat antal paragrafer, tappade kapitel och ovanligt långa paragrafer flaggas i rapporten; `tests/test_data_quality.js` körs i CI.

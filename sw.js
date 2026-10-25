@@ -1,6 +1,6 @@
 // Appens skal versionshanteras per release; lagtexten ligger i en separat cache som
 // behålls mellan versioner så att nedladdade lagar finns kvar offline.
-const VERSION='lagboken-shell-v06';
+const VERSION='lagboken-shell-v07';
 const DATA='lagboken-data';
 const CORE=['./','./index.html','./assets/app.css','./assets/app.js','./assets/search-core.js','./assets/legal-links.js','./assets/editorial.js','./assets/law-model.js','./assets/search-index.js','./assets/highlights.js','./assets/toc-model.js','./icon.svg','./icon-180.png','./manifest.webmanifest'];
 self.addEventListener('install',event=>event.waitUntil(caches.open(VERSION).then(c=>c.addAll(CORE)).then(()=>self.skipWaiting())));

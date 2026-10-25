@@ -6,7 +6,7 @@
   const view = $('#view');
   const sheet = $('#sheet');
   const scrim = $('#scrim');
-  const defaults = {favourites:[], recents:[], notes:{}, highlights:{}, collections:[], watch:{}, theme:'light', fontSize:1, lineHeight:1.55, readingMode:'standard', focusReader:'off'};
+  const defaults = {favourites:[], recents:[], notes:{}, highlights:{}, collections:[], watch:{}, readPos:{}, lastRead:null, lastColor:'yellow', theme:'light', fontSize:1, lineHeight:1.55, readingMode:'standard', focusReader:'off'};
   let pref;
   try { pref = Object.assign({}, defaults, JSON.parse(localStorage.getItem('lagboken-settings') || '{}')); }
   catch (_) { pref = Object.assign({}, defaults); }
@@ -18,7 +18,7 @@
   const highlights=window.LagbokHighlights;
   const fetchJson=(url)=>fetch(url).then(r=>{if(!r.ok)throw Error(url);return r.json();});
   const searchIndex=window.LagbokIndex?window.LagbokIndex.create(fetchJson):null;
-  const state = {version:'',areas:[],status:{},upcoming:null,backlinks:new Map(),pendingHighlight:null,markTerms:null,returnStack:[],catalog:[],fap:[],laws:new Map(),loading:new Map(),query:'',searchEpoch:0,positions:{},current:null,previous:[],savedOnHome:false,focus:pref.focusReader==='on',visibleParagraph:null};
+  const state = {version:'',sections:[],relations:{},pen:false,penAnchor:null,editingNote:null,searchFilter:'',marksFilter:'',marksQuery:'',status:{},upcoming:null,backlinks:new Map(),pendingHighlight:null,markTerms:null,returnStack:[],catalog:[],fap:[],laws:new Map(),loading:new Map(),query:'',searchEpoch:0,positions:{},current:null,previous:[],savedOnHome:false,focus:pref.focusReader==='on',visibleParagraph:null};
   const source = 'https://data.riksdagen.se/dokument/sfs-';
   const html = (s) => String(s == null ? '' : s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const attr = html;
@@ -62,11 +62,15 @@
     if (history.state || state.previous.length) history.back();
     else navigate('#/catalog');
   }
-  function toast(message) {
+  // Kort meddelande, valfritt med en ångra-knapp.
+  function toast(message,undo) {
     const el = $('#toast');
-    el.textContent = message; el.hidden = false;
+    toast.undo=undo||null;
+    if(undo){el.innerHTML='<span>'+html(message)+'</span><button type="button" class="toast-undo" data-action="toast-undo">Ångra</button>';}
+    else el.textContent = message;
+    el.hidden = false;
     clearTimeout(toast.timer);
-    toast.timer = setTimeout(() => el.hidden=true,2300);
+    toast.timer = setTimeout(() => {el.hidden=true;toast.undo=null;},undo?5000:2300);
   }
   function closeSheet() {
     sheet.hidden = true; scrim.hidden = true; sheet.dataset.kind=''; $('#menu-button').setAttribute('aria-expanded','false'); sheet.innerHTML = '';
@@ -138,20 +142,39 @@
       state.catalog.slice(0,5).map(lawRow).join('') +
       '</div><p class="small muted" style="margin-top:17px"><a href="#/catalog" data-link="1">Alla författningar</a> · <a href="#/fap" data-link="1">Polisens FAP</a></p>' + footer() + '</div>';
   }
-  function areaSections(){
-    const areas=state.areas.length?state.areas:[{id:'',name:'Författningar'}];
-    return areas.map(a=>{
-      const laws=state.catalog.filter(l=>(l.area||'')===a.id||(!a.id));
-      if(!laws.length)return '';
-      return '<details class="area"'+(a.id==='polis'||a.id==='straff'||a.id==='process'||!a.id?' open':'')+'><summary class="section-title area-title">'+html(a.name)+
-        ' <span class="area-count">'+laws.length+'</span></summary><div class="card-list">'+laws.map(lawRow).join('')+'</div></details>';
+  // Katalogen följer Sveriges Rikes Lag: grundlagar, balkarna med anslutande författningar, övriga områden.
+  function childRow(law){
+    return '<a class="list-row child-row" href="'+attr(urlFor(law.sfs))+'" data-link="1"><div class="grow"><div class="row-title">'+html(law.name)+'</div>'+
+      '<div class="row-sub">'+(law.type==='förordning'?'Förordning':'Lag')+' · SFS '+html(law.sfs)+'</div></div><span class="chevron">›</span></a>';
+  }
+  function readTarget(sfs){
+    const pos=pref.readPos[sfs];if(!pos)return null;
+    return {url:urlFor(sfs,pos.chapter,pos.para?searchCore.paraKey(pos.para):null),label:(pos.chapter&&pos.chapter!=='0'?pos.chapter+' kap. ':'')+(pos.para?pos.para+' §':'')};
+  }
+  function continueRow(){
+    const sfs=pref.lastRead,meta=sfs&&lawById(sfs),t=meta&&readTarget(sfs);
+    if(!t)return '';
+    return '<a class="continue-row" data-link="1" href="'+attr(t.url)+'"><span class="continue-icon" aria-hidden="true">↻</span><div class="grow"><div class="row-title">Fortsätt läsa</div>'+
+      '<div class="row-sub">'+html(meta.name)+(t.label?' · '+html(t.label):'')+'</div></div><span class="chevron">›</span></a>';
+  }
+  function catalogSections(){
+    const sections=state.sections.length?state.sections:[{id:'',name:'Författningar'}];
+    return sections.map(sec=>{
+      const laws=state.catalog.filter(l=>!sec.id||l.section===sec.id);
+      const top=laws.filter(l=>!l.parent||!lawById(l.parent));
+      if(!top.length)return '';
+      return '<div class="section-title">'+html(sec.name)+'</div><div class="card-list">'+top.map(law=>{
+        const kids=state.catalog.filter(k=>k.parent===law.sfs);
+        return lawRow(law)+(kids.length?'<details class="children"><summary class="children-toggle">Anslutande författningar <span>'+kids.length+'</span></summary>'+
+          '<div class="children-list">'+kids.map(childRow).join('')+'</div></details>':'');
+      }).join('')+'</div>';
     }).join('');
   }
   function catalogPage(){
     return '<div class="page"><div class="catalog-hero"><h1 class="page-title">Hitta lagrum</h1>'+
       '<p class="intro">Sök på författning, juridiskt begrepp eller skriv exempelvis BrB 24:1.</p></div>'+
       searchBox('Sök i lagboken')+
-      '<div id="search-results"></div><div id="catalog-directory">'+areaSections()+
+      '<div id="search-results"></div><div id="catalog-directory">'+continueRow()+catalogSections()+
       '<div class="section-title">Polisens föreskrifter</div><div class="card-list">'+
       listRow('Polisens FAP','Separat sidoregister, öppnas i appen','#/fap')+'</div>'+
       '<p class="catalog-meta">Version '+html(state.version||'0.5')+' · Visa källa och rättslig status i respektive författning.</p>'+
@@ -165,16 +188,31 @@
       '<div class="section-title">Samlingar ('+pref.collections.length+')</div><div class="card-list">'+
       (pref.collections.length?pref.collections.map(c=>listRow(c.name,c.items.length+' paragrafer','#/collection/'+encodeURIComponent(c.id),'▤')).join(''):
         '<div class="empty">Samla paragrafer, t.ex. ”LOB-ingripande”, via paragrafens meny ⋯.</div>')+'</div>'+
-      '<div class="section-title">Markeringar ('+marks.length+')</div><div class="card-list">'+
-      (marks.length?marks.slice(0,40).map(x=>'<a class="list-row" data-link="1" href="'+attr(favRoute(x.k))+'"><span class="hl-dot hl-'+attr(x.h.color)+'"></span><div class="grow"><div class="row-title">'+html(favTitle(x.k))+'</div>'+
-        '<div class="row-sub">”'+html(x.h.quote.slice(0,110))+'”'+(x.h.note?' – '+html(x.h.note.slice(0,80)):'')+'</div></div><span class="chevron">›</span></a>').join(''):
-        '<div class="empty">Markera text i en paragraf för att stryka under den.</div>')+'</div>'+
+      '<div class="section-title">Markeringar och anteckningar ('+(marks.length+Object.keys(pref.notes).filter(x=>pref.notes[x]).length)+')</div>'+
+      '<div class="marks-tools"><div class="searchbox small-search">'+iconSearch()+'<input id="marks-query" type="search" placeholder="Sök i markeringar och anteckningar" value="'+attr(state.marksQuery)+'"></div>'+
+      '<div class="chips">'+[['','Alla'],['yellow','Gul'],['green','Grön'],['rose','Rosa'],['note','Anteckningar']].map(([id,label])=>
+        '<button type="button" class="chip'+(state.marksFilter===id?' active':'')+'" data-action="marks-filter" data-id="'+id+'">'+(id&&id!=='note'?'<span class="hl-dot hl-'+id+'"></span>':'')+label+'</button>').join('')+'</div></div>'+
+      '<div id="marks-list">'+marksHtml()+'</div>'+
       '<div class="section-title">Favoriter ('+favs.length+')</div><div class="card-list">' +
       (favs.length?favs.map(id=>listRow(favTitle(id),'',favRoute(id),'★')).join(''):'<div class="empty">Inga sparade lagrum ännu.</div>') +
-      '</div><div class="section-title">Anteckningar ('+Object.keys(pref.notes).filter(x=>pref.notes[x]).length+')</div><div class="card-list">' +
-      (Object.keys(pref.notes).filter(x=>pref.notes[x]).map(k=>listRow(favTitle(k),pref.notes[k].slice(0,90),favRoute(k))).join('') ||
-        '<div class="empty">Ingen anteckning ännu. Lägg till en anteckning från paragrafens meny.</div>') +
+      '</div><div>' +
       '</div></div>';
+  }
+  // Markeringar och anteckningar grupperade per författning, med filter på färg och fritext.
+  function marksHtml(){
+    const q=norm(state.marksQuery),f=state.marksFilter,items=[];
+    for(const [k,list] of Object.entries(pref.highlights))for(const h of list)items.push({k,color:h.color,quote:h.quote,note:h.note||''});
+    for(const [k,n] of Object.entries(pref.notes))if(n)items.push({k,color:'note',quote:'',note:n});
+    const shown=items.filter(x=>lawById(x.k.split('|')[0])&&(!f||x.color===f||(f==='note'&&x.note))&&(!q||norm(x.quote+' '+x.note+' '+favTitle(x.k)).includes(q)));
+    if(!shown.length)return '<div class="empty">'+(items.length?'Inget matchar filtret.':'Markera text i en paragraf eller skriv en anteckning så samlas de här.')+'</div>';
+    const groups=new Map();
+    for(const x of shown){const s=x.k.split('|')[0];if(!groups.has(s))groups.set(s,[]);groups.get(s).push(x);}
+    const order=sfs=>state.catalog.findIndex(l=>l.sfs===sfs);
+    return [...groups].sort((a,b)=>order(a[0])-order(b[0])).map(([sfs,list])=>'<div class="marks-group"><div class="marks-law">'+html(lawById(sfs).name)+'</div><div class="card-list">'+
+      list.map(x=>'<a class="list-row" data-link="1" href="'+attr(favRoute(x.k))+'">'+(x.color==='note'?'<span class="note-dot">✎</span>':'<span class="hl-dot hl-'+attr(x.color)+'"></span>')+
+        '<div class="grow"><div class="row-title">'+html(shortRef(...x.k.split('|')))+'</div>'+
+        (x.quote?'<div class="row-sub">”'+html(x.quote.slice(0,140))+'”</div>':'')+(x.note?'<div class="row-sub note-text">'+html(x.note.slice(0,160))+'</div>':'')+
+        '</div><span class="chevron">›</span></a>').join('')+'</div></div>').join('');
   }
   function fapPage(){
     const query=norm(state.query),items=state.fap.filter(f=>!query||norm([f.id,f.name,f.code,(f.tags||[]).join(' ')].join(' ')).includes(query));
@@ -219,7 +257,25 @@
       '<div class="actions"><button type="button" class="button" data-action="fav" data-key="'+attr(meta.sfs)+'">'+badgeMark(meta.sfs)+' Spara</button>'+
       '<button type="button" class="button'+(pref.watch[meta.sfs]?' active':'')+'" data-action="watch" data-key="'+attr(meta.sfs)+'">'+(pref.watch[meta.sfs]?'◉ Bevakas':'○ Bevaka ändringar')+'</button>'+
       '<a class="button" href="'+attr(sourceUrl(meta.sfs))+'" target="_blank" rel="noopener noreferrer">Officiell källa ↗</a></div>'+
+      (readTarget(meta.sfs)&&readTarget(meta.sfs).label?'<a class="continue-row compact" data-link="1" href="'+attr(readTarget(meta.sfs).url)+'"><span class="continue-icon" aria-hidden="true">↻</span><div class="grow"><div class="row-title">Fortsätt där du var</div><div class="row-sub">'+html(readTarget(meta.sfs).label)+'</div></div><span class="chevron">›</span></a>':'')+
+      lawRelations(meta)+
       '<p class="small muted">Appen visar den lydelse som gäller i dag enligt källans markeringar. Kommande lydelser visas under respektive paragraf. Kontrollera alltid mot Riksdagen vid rättslig användning.</p></div>';
+  }
+  // Förordningar som ansluter till lagen, eller lagen som förordningen ansluter till.
+  function lawRelations(meta){
+    const r=state.relations[meta.sfs]||{},parent=meta.parent&&lawById(meta.parent);
+    const chips=(label,list)=>list.length?'<div class="relation-line"><span>'+label+'</span>'+list.map(s=>lawById(s)).filter(Boolean)
+      .map(l=>'<a class="chip" data-link="1" href="'+attr(urlFor(l.sfs))+'">'+html(l.name)+'</a>').join('')+'</div>':'';
+    return '<div class="relations">'+chips('Anslutande förordningar',r.kompletteras||[])+chips('Kompletterar',r.kompletterar||[])+
+      (parent&&!(r.kompletterar||[]).includes(parent.sfs)?chips('Ansluter till',[parent.sfs]):'')+'</div>';
+  }
+  function transitionsHtml(meta,data){
+    const list=data.transitions||[];if(!list.length)return '';
+    const ch={number:'0'};
+    return '<details class="transitions"><summary>Övergångsbestämmelser <span>'+list.length+(list.length===1?' författning':' ändringsförfattningar')+'</span></summary>'+
+      '<p class="small muted">Ikraftträdande- och övergångsbestämmelser för lagen och dess ändringar, nyast först.</p>'+
+      list.slice().reverse().map(t=>'<div class="transition"><div class="transition-sfs">'+(t.sfs?'SFS '+html(t.sfs):'Ursprunglig lydelse')+'</div>'+
+        '<div class="paragraph-content">'+textHtml(t.text,meta,ch)+'</div></div>').join('')+'</details>';
   }
   function chapterList(meta,data){
     return docIntro(meta,data)+
@@ -237,7 +293,7 @@
             '<span class="grow">'+(g.parent?'<span class="chapter-section-parent">'+html(g.parent)+'</span>':'')+'<span class="chapter-section-title">'+html(g.title)+'</span></span>'+
             '<span class="chapter-section-range">'+html(range(g))+'</span><span class="chevron">›</span></a>').join('')+
           '</div></details>';
-      }).join('')+'</div></div>';
+      }).join('')+'</div>'+transitionsHtml(meta,data)+'</div>';
   }
   function range(g){
     const first=g.paragraphs[0].number,last=g.paragraphs[g.paragraphs.length-1].number;
@@ -277,7 +333,10 @@
     const status=resolved.pending?'<div class="lydelse-status upcoming">'+html(lawModel.describe(current))+'</div>':
       current.expires?'<div class="lydelse-status">'+html(lawModel.describe(current))+'</div>':'';
     const others=resolved.others.map(v=>'<details class="lydelse"><summary>'+html(lawModel.describe(v))+'</summary>'+
-      '<div class="paragraph-content">'+textHtml(v.text,meta,ch)+'</div>'+amended(v)+'</details>').join('');
+      (v.status==='upcoming'&&!resolved.pending?'<div class="diff-legend"><span class="diff-del">struket</span> tas bort · <span class="diff-ins">understruket</span> är nytt</div>'+
+        '<div class="paragraph-content diff">'+diffHtml(current.text,v.text)+'</div>'+
+        '<details class="plain-version"><summary>Visa ny lydelse utan markeringar</summary><div class="paragraph-content">'+textHtml(v.text,meta,ch)+'</div></details>':
+        '<div class="paragraph-content">'+textHtml(v.text,meta,ch)+'</div>')+amended(v)+'</details>').join('');
     const back=(state.backlinks.get(meta.sfs)||{})[ch.number+'|'+searchCore.paraKey(item.number)]||[];
     return '<article class="paragraph reader-block" data-key="'+attr(key)+'"'+anchor+'>'+
       '<header class="paragraph-header">'+
@@ -285,8 +344,32 @@
       '<span class="paragraph-num">'+html(item.number)+' §</span>'+(title?'<span class="paragraph-title">'+html(title)+'</span>':'')+'</button>'+
       '<button type="button" class="para-menu-button" data-action="para-menu" data-key="'+attr(key)+'" aria-label="Meny för '+attr(item.number)+' §: kopiera, dela, spara, samla eller anteckna">⋯</button>'+
       '</header>'+status+'<div class="paragraph-content">'+textHtml(current.text,meta,ch)+'</div>'+amended(current)+others+
-      (back.length?'<button type="button" class="backlinks-button" data-action="backlinks" data-key="'+attr(key)+'">↩ Hänvisas hit från '+back.length+(back.length===1?' ställe':' ställen')+'</button>':'')+
-      (pref.notes[key]?'<button type="button" class="paragraph-note" data-action="note" data-key="'+attr(key)+'">✎ '+html(pref.notes[key].slice(0,120))+'</button>':'')+'</article>';
+      linksRow(key,back)+noteHtml(key)+'</article>';
+  }
+  // Kopplingar under paragrafen: kompletterande föreskrifter, vad den kompletterar och hänvisningar hit.
+  function linkLabel(list){
+    const names=list.slice(0,3).map(([s,c,n])=>shortRef(s,c,n));
+    return names.join(', ')+(list.length>3?' +'+(list.length-3):'');
+  }
+  function linksRow(key,back){
+    if(!back.length)return '';
+    const reg=back.filter(e=>e[3]==='föreskrift'),comp=back.filter(e=>e[3]==='kompletterar'),refs=back.filter(e=>!e[3]||e[3]==='ref');
+    return '<div class="links-row">'+
+      (reg.length?'<button type="button" class="link-chip regulation" data-action="backlinks" data-key="'+attr(key)+'">§ Kompletteras av '+html(linkLabel(reg))+'</button>':'')+
+      (comp.length?'<button type="button" class="link-chip complements" data-action="backlinks" data-key="'+attr(key)+'">↗ Kompletterar '+html(linkLabel(comp))+'</button>':'')+
+      (refs.length?'<button type="button" class="link-chip" data-action="backlinks" data-key="'+attr(key)+'">↩ '+refs.length+(refs.length===1?' hänvisning':' hänvisningar')+' hit</button>':'')+
+      '</div>';
+  }
+  function noteHtml(key){
+    if(state.editingNote===key)return '<div class="note-inline"><textarea class="note-input" data-note-key="'+attr(key)+'" rows="3" placeholder="Skriv en anteckning till paragrafen …">'+html(pref.notes[key]||'')+'</textarea>'+
+      '<div class="note-actions"><span class="small muted">Sparas automatiskt</span><button type="button" class="button primary" data-action="note-done" data-key="'+attr(key)+'">Klar</button></div></div>';
+    return pref.notes[key]?'<button type="button" class="paragraph-note" data-action="note" data-key="'+attr(key)+'"><span class="note-label">Anteckning</span>'+html(pref.notes[key])+'</button>':'';
+  }
+  function diffHtml(a,b){
+    return lawModel.diffWords(a,b).map(x=>{
+      const t=html(x.text).replace(/\n\n+/g,'<br><br>').replace(/\n/g,'<br>');
+      return x.type==='same'?t:x.type==='del'?'<del class="diff-del">'+t+'</del>':'<ins class="diff-ins">'+t+'</ins>';
+    }).join('');
   }
   function chapterReader(meta,data,capid){
     const ch=data.chapters.find(c=>String(c.number)===String(capid));
@@ -298,12 +381,13 @@
       let head='';
       if(g.parent&&g.parent!==parent)head+='<h2 class="reader-section">'+html(g.parent)+'</h2>';
       parent=g.parent||null;
-      if(g.origin!=='kapitel')head+='<h2 class="reader-subhead'+(g.origin==='redaktionell'?' editorial':'')+'" id="g-'+attr(searchCore.paraKey(g.first))+'">'+html(g.title)+'</h2>';
+      if(g.origin!=='kapitel')head+='<h2 class="reader-subhead" id="g-'+attr(searchCore.paraKey(g.first))+'">'+html(g.title)+'</h2>';
       return head+g.paragraphs.map(p=>paraHtml(meta,ch,byNumber.get(p.number))).join('');
     }).join('');
     const index=data.chapters.indexOf(ch),next=data.chapters[index+1];
     return '<div class="reader-context">'+
       '<div class="reader-crumbs"><strong>'+html(short)+'</strong><span class="reader-current">'+html(ch.title||meta.name)+'</span></div>'+
+      '<button type="button" data-action="pen" class="pen-toggle'+(state.pen?' on':'')+'" aria-pressed="'+state.pen+'" aria-label="Penna för markeringar">✎ Penna</button>'+
       '<button type="button" data-action="toc" class="reader-toc-button" aria-label="Öppna innehållsförteckning">Innehåll <span aria-hidden="true">☷</span></button>'+
       (state.focus?'<button type="button" class="focus-return" data-action="toggle-focus">Avsluta läsläge</button>':'')+
       '</div>'+
@@ -312,7 +396,7 @@
       '<div class="statute-body">'+content+'</div>'+
       '<footer class="reader-end"><span class="small muted">Slut på '+html(short)+'.</span>'+
       (next?'<a class="reader-next" data-link="1" href="'+attr(urlFor(meta.sfs,next.number))+'"><span class="small muted">Nästa kapitel</span>'+
-        '<span>'+html(next.number+' kap. '+(next.title||''))+' ›</span></a>':'')+'</footer></main>';
+        '<span>'+html(next.number+' kap. '+(next.title||''))+' ›</span></a>':transitionsHtml(meta,data))+'</footer></main>';
   }
   function tocHtml(meta,data,needle){
     const here=route(),q=needle||'';
@@ -322,7 +406,7 @@
       '<div class="toc-search"><div class="searchbox">'+iconSearch()+
       '<input id="toc-query" type="search" enterkeyhint="search" autocomplete="off" placeholder="Sök rubrik, kapitel eller paragraf" value="'+attr(q)+'"></div></div>'+
       '<div class="toc-results" id="toc-results">'+tocEntries(meta,data,here,q)+'</div>'+
-      '<p class="toc-caption">Innehållsrubriker kommer från lagtexten eller är redaktionella. Övriga beskrivningar är korta utdrag ur lagtexten.</p>';
+      '';
   }
   function tocEntries(meta,data,here,needle){
     const q=norm(needle||''),currentPara=state.visibleParagraph||here.paragraph||null;
@@ -393,7 +477,7 @@
       '<div class="section-title">Offline</div>'+
       '<p class="small muted">Spara alla författningar på telefonen så att de går att läsa utan internet.</p>'+
       '<div class="actions"><button type="button" class="button primary" data-action="offline">Ladda ner hela lagboken</button></div>'+
-      '<div class="actions offline-areas">'+state.areas.map(a=>'<button type="button" class="button" data-action="offline" data-area="'+attr(a.id)+'">'+html(a.name)+'</button>').join('')+'</div>'+
+      '<div class="actions offline-areas">'+state.sections.map(a=>'<button type="button" class="button" data-action="offline" data-area="'+attr(a.id)+'">'+html(a.name)+'</button>').join('')+'</div>'+
       '<p class="small muted" id="offline-status">Kontrollerar sparade lagar …</p>'+
       '<div class="section-title">Säkerhetskopia</div>'+
       '<p class="small muted">Favoriter, anteckningar och inställningar sparas bara på den här enheten. Spara en kopia som fil och läs in den igen vid behov.</p>'+
@@ -417,7 +501,7 @@
     if(!window.caches){toast('Offlinelagring stöds inte här.');return;}
     const box=$('#offline-status');let done=0,failed=0;
     const cache=await caches.open(DATA_CACHE);
-    const laws=state.catalog.filter(l=>!area||l.area===area);
+    const laws=state.catalog.filter(l=>!area||l.section===area);
     // Lagtext, register över hänvisningar och sökindexet behövs för full funktion utan nät.
     const files=laws.flatMap(l=>[lawUrl(l.sfs),'data/index/backlinks/'+sfsFile(l.sfs)+'.json']);
     try{
@@ -476,7 +560,7 @@
     return '<div class="page"><h1 class="page-title">Om lagboken</h1><p>En fristående, mobilanpassad lagbok med läsvy i mjukvitt, grönt och diskreta vinröda detaljer.</p>' +
       '<div class="section-title">Rättskällor</div><p class="small muted">Författningstexterna hämtas från Sveriges riksdags öppna data. Polisens FAP visas i en intern PDF-läsare med direktlänkar till Polismyndighetens författningssamling.</p>' +
       '<div class="section-title">Uppdateringsstatus</div><p class="small">Senast genomförd datainhämtning: '+html(window.LAGBOK_GENERATED||'Se respektive författning')+'. Lagtexten kontrolleras automatiskt den 1 varje månad mot Riksdagens öppna data och ändringar granskas innan de publiceras.</p>' +
-      '<div class="section-title">Lydelser</div><p class="small muted">När en paragraf har flera lydelser visar appen den som gäller i dag enligt Riksdagens markeringar om ikraftträdande. Kommande lydelser visas hopfällda under paragrafen. Rubriker märkta som redaktionella är tillagda för navigering och är inte en del av lagtexten.</p>' +
+      '<div class="section-title">Lydelser och rubriker</div><p class="small muted">När en paragraf har flera lydelser visar appen den som gäller i dag enligt Riksdagens markeringar om ikraftträdande. Kommande lydelser visas hopfällda under paragrafen med ändringarna markerade. Vissa kapitel- och paragrafrubriker samt kopplingar mellan lag och förordning är tillagda för navigering och är inte en del av lagtexten.</p>' +
       '<div class="notice">Det här är inte en officiell lagtexttjänst. En importerad lydelse kan innehålla övergångsbestämmelser och framtida ikraftträdanden. Kontrollera den tillämpliga versionen i originalkällan.</div>' +
       '<p><a href="https://github.com/Deashi03/Lagbok" target="_blank" rel="noopener noreferrer">Öppna projektet på GitHub ↗</a></p></div>';
   }
@@ -540,23 +624,37 @@
     const el=$('#search-suggest'),input=$('#query');if(!el||!input)return;
     const markup=suggestionsHtml(state.query);el.innerHTML=markup;el.hidden=!markup;input.setAttribute('aria-expanded',String(!!markup));
   }
+  // Filter för fritextsökningen: lagbokens avdelningar, de stora balkarna och egna samlingar.
+  function searchFilters(){
+    const opts=[['','Alla'],['balk:1962:700','BrB m.fl.'],['balk:1942:740','RB m.fl.'],...state.sections.filter(s=>s.id!=='balkar').map(s=>[s.id,s.name.split(/,| och /)[0]])];
+    if(pref.collections.length)opts.push(['samlingar','Mina samlingar']);
+    return '<div class="chips search-filters">'+opts.map(([id,label])=>'<button type="button" class="chip'+(state.searchFilter===id?' active':'')+'" data-action="search-filter" data-id="'+attr(id)+'">'+html(label)+'</button>').join('')+'</div>';
+  }
+  function passesFilter(h){
+    const f=state.searchFilter;if(!f)return true;
+    const law=lawById(h.sfs);if(!law)return false;
+    if(f.startsWith('balk:')){const b=f.slice(5);return law.sfs===b||law.parent===b;}
+    if(f==='samlingar'){const k=searchCore.paraKey(h.number);return pref.collections.some(c=>c.items.some(x=>{const [s,ch,n]=x.split('|');return s===h.sfs&&ch===h.chapter&&searchCore.paraKey(n)===k;}));}
+    return law.section===f;
+  }
   async function populateTextResults(q,epoch) {
     const box=()=>epoch===state.searchEpoch?$('#text-results'):null;
     if(!searchIndex||!searchIndex){return;}
     let result;
-    try{result=await searchIndex.query(q,{limit:40});}
+    try{result=await searchIndex.query(q,{limit:400});}
     catch(_){if(box())box().innerHTML='<div class="empty">Sökindexet kunde inte läsas. Försök igen med internetanslutning.</div>';return;}
     if(!box())return;
     if(!result.tokens.length){box().innerHTML='<p class="muted small">Skriv minst två tecken för fritextsökning.</p>';return;}
-    if(!result.total){box().innerHTML='<div class="empty">Inga paragrafer innehåller alla sökorden.</div>';return;}
-    const hits=result.hits.slice(0,30);
+    if(!result.total){box().innerHTML=searchFilters()+'<div class="empty">Inga paragrafer innehåller alla sökorden.</div>';return;}
+    const all=result.hits.filter(passesFilter),hits=all.slice(0,30);
+    if(!hits.length){box().innerHTML=searchFilters()+'<div class="empty">Inga träffar med det här filtret.</div>';return;}
     const rows=hits.map((h,i)=>{
       const meta=lawById(h.sfs);if(!meta)return '';
       return '<a class="list-row" href="'+attr(urlFor(h.sfs,h.chapter,searchCore.paraKey(h.number)))+'" data-link="1" data-terms="'+attr(result.tokens.join(' '))+'"><div class="grow"><div class="row-title">'+
         html(shortRef(h.sfs,h.chapter,h.number))+(h.title?' · '+html(h.title):'')+'</div><div class="row-sub">'+html(meta.name)+'</div>'+
         '<div class="search-excerpt" id="hit-'+i+'"></div></div><span class="chevron">›</span></a>';
     }).join('');
-    box().innerHTML='<p class="small muted">'+result.total+' paragrafer'+(result.total>hits.length?' · visar de '+hits.length+' mest relevanta':'')+'</p><div class="card-list">'+rows+'</div>';
+    box().innerHTML=searchFilters()+'<p class="small muted">'+all.length+' paragrafer'+(all.length>hits.length?' · visar de '+hits.length+' mest relevanta':'')+'</p><div class="card-list">'+rows+'</div>';
     // Utdrag fylls i när respektive lagtext har lästs in.
     hits.forEach((h,i)=>loadLaw(h.sfs).then(doc=>{
       const el=$('#hit-'+i);if(!el||epoch!==state.searchEpoch)return;
@@ -598,7 +696,7 @@
     $('#back').hidden=['home','catalog','search','saved'].includes(r.page);
     hideHighlightBar();
     $('#toc-button').hidden=true;
-    $('#in-law-search').hidden=r.page!=='law';
+    $('#in-law-search').hidden=false;
     const meta=lawById(r.sfs);
     $('#top-title').textContent = r.page==='law'?(meta?meta.name:'Lagbok'):({home:'Lagbok',catalog:'Lagbok',search:'Lagbok',saved:'Sparat',fap:r.sfs?'FAP':'Polisens FAP',settings:'Inställningar',about:'Om',collection:'Samling',upcoming:'Kommande ändringar'}[r.page]||'Lagbok');
     if(r.page!=='law')state.returnStack=[];
@@ -669,6 +767,21 @@
       hits.slice(0,45).map(x=>listRow((x.ch.number==='0'?'':x.ch.number+' kap. ')+x.item.number+' §',x.preview,urlFor(meta.sfs,x.ch.number,x.item.number))).join('')+
       '</div>'+(hits.length>45?'<p class="small muted">Visar de första 45 träffarna. Skriv fler ord för att avgränsa.</p>':'');
   }
+  // Snabbhopp: skriv t.ex. "rb 23 8b" eller "fuk 13" från vilken vy som helst.
+  function quickJump(){
+    const r=route(),meta=r.page==='law'?lawById(r.sfs):null;
+    showSheet('<div class="sheet-title">Gå till eller sök <button class="icon-button" data-action="close" aria-label="Stäng">×</button></div>'+
+      '<form id="jump-form" class="searchbox">'+iconSearch()+'<input id="jump-query" type="search" enterkeyhint="go" autocomplete="off" spellcheck="false" placeholder="T.ex. rb 23 8b, fuk 13 eller ett ord'+(meta?' i '+html(meta.name):'')+'"></form>'+
+      '<div id="jump-results"><p class="small muted">Skriv en förkortning och ett lagrum, så öppnas det direkt.'+(meta?' Ord söks i '+html(meta.name)+'.':'')+'</p></div>');
+  }
+  function jumpResults(q){
+    const r=route(),meta=r.page==='law'?lawById(r.sfs):null,doc=meta&&state.laws.get(r.sfs);
+    const direct=q.trim()?findDirect(q):null;
+    let out=direct?'<div class="card-list"><a class="list-row" data-quick="'+attr(q)+'" href="'+attr(quickUrl(direct))+'"><div class="grow"><div class="row-title">'+html(quickLabel(direct))+'</div><div class="row-sub">Öppna direkt (Enter)</div></div><span class="chevron">›</span></a></div>':'';
+    if(!direct&&doc&&norm(q).length>=2)out+=lawSearchResults(doc,meta,q);
+    if(!direct&&norm(q).length>=2)out+='<div class="card-list"><a class="list-row" href="#/catalog" data-action="jump-all" data-q="'+attr(q)+'"><div class="grow"><div class="row-title">Sök ”'+html(q)+'” i hela lagboken</div></div><span class="chevron">›</span></a></div>';
+    return out||'<p class="small muted">Skriv en förkortning och ett lagrum, så öppnas det direkt.</p>';
+  }
   function findWithinLaw() {
     const r=route(),meta=lawById(r.sfs),doc=state.laws.get(r.sfs);
     if(!doc||!meta)return toast('Lagtexten är ännu inte inläst.');
@@ -689,10 +802,21 @@
     }).catch(()=>toast('Innehållsförteckningen kunde inte läsas.'));
   }
   function note(key) {
-    showSheet('<div class="sheet-title">Egen anteckning <button class="icon-button" data-action="close">×</button></div>'+
-      '<div class="small muted">'+html(favTitle(key))+'</div>'+
-      '<div class="field"><label for="note-text">Anteckning</label><textarea id="note-text" placeholder="Skriv en privat anteckning…">'+html(pref.notes[key]||'')+'</textarea></div>'+
-      '<button class="button primary" data-action="save-note" data-key="'+attr(key)+'">Spara anteckning</button>');
+    closeSheet();
+    const [sfs,cap,num]=key.split('|'),r=route();
+    // Anteckningen skrivs direkt under paragrafen i läsvyn.
+    state.editingNote=key;
+    const here=r.page==='law'&&r.sfs===sfs&&String(r.chapter)===String(cap);
+    const focus=()=>{const f=$('textarea.note-input');if(f){f.focus();const el=f.closest('.paragraph');if(el&&el.scrollIntoView)el.scrollIntoView({block:'nearest'});}};
+    if(here)renderKeep().then(focus);
+    else{navigate(urlFor(sfs,cap,searchCore.paraKey(num)));setTimeout(focus,350);}
+  }
+  function saveNote(key,value,quiet){
+    const before=pref.notes[key]||'';
+    const t=String(value||'').trim();
+    if(t)pref.notes[key]=t;else delete pref.notes[key];
+    savePrefs();
+    if(!quiet&&before&&!t)toast('Anteckningen är borttagen',()=>{pref.notes[key]=before;savePrefs();renderKeep();});
   }
   function menuRow(action,key,label,icon,extra){
     return '<button type="button" class="list-row sheet-menu-row" data-action="'+action+'" data-key="'+attr(key)+'"'+(extra||'')+'><span class="grow"><span class="row-title">'+label+'</span></span><span class="chevron">'+icon+'</span></button>';
@@ -781,6 +905,19 @@
     if(!c.items.includes(key))c.items.push(key);
     savePrefs();closeSheet();toast('Tillagd i ”'+c.name+'”');
   }
+  // Samlingen som ren text med hänvisningar, för att dela eller klistra in någon annanstans.
+  async function collectionText(id){
+    const c=collectionById(id);if(!c)return;
+    const parts=[c.name,''];
+    for(const key of c.items){
+      const [sfs,cap,num]=key.split('|'),meta=lawById(sfs);
+      try{const {item}=findPara(await loadLaw(sfs),cap,num);if(!item)continue;
+        parts.push(shortRef(sfs,cap,num)+' '+(meta?meta.name:'')+' (SFS '+sfs+')',lawModel.resolve(item).current.text);
+        if(pref.notes[key])parts.push('Anteckning: '+pref.notes[key]);parts.push('');}catch(_){}
+    }
+    const text=parts.join('\n')+'\nKälla: Sveriges riksdag. Kontrollera gällande lydelse.';
+    if(navigator.share)navigator.share({title:c.name,text}).catch(()=>{});else copyText(text,'Samlingen är kopierad som text');
+  }
   function removeFromCollection(id,key){
     const c=collectionById(id);if(!c)return;
     c.items=c.items.filter(x=>x!==key);savePrefs();renderKeep();
@@ -814,6 +951,8 @@
     }));
     return '<div class="page collection-page"><span class="source-label">Samling</span><h1 class="page-title">'+html(c.name)+'</h1>'+
       '<div class="actions"><button type="button" class="button" data-action="collection-rename" data-id="'+attr(c.id)+'">Byt namn</button>'+
+      '<button type="button" class="button" data-action="collection-text" data-id="'+attr(c.id)+'">Dela som text</button>'+
+      '<button type="button" class="button" data-action="collection-print" data-id="'+attr(c.id)+'">Skriv ut / PDF</button>'+
       '<button type="button" class="button" data-action="collection-delete" data-id="'+attr(c.id)+'">Ta bort samling</button></div>'+
       (parts.length?'<div class="law-reader collection-reader">'+parts.join('')+'</div>':'<div class="empty" style="margin-top:18px">Samlingen är tom. Lägg till paragrafer via menyn ⋯ vid en paragraf.</div>')+'</div>';
   }
@@ -822,10 +961,13 @@
     const [sfs,cap,num]=key.split('|');
     try{await loadLaw(sfs);}catch(_){}
     const list=(state.backlinks.get(sfs)||{})[cap+'|'+searchCore.paraKey(num)]||[];
-    showSheet('<div class="sheet-title">Hänvisar till '+html(shortRef(sfs,cap,num))+' <button class="icon-button" data-action="close" aria-label="Stäng">×</button></div>'+
-      (list.length?'<p class="small muted">'+list.length+(list.length===1?' paragraf':' paragrafer')+' i lagboken hänvisar hit.</p><div class="card-list">'+
-        list.map(([s,c,n])=>listRow(shortRef(s,c,n)+((tocModel.curatedTitle(s,c,n))?' · '+tocModel.curatedTitle(s,c,n):''),(lawById(s)||{}).name||s,urlFor(s,c,searchCore.paraKey(n)))).join('')+'</div>':
-        '<div class="empty">Inga andra paragrafer i lagboken hänvisar hit.</div>'),false);
+    const rows=items=>'<div class="card-list">'+items.map(([s,c,n])=>listRow(shortRef(s,c,n)+((tocModel.curatedTitle(s,c,n))?' · '+tocModel.curatedTitle(s,c,n):''),(lawById(s)||{}).name||s,urlFor(s,c,searchCore.paraKey(n)))).join('')+'</div>';
+    const reg=list.filter(e=>e[3]==='föreskrift'),comp=list.filter(e=>e[3]==='kompletterar'),refs=list.filter(e=>!e[3]||e[3]==='ref');
+    showSheet('<div class="sheet-title">Kopplingar för '+html(shortRef(sfs,cap,num))+' <button class="icon-button" data-action="close" aria-label="Stäng">×</button></div>'+
+      (reg.length?'<div class="section-title regulation-title">Kompletterande föreskrifter</div><p class="small muted">Förordningsparagrafer som fyller ut bestämmelsen.</p>'+rows(reg):'')+
+      (comp.length?'<div class="section-title regulation-title">Kompletterar</div><p class="small muted">Lagparagrafer som den här föreskriften fyller ut.</p>'+rows(comp):'')+
+      (refs.length?'<div class="section-title">Hänvisar hit</div>'+rows(refs):'')+
+      (!list.length?'<div class="empty">Inga kopplingar till andra paragrafer.</div>':''),false);
   }
   // ---------- 0.6: ändringsbevakning ----------
   function watchedLaws(){return Object.keys(pref.watch).filter(lawById);}
@@ -919,13 +1061,36 @@
   }
   function addHighlight(color,withNote){
     const p=state.pendingHighlight;if(!p)return;
-    const h={id:Date.now().toString(36),start:p.start,end:p.end,quote:p.quote,color,note:'',created:lawModel.today()};
-    (pref.highlights[p.key]=pref.highlights[p.key]||[]).push(h);savePrefs();
+    const h=createHighlight(p.key,p.start,p.end,p.quote,color);
     const sel=window.getSelection&&window.getSelection();if(sel)sel.removeAllRanges();
-    hideHighlightBar();renderKeep().then(()=>{if(withNote)highlightSheet(p.key,h.id);});
+    hideHighlightBar();renderKeep().then(()=>{if(withNote)highlightSheet(p.key,h.id,true);});
   }
-  function highlightSheet(key,id){
+  function createHighlight(key,start,end,quote,color){
+    const h={id:Date.now().toString(36),start,end,quote,color,note:'',created:lawModel.today()};
+    (pref.highlights[key]=pref.highlights[key]||[]).push(h);pref.lastColor=color;savePrefs();
+    toast('Markerat',()=>{pref.highlights[key]=(pref.highlights[key]||[]).filter(x=>x.id!==h.id);if(!pref.highlights[key].length)delete pref.highlights[key];savePrefs();renderKeep();});
+    return h;
+  }
+  // Liten ruta vid markeringen: färg, anteckning och ta bort.
+  function highlightSheet(key,id,openNote){
     const h=(pref.highlights[key]||[]).find(x=>x.id===id);if(!h)return;
+    const mark=document.querySelector&&document.querySelector('mark.hl[data-hl="'+id+'"]');
+    if(mark&&mark.getBoundingClientRect&&window.innerHeight){
+      closePopover();
+      const pop=document.createElement('div');pop.className='hl-pop';pop.setAttribute('role','dialog');
+      pop.innerHTML='<div class="hl-pop-row">'+highlights.COLORS.map(([c,label])=>'<button type="button" class="hl-swatch hl-'+c+(h.color===c?' selected':'')+'" data-action="hl-pop-color" data-color="'+c+'" data-id="'+attr(id)+'" data-key="'+attr(key)+'" aria-label="'+label+'"></button>').join('')+
+        '<button type="button" class="hl-pop-button" data-action="hl-pop-note">✎ Anteckning</button><button type="button" class="hl-pop-button danger" data-action="hl-pop-remove" data-id="'+attr(id)+'" data-key="'+attr(key)+'" aria-label="Ta bort markering">Ta bort</button></div>'+
+        '<div class="hl-pop-note"'+(openNote||h.note?'':' hidden')+'><textarea rows="2" placeholder="Anteckning till markeringen …">'+html(h.note||'')+'</textarea>'+
+        '<button type="button" class="button primary" data-action="hl-pop-save" data-id="'+attr(id)+'" data-key="'+attr(key)+'">Spara</button></div>';
+      document.body.appendChild(pop);
+      const r=mark.getBoundingClientRect(),w=Math.min(340,window.innerWidth-24);
+      pop.style.width=w+'px';
+      pop.style.left=Math.max(12,Math.min(window.innerWidth-w-12,r.left+r.width/2-w/2))+'px';
+      const below=r.bottom+10,height=pop.offsetHeight||120;
+      pop.style.top=(below+height>window.innerHeight-80?Math.max(60,r.top-height-10):below)+'px';
+      if(openNote){const f=pop.querySelector('textarea');if(f)f.focus();}
+      return;
+    }
     showSheet('<div class="sheet-title">Markering <button class="icon-button" data-action="close" aria-label="Stäng">×</button></div>'+
       '<p class="small muted">'+html(favTitle(key))+'</p><blockquote class="hl-quote hl-'+attr(h.color)+'">'+html(h.quote)+'</blockquote>'+
       '<div class="hl-colors">'+highlights.COLORS.map(([c,label])=>'<button type="button" class="hl-swatch hl-'+c+(h.color===c?' selected':'')+'" data-action="hl-color" data-color="'+c+'" data-id="'+attr(id)+'" data-key="'+attr(key)+'" aria-label="'+label+'"></button>').join('')+'</div>'+
@@ -933,14 +1098,72 @@
       '<div class="actions"><button type="button" class="button primary" data-action="hl-save-note" data-id="'+attr(id)+'" data-key="'+attr(key)+'">Spara</button>'+
       '<button type="button" class="button" data-action="hl-remove" data-id="'+attr(id)+'" data-key="'+attr(key)+'">Ta bort markering</button></div>',false);
   }
+  function closePopover(){$$('.hl-pop').forEach(x=>x.remove());}
   function updateHighlight(key,id,changes){
     const h=(pref.highlights[key]||[]).find(x=>x.id===id);if(!h)return;
-    Object.assign(h,changes);savePrefs();closeSheet();renderKeep();if('note' in changes)toast('Markeringen är sparad');
+    Object.assign(h,changes);savePrefs();closeSheet();closePopover();renderKeep();if('note' in changes)toast('Anteckningen är sparad');
   }
   function removeHighlight(key,id){
-    pref.highlights[key]=(pref.highlights[key]||[]).filter(x=>x.id!==id);
+    const list=pref.highlights[key]||[],removed=list.find(x=>x.id===id);
+    pref.highlights[key]=list.filter(x=>x.id!==id);
     if(!pref.highlights[key].length)delete pref.highlights[key];
-    savePrefs();closeSheet();renderKeep();
+    savePrefs();closeSheet();closePopover();renderKeep();
+    if(removed)toast('Markeringen är borttagen',()=>{(pref.highlights[key]=pref.highlights[key]||[]).push(removed);savePrefs();renderKeep();});
+  }
+  // ---------- 0.7: penna – tryck på första och sista ordet för att markera ----------
+  let penBar=null;
+  function updatePenBar(){
+    if(!penBar){
+      penBar=document.createElement('div');penBar.className='hl-bar pen-bar';
+      document.body.appendChild(penBar);
+    }
+    penBar.hidden=!state.pen;
+    penBar.innerHTML='<span class="pen-hint">'+(state.penAnchor?'Tryck på sista ordet':'Tryck på första ordet')+'</span>'+
+      highlights.COLORS.map(([c,label])=>'<button type="button" class="hl-swatch hl-'+c+(pref.lastColor===c?' selected':'')+'" data-action="pen-color" data-color="'+c+'" aria-label="'+label+'"></button>').join('')+
+      '<button type="button" class="hl-note-button" data-action="pen-done">Klar</button>';
+  }
+  function togglePen(){
+    state.pen=!state.pen;state.penAnchor=null;
+    document.documentElement.dataset.pen=state.pen?'on':'off';
+    hideHighlightBar();updatePenBar();renderKeep();
+    if(state.pen)toast('Penna på: tryck på första och sista ordet');
+  }
+  function caretAt(x,y){
+    if(document.caretRangeFromPoint)return document.caretRangeFromPoint(x,y);
+    if(document.caretPositionFromPoint){const p=document.caretPositionFromPoint(x,y);if(!p)return null;const r=document.createRange();r.setStart(p.offsetNode,p.offset);return r;}
+    return null;
+  }
+  // Ordets gränser runt en tryckpunkt, som teckenpositioner i paragrafens text.
+  function wordAt(content,e){
+    const caret=caretAt(e.clientX,e.clientY);
+    if(!caret||!content.contains(caret.startContainer))return null;
+    const probe=document.createRange();probe.setStart(caret.startContainer,caret.startOffset);probe.setEnd(caret.startContainer,caret.startOffset);
+    let pos=null,offset=0;
+    for(const node of highlights.textNodes(content)){if(node===caret.startContainer){pos=offset+caret.startOffset;break;}offset+=node.data.length;}
+    if(pos==null)return null;
+    const text=content.textContent,isWord=c=>/[\p{L}\p{N}§-]/u.test(c||'');
+    let start=pos,end=pos;
+    if(!isWord(text[start])&&isWord(text[start-1]))start--;
+    while(start>0&&isWord(text[start-1]))start--;
+    while(end<text.length&&isWord(text[end]))end++;
+    return end>start?{start,end}:null;
+  }
+  function penTap(e,content){
+    const article=content.parentElement,key=article.dataset.key,w=wordAt(content,e);
+    if(!w)return;
+    const a=state.penAnchor;
+    if(!a||a.key!==key){
+      state.penAnchor={key,start:w.start,end:w.end};
+      $$('mark.pen-anchor').forEach(m=>{const p=m.parentNode;while(m.firstChild)p.insertBefore(m.firstChild,m);m.remove();});
+      highlights.wrap(content,w.start,w.end,()=>{const m=document.createElement('mark');m.className='pen-anchor';return m;});
+      updatePenBar();return;
+    }
+    const start=Math.min(a.start,w.start),end=Math.max(a.end,w.end);
+    state.penAnchor=null;
+    $$('mark.pen-anchor').forEach(m=>{const p=m.parentNode;while(m.firstChild)p.insertBefore(m.firstChild,m);m.remove();});
+    const text=content.textContent;
+    createHighlight(key,start,end,text.slice(start,end),pref.lastColor||'yellow');
+    renderKeep().then(updatePenBar);
   }
   function applyHighlights(){
     if(typeof view.querySelectorAll!=='function'||!highlights)return;
@@ -974,6 +1197,15 @@
     const i=data.chapters.findIndex(c=>c.number===r.chapter),next=data.chapters[i+dir];
     if(next){navigate(urlFor(r.sfs,next.number));toast(next.number==='0'?'':next.number+' kap.'+(next.title?' '+next.title:''));}
   }
+  // Kommer ihåg var i varje författning man läste senast.
+  function rememberPosition(){
+    clearTimeout(rememberPosition.t);
+    rememberPosition.t=setTimeout(()=>{
+      const r=route();if(r.page!=='law'||!lawById(r.sfs)||r.chapter==null)return;
+      pref.readPos[r.sfs]={chapter:r.chapter,para:state.visibleParagraph||r.paragraph||null};
+      pref.lastRead=r.sfs;savePrefs();
+    },700);
+  }
   let readerScrollPending=false;
   view.addEventListener('scroll',()=>{
     if(route().page!=='law'||readerScrollPending||typeof view.querySelectorAll!=='function')return;
@@ -986,6 +1218,7 @@
       for(const el of paragraphs){
         if(el.getBoundingClientRect().bottom>top){
           state.visibleParagraph=el.dataset.paragraph;
+          rememberPosition();
           break;
         }
       }
@@ -1003,6 +1236,10 @@
     if(dt<600&&Math.abs(dx)>90&&Math.abs(dy)<45&&(!sel||sel.isCollapsed))chapterStep(dx<0?1:-1);
   },{passive:true});
   view.addEventListener('input',e=>{
+    if(e.target.classList&&e.target.classList.contains('note-input')){
+      const k=e.target.dataset.noteKey,v=e.target.value;clearTimeout(saveNote.t);saveNote.t=setTimeout(()=>saveNote(k,v,true),400);return;
+    }
+    if(e.target.id==='marks-query'){state.marksQuery=e.target.value;const box=$('#marks-list');if(box)box.innerHTML=marksHtml();return;}
     if(e.target.id==='query'||e.target.id==='fap-query')onSearch(e.target.value);
   });
   view.addEventListener('submit',async e=>{
@@ -1022,7 +1259,13 @@
       const next=list[index+(e.key==='ArrowDown'?1:-1)];if(next)next.focus();else $('#query')?.focus();
     }
   });
+  sheet.addEventListener('submit',e=>{
+    if(e.target.id!=='jump-form')return;e.preventDefault();
+    const q=$('#jump-query').value.trim();if(!q)return;
+    goQuick(q).then(done=>{if(!done){closeSheet();state.query=q;navigate('#/catalog');}});
+  });
   sheet.addEventListener('input',e=>{
+    if(e.target.id==='jump-query'){$('#jump-results').innerHTML=jumpResults(e.target.value);return;}
     if(e.target.id==='local-query'){
       const r=route(),meta=lawById(r.sfs),doc=state.laws.get(r.sfs);
       if(meta&&doc)$('#local-results').innerHTML=lawSearchResults(doc,meta,e.target.value);
@@ -1043,7 +1286,12 @@
     }
   });
   document.addEventListener('click',e=>{
+    if(!e.target.closest('.hl-pop')&&!e.target.closest('mark.hl'))closePopover();
     const close=e.target.closest('[data-action="close"]'); if(close){closeSheet();return;}
+    if(state.pen&&!e.target.closest('mark.hl')){
+      const content=e.target.closest('.paragraph-content');
+      if(content&&content.parentElement&&content.parentElement.classList.contains('paragraph')&&view.contains(content)){e.preventDefault();penTap(e,content);return;}
+    }
     const reference=e.target.closest('[data-ref]');if(reference){e.preventDefault();followRef(reference);return;}
     const quickAnchor=e.target.closest('[data-quick]');if(quickAnchor){e.preventDefault();goQuick(quickAnchor.dataset.quick);return;}
     const mark=e.target.closest('mark.hl');if(mark&&!e.target.closest('a')){highlightSheet(mark.dataset.key,mark.dataset.hl);return;}
@@ -1066,6 +1314,21 @@
       if(field){const t=field.value.trim();if(t)pref.notes[k]=t;else delete pref.notes[k];savePrefs();closeSheet();const position=view.scrollTop;Promise.resolve(render(false)).then(()=>{view.scrollTop=position;});toast('Anteckning sparad');}
     }
     if(a==='toc')toc();
+    if(a==='toast-undo'){const fn=toast.undo;$('#toast').hidden=true;toast.undo=null;if(fn)fn();return;}
+    if(a==='note-done'){const f=$('textarea.note-input');if(f)saveNote(k,f.value);state.editingNote=null;renderKeep();return;}
+    if(a==='pen'){togglePen();return;}
+    if(a==='pen-color'){pref.lastColor=btn.dataset.color;savePrefs();updatePenBar();return;}
+    if(a==='pen-done'){if(state.pen)togglePen();return;}
+    if(a==='hl-pop-color'){updateHighlight(k,btn.dataset.id,{color:btn.dataset.color});pref.lastColor=btn.dataset.color;savePrefs();return;}
+    if(a==='hl-pop-note'){const box=$('.hl-pop-note');if(box){box.hidden=!box.hidden;const f=$('.hl-pop-note textarea');if(f&&!box.hidden)f.focus();}return;}
+    if(a==='hl-pop-save'){const f=$('.hl-pop-note textarea');updateHighlight(k,btn.dataset.id,{note:f?f.value.trim():''});return;}
+    if(a==='hl-pop-remove'){removeHighlight(k,btn.dataset.id);return;}
+    if(a==='marks-filter'){state.marksFilter=state.marksFilter===btn.dataset.id?'':btn.dataset.id;renderKeep();return;}
+    if(a==='search-filter'){state.searchFilter=btn.dataset.id;onSearch(state.query);return;}
+    if(a==='jump'){quickJump();return;}
+    if(a==='jump-all'){e.preventDefault();closeSheet();state.query=btn.dataset.q;navigate('#/catalog');return;}
+    if(a==='collection-text'){collectionText(btn.dataset.id);return;}
+    if(a==='collection-print'){window.print();return;}
     if(a==='return'){history.back();return;}
     if(a==='offline'){downloadAll(btn.dataset.area||null);return;}
     if(a==='copy-ref'){const [id,cap,num]=k.split('|');copyText(shortRef(id,cap,num),'Hänvisning kopierad');return;}
@@ -1098,7 +1361,7 @@
   $('#back').addEventListener('click',()=>{if(history.length>1)history.back();else navigate('#/catalog');});
   $('#menu-button').addEventListener('click',()=>sheet.hidden?menu():closeSheet());
   $('#toc-button').addEventListener('click',toc);
-  $('#in-law-search').addEventListener('click',findWithinLaw);
+  $('#in-law-search').addEventListener('click',quickJump);
   scrim.addEventListener('click',closeSheet);
   window.addEventListener('popstate',()=>{closeSheet();render(false);});
   window.addEventListener('hashchange',()=>{closeSheet();render(false);});
@@ -1109,7 +1372,7 @@
       const resp=await fetch('data/catalog.json',{cache:'no-store'});
       if(!resp.ok)throw Error('Katalog saknas');
       const data=await resp.json();
-      state.catalog=(data.laws||[]).filter(l=>l.available!==false);state.fap=data.fap||[];state.version=data.version||'';state.areas=data.areas||[];window.LAGBOK_GENERATED=data.generated;
+      state.catalog=(data.laws||[]).filter(l=>l.available!==false);state.fap=data.fap||[];state.version=data.version||'';state.sections=data.sections||[];window.LAGBOK_GENERATED=data.generated;
       legalLinks.configure&&legalLinks.configure(state.catalog);
     } catch(_) {
       view.innerHTML='<div class="page"><div class="empty">Författningskatalogen kunde inte laddas. Försök igen med internetanslutning.</div></div>';
@@ -1118,6 +1381,7 @@
     if(!location.hash||location.hash==='#/home'||location.hash==='#/search')history.replaceState(null,'','#/catalog');
     render(true);
     fetchJson('data/index/status.json').then(st=>{state.status=st;updateNavBadge();}).catch(()=>{});
+    fetchJson('data/index/relations.json').then(r=>{state.relations=r;if(route().page==='law')renderKeep();}).catch(()=>{});
     if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
   }
   boot();

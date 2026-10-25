@@ -2,7 +2,10 @@
 /* Bygger sökindex och register över hänvisningar ur data/laws.
    data/index/paras.json          – alla paragrafer: [lag, kapitel, paragraf, rubrik]
    data/index/terms/<xx>.json     – ord -> paragrafnummer (deltakodade), uppdelat på ordets två första tecken
-   data/index/backlinks/<sfs>.json – "kapitel|paragraf" -> paragrafer som hänvisar hit
+   data/index/backlinks/<sfs>.json – "kapitel|paragraf" -> kopplingar [lag, kapitel, paragraf, typ] där typ är
+                                    "ref" (hänvisar hit), "föreskrift" (förordning som kompletterar) eller
+                                    "kompletterar" (lagparagraf som förordningsparagrafen kompletterar)
+   data/index/relations.json      – förordningar och de lagar de ansluter till
    data/index/status.json         – per lag: senaste ändring och kontrollsumma (för ändringsbevakning)
    data/index/upcoming.json       – alla kommande lydelser med datum
    Körs av importen och kontrolleras i CI, så att indexet alltid matchar lagtexten. */
@@ -29,7 +32,19 @@ for(const [sfs,doc] of docs)for(const ch of doc.chapters)known.set(sfs+'|'+ch.nu
 const exists=(sfs,chapter,para)=>{const s=known.get(sfs+'|'+chapter);return !!s&&(para==null||s.has(key(para)));};
 const fold=s=>String(s||'').toLocaleLowerCase('sv').normalize('NFD').replace(/[̀-ͯ]/g,'');
 const words=s=>fold(s).match(/[a-z0-9]{2,}/g)||[];
-const paras=[],postings=new Map(),backlinks=new Map();
+const paras=[],postings=new Map(),backlinks=new Map(),lawRefs=new Map();
+const typeOf=new Map(laws.map(l=>[l.sfs,l.type]));
+function addLink(sfs,chapter,para,entry){
+  const k=sfs+'#'+chapter+'|'+key(para);
+  if(!backlinks.has(k))backlinks.set(k,new Map());
+  backlinks.get(k).set(entry.join('|'),entry);
+}
+// Paragrafnummer som det skrivs i lagtexten ("3 a"), inte som nyckel ("3a").
+function displayNumber(sfs,chapter,num){
+  const doc=docs.get(sfs),ch=doc&&doc.chapters.find(c=>c.number===chapter);
+  const item=ch&&ch.items.find(i=>i.type==='para'&&key(i.number)===key(num));
+  return item?String(item.number):String(num);
+}
 laws.forEach((law,li)=>{
   const doc=docs.get(law.sfs);
   for(const ch of doc.chapters){
@@ -49,16 +64,44 @@ laws.forEach((law,li)=>{
       for(const text of texts){
         for(const ref of links.parseRefs(text,{sfs:law.sfs,chapter:ch.number,exists})){
           if(ref.id===law.sfs&&ref.chapter===ch.number&&ref.numbers.includes(key(item.number)))continue;
+          const target=typeOf.get(ref.id);
+          const complements=law.type==='förordning'&&target==='lag'&&ref.id!==law.sfs;
           for(const n of ref.numbers){
-            const k=ref.id+'#'+ref.chapter+'|'+n;
-            if(!backlinks.has(k))backlinks.set(k,new Map());
-            backlinks.get(k).set(law.sfs+'|'+ch.number+'|'+item.number,[law.sfs,ch.number,String(item.number)]);
+            addLink(ref.id,ref.chapter,n,[law.sfs,ch.number,String(item.number),complements?'föreskrift':'ref']);
+            if(complements){
+              addLink(law.sfs,ch.number,item.number,[ref.id,ref.chapter,displayNumber(ref.id,ref.chapter,n),'kompletterar']);
+              lawRefs.set(law.sfs+'>'+ref.id,(lawRefs.get(law.sfs+'>'+ref.id)||0)+1);
+            }
           }
         }
       }
     }
   }
 });
+// Redigerade kopplingar (data/relations.json) för förordningar som inte själva hänvisar till lagparagrafen.
+const curated=JSON.parse(fs.readFileSync(path.join(root,'data/relations.json'),'utf8'));
+for(const rel of curated.kompletterar){
+  const [fs_,fc,fp]=rel.fran.split('|');
+  if(!docs.has(fs_))continue;
+  for(const to of rel.till){
+    const [ts,tc,tp]=to.split('|');
+    if(!docs.has(ts))continue;
+    addLink(ts,tc,tp,[fs_,fc,fp,'föreskrift']);
+    addLink(fs_,fc,fp,[ts,tc,tp,'kompletterar']);
+    lawRefs.set(fs_+'>'+ts,(lawRefs.get(fs_+'>'+ts)||0)+3);
+  }
+}
+// En förordning ansluter till en lag när den hänvisar dit ofta: minst fem gånger och minst 30 % av
+// hänvisningarna till den mest hänvisade lagen. Enstaka hänvisningar ger ingen koppling på lagnivå.
+const relations={},top=new Map();
+for(const [pair,count] of lawRefs){const f=pair.split('>')[0];top.set(f,Math.max(top.get(f)||0,count));}
+for(const [pair,count] of [...lawRefs].sort()){
+  if(count<5||count<0.3*top.get(pair.split('>')[0]))continue;
+  const [f,l]=pair.split('>');
+  (relations[f]=relations[f]||{kompletterar:[],kompletteras:[]}).kompletterar.push(l);
+  (relations[l]=relations[l]||{kompletterar:[],kompletteras:[]}).kompletteras.push(f);
+}
+fs.writeFileSync(path.join(out,'relations.json'),JSON.stringify(relations));
 fs.writeFileSync(path.join(out,'paras.json'),JSON.stringify({laws:laws.map(l=>l.sfs),p:paras}));
 const shards=new Map();
 for(const [term,list] of [...postings].sort((a,b)=>a[0]<b[0]?-1:1)){
@@ -72,7 +115,9 @@ const bySfs=new Map();
 for(const [k,sources] of backlinks){
   const [sfs,target]=k.split('#');
   if(!bySfs.has(sfs))bySfs.set(sfs,{});
-  bySfs.get(sfs)[target]=[...sources.values()];
+  // Kompletterande föreskrifter först, sedan hänvisningar.
+  const order={'föreskrift':0,'kompletterar':1,'ref':2};
+  bySfs.get(sfs)[target]=[...sources.values()].sort((a,b)=>order[a[3]]-order[b[3]]);
 }
 for(const [sfs,data] of bySfs)fs.writeFileSync(path.join(out,'backlinks',sfs.replace(/[: ]/g,'-')+'.json'),JSON.stringify(data));
 // Kontrollsumma per paragraf och lag: ändras när lydelserna ändras, inte när hämtningsdatum ändras.

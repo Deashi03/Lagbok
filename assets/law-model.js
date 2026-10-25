@@ -57,5 +57,40 @@
     for(const k in before.paras)if(!(k in now.paras))removed.push(k);
     return {added,changed,removed,snapshot:now};
   }
-  return {today,status,resolve,describe,formatDate,hash,paraHash,snapshot,diff};
+  // Ordvis jämförelse mellan två lydelser: [{type:'same'|'del'|'ins',text}]
+  function diffWords(a,b){
+    const A=String(a||'').split(/(\s+)/),B=String(b||'').split(/(\s+)/);
+    if(A.length*B.length>4e6)return [{type:'del',text:a},{type:'ins',text:b}];
+    const n=A.length,m=B.length,L=new Array((n+1)*(m+1)).fill(0),w=m+1;
+    for(let i=n-1;i>=0;i--)for(let j=m-1;j>=0;j--)L[i*w+j]=A[i]===B[j]?L[(i+1)*w+j+1]+1:Math.max(L[(i+1)*w+j],L[i*w+j+1]);
+    const out=[],push=(type,text)=>{const last=out[out.length-1];if(last&&last.type===type)last.text+=text;else out.push({type,text});};
+    let i=0,j=0;
+    while(i<n&&j<m){
+      if(A[i]===B[j]){push('same',A[i]);i++;j++;}
+      else if(L[(i+1)*w+j]>=L[i*w+j+1])push('del',A[i++]);
+      else push('ins',B[j++]);
+    }
+    while(i<n)push('del',A[i++]);while(j<m)push('ins',B[j++]);
+    // Slå ihop ändringar som bara skiljs åt av mellanrum till ett struket och ett nytt block,
+    // så att texten läses som "gammal formulering → ny formulering" i stället för ord för ord.
+    const marked=out.map(x=>(/^\s+$/.test(x.text)?{type:'same',text:x.text}:x)),res=[];
+    for(let k=0;k<marked.length;k++){
+      const x=marked[k];
+      if(x.type==='same'){res.push(x);continue;}
+      let del='',ins='';
+      while(k<marked.length){
+        const y=marked[k];
+        if(y.type==='del')del+=y.text;else if(y.type==='ins')ins+=y.text;
+        else if(/^\s+$/.test(y.text)&&marked[k+1]&&marked[k+1].type!=='same'){del+=del?y.text:'';ins+=ins?y.text:'';}
+        else break;
+        k++;
+      }
+      k--;
+      if(del)res.push({type:'del',text:del});
+      if(ins)res.push({type:'ins',text:ins});
+      if(marked[k+1]&&marked[k+1].type==='same'&&(del||ins))res.push({type:'same',text:''});
+    }
+    return res.filter(x=>x.text!=='');
+  }
+  return {today,status,resolve,describe,formatDate,hash,paraHash,snapshot,diff,diffWords};
 });

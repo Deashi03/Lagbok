@@ -141,19 +141,6 @@
       "section": "balkar"
     },
     {
-      "sfs": "1736:0123 2",
-      "name": "Handelsbalken",
-      "type": "lag",
-      "aliases": [
-        "HB",
-        "handelsbalk"
-      ],
-      "chaptered": false,
-      "check": "handelsbalk",
-      "section": "balkar",
-      "available": false
-    },
-    {
       "sfs": "1915:218",
       "name": "Avtalslagen",
       "type": "lag",
@@ -163,8 +150,7 @@
       ],
       "chaptered": true,
       "check": "avtal",
-      "section": "balkar",
-      "parent": "1736:0123 2"
+      "section": "balkar"
     },
     {
       "sfs": "1990:931",
@@ -176,8 +162,7 @@
       ],
       "chaptered": false,
       "check": "köplag",
-      "section": "balkar",
-      "parent": "1736:0123 2"
+      "section": "balkar"
     },
     {
       "sfs": "1972:207",
@@ -190,8 +175,7 @@
       ],
       "chaptered": true,
       "check": "skadeståndslag",
-      "section": "balkar",
-      "parent": "1736:0123 2"
+      "section": "balkar"
     },
     {
       "sfs": "2014:322",
@@ -203,8 +187,7 @@
       ],
       "chaptered": false,
       "check": "brottsskadelag",
-      "section": "balkar",
-      "parent": "1736:0123 2"
+      "section": "balkar"
     },
     {
       "sfs": "1962:700",
@@ -781,18 +764,6 @@
       "chaptered": false,
       "check": "kamerabevakningslag",
       "section": "polis"
-    },
-    {
-      "sfs": "2018:1222",
-      "name": "Kamerabevakningsförordningen",
-      "type": "förordning",
-      "aliases": [
-        "kamerabevakningsförordning"
-      ],
-      "chaptered": false,
-      "check": "kamerabevakningsförordning",
-      "section": "polis",
-      "available": false
     },
     {
       "sfs": "2018:1177",

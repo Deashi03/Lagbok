@@ -22,3 +22,7 @@ const d=law.diff(before,after);
 assert.deepEqual([d.changed,d.added,d.removed],[['1|1'],['1|3'],['1|2']]);
 assert.notEqual(before.hash,d.snapshot.hash);
 console.log('Ändringsbevakning: jämförelse av ögonblicksbilder godkänd');
+const dw=law.diffWords('Den som stjäl döms för stöld till fängelse i högst två år.','Den som stjäl döms för stöld till fängelse i högst tre år.');
+assert.deepEqual(dw.filter(x=>x.type!=='same').map(x=>x.type+':'+x.text),['del:två','ins:tre']);
+assert.equal(dw.filter(x=>x.type!=='ins').map(x=>x.text).join(''),'Den som stjäl döms för stöld till fängelse i högst två år.');
+console.log('Jämför lydelser: ordvis skillnad godkänd');

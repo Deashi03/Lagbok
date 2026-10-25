@@ -10,6 +10,23 @@
   'use strict';
   const fold=s=>String(s||'').toLocaleLowerCase('sv').normalize('NFD').replace(/[̀-ͯ]/g,'');
   const words=s=>Array.from(new Set(fold(s).match(/[a-z0-9]{2,}/g)||[]));
+  // Vardagliga ord och förkortningar som annars inte finns i lagtexten.
+  const SYNONYMS={
+    lob:['berusad'],fylla:['berusad'],fyllo:['berusad'],
+    rattfylla:['rattfylleri'],rattfyllerist:['rattfylleri'],rattonykter:['rattfylleri'],
+    snatteri:['ringa','stold'],fortkorning:['hastighet'],olovlig:['olovlig'],
+    visitation:['kroppsvisitation'],visitera:['kroppsvisitera'],
+    gripa:['gripas'],anhalla:['anhallas'],hakta:['haktas'],
+    kniv:['kniv'],vapen:['vapen'],misshandla:['misshandel'],
+    nodvarn:['nodvarn'],tvang:['tvang'],
+    sekretess:['sekretess'],hemfrid:['hemfrid'],
+    lvu:['vard','unga'],lvm:['missbrukare'],lpt:['psykiatrisk','tvangsvard']
+  };
+  function expand(tokens){
+    const out=[];
+    for(const t of tokens){const s=SYNONYMS[t];if(s&&!(s.length===1&&s[0]===t))out.push(...s);else out.push(t);}
+    return Array.from(new Set(out));
+  }
   function decode(list){let n=0;return list.map(d=>(n+=d));}
   function create(fetchJson){
     let base=null;const shards=new Map();
@@ -20,7 +37,7 @@
     }
     async function query(q,options){
       const limit=(options&&options.limit)||60;
-      const tokens=words(q);
+      const tokens=expand(words(q));
       if(!tokens.length)return {total:0,hits:[],tokens};
       const idx=await paras();
       const matches=[];
@@ -70,5 +87,5 @@
     out+=escape(slice.slice(pos));
     return (start>0?'…':'')+out+(start+size<plain.length?'…':'');
   }
-  return {create,words,fold,snippet};
+  return {create,words,fold,snippet,expand};
 });
