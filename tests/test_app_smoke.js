@@ -4,6 +4,7 @@ const fs=require('node:fs');
 const vm=require('node:vm');
 const search=require('../assets/search-core.js');
 const legalLinks=require('../assets/legal-links.js');
+const tocModel=require('../assets/toc-model.js');
 const catalog=require('../data/catalog.json');
 const app=fs.readFileSync(require('node:path').join(__dirname,'../assets/app.js'),'utf8');
 const laws={
@@ -15,7 +16,7 @@ const laws={
 };
 const listeners={};
 const node=id=>({
- id,hidden:false,innerHTML:'',value:'',scrollTop:0,textContent:'',dataset:{},
+ id,hidden:false,innerHTML:'',value:'',scrollTop:0,textContent:'',dataset:{},querySelector(){return null},
  style:{setProperty(){}},classList:{toggle(){}},
  addEventListener(name,fn){(listeners[id+'.'+name]??=[]).push(fn)},
  setAttribute(){},getAttribute(){return ''},blur(){},focus(){},scrollIntoView(){}
@@ -42,7 +43,7 @@ const history={
  replaceState(_s,_t,url){location.hash=url}
 };
 const window={
- LagbokSearch:search,LagbokReferences:legalLinks,
+ LagbokSearch:search,LagbokReferences:legalLinks,LagbokTOC:tocModel,
  matchMedia:()=>({matches:false,addEventListener(){}}),
  addEventListener(name,fn){(listeners['window.'+name]??=[]).push(fn)}
 };
@@ -77,7 +78,11 @@ async function submit(q){
  assert.equal(location.hash,'#/law/1962%3A700/24/1');
  assert.match(el.view.innerHTML,/Tjugofjärde kapitlet/);
  assert.match(el.view.innerHTML,/reading-mode-standard/);
- assert.match(el.view.innerHTML,/chapter-navigation/);
+ assert.doesNotMatch(el.view.innerHTML,/chapter-navigation/);
+ assert.doesNotMatch(el.view.innerHTML,/Nästa: 2 §/);
+ assert.doesNotMatch(el.view.innerHTML,/read-modes/);
+ assert.equal((el.view.innerHTML.match(/data-action="toc"/g)||[]).length,1);
+ assert.match(el.view.innerHTML,/paragraph-heading-button/);
  assert.match(el.view.innerHTML,/data-ref-para="2"/);
  const refTarget={
    dataset:{refSfs:'1962:700',refChapter:'24',refPara:'2'},
@@ -87,6 +92,24 @@ async function submit(q){
  await settle();
  assert.match(el.sheet.innerHTML,/Förhandsvisning/);
  assert.match(el.sheet.innerHTML,/Det andra lagrummet/);
+ listeners['document.click'][0]({target:action('toc')});
+ await settle();
+ assert.equal(el.sheet.dataset.kind,'toc');
+ assert.match(el.sheet.innerHTML,/toc-paragraphs/);
+ assert.match(el.sheet.innerHTML,/toc-current/);
+ assert.doesNotMatch(el.sheet.innerHTML,/para-grid/);
+ assert.match(el.sheet.innerHTML,/Tjugofjärde kapitlet/);
+ const selectPara={
+   closest(selector){
+     if(selector==='a[data-link]')return {getAttribute:()=> '#/law/1962%3A700/24/2'};
+     return null;
+   }
+ };
+ listeners['document.click'][0]({target:selectPara,preventDefault(){}});
+ await settle();
+ assert.equal(location.hash,'#/law/1962%3A700/24/2');
+ assert.equal(el.sheet.hidden,true);
+
  const action=(name,extra={})=>({
    dataset:{action:name,...extra},
    closest(selector){return selector==='[data-action]'?this:null}
@@ -108,5 +131,5 @@ async function submit(q){
  assert.equal(location.hash,'#/fap/FAP%20104-04');
  assert.match(el.view.innerHTML,/fap-frame/);
  assert.match(el.view.innerHTML,/polisen\.se/);
- console.log('Appflöden 0.3: sökning, förslag, läsvy, kapitel, lagrum och FAP godkända');
+ console.log('Appflöden 0.4: sökning, vertikal innehållsförteckning, läsning och FAP godkända');
 })().catch(error=>{console.error(error);process.exitCode=1});

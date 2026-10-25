@@ -24,3 +24,21 @@ assert.equal(toc.description('1962:700','8',{number:'3',text:'Har upphävts.'}).
 const others=toc.chapterGroups('1998:1276',{number:'1',title:'Allmänt',items:[{type:'para',number:'1',text:'Denna förordning gäller trafik på väg.'}]});
 assert.ok(others[0].paragraphs[0].title.includes('Denna förordning'));
 console.log('Innehållsförteckning: rubriceringar och grupper godkända');
+
+const fs=require('node:fs');
+const path=require('node:path');
+const catalog=require('../data/catalog.json');
+let total=0;
+for(const law of catalog.laws){
+ const pathname=path.join(__dirname,'..','data','laws',law.sfs.replace(':','-')+'.json');
+ const source=JSON.parse(fs.readFileSync(pathname,'utf8'));
+ for(const chapter of source.chapters){
+   const grouped=toc.chapterGroups(law.sfs,chapter);
+   const input=chapter.items.filter(x=>x.type==='para').map(x=>String(x.number));
+   const flattened=grouped.flatMap(g=>g.paragraphs.map(x=>x.number));
+   assert.deepEqual(flattened,input,law.sfs+' kap. '+chapter.number);
+   total+=input.length;
+ }
+}
+assert.ok(total>2500,'Katalogen bör täcka alla importerade paragrafer');
+console.log('Fullständighet: '+total+' paragrafer bevarade i innehållsförteckningen');
