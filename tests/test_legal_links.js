@@ -19,3 +19,6 @@ assert.doesNotMatch(linkify('Se 99 § i detta kapitel',local),/class="law-ref"/)
 assert.doesNotMatch(linkify('Lag (2017:442).',local),/class="law-ref"/);
 assert.deepEqual(parseRefs('23 kap. 1 § rättegångsbalken',local)[0].numbers,['1']);
 console.log('Juridiska länkar: 9 kontroller godkända');
+
+assert.match(linkify('Se 1 och 2 §§ i detta kapitel',local),/data-ref-para="1"/);
+assert.match(linkify('Se 1 och 2 §§ i detta kapitel',local),/data-ref-para="2"/);

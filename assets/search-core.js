@@ -60,7 +60,7 @@
     const out=[],seen=new Set();
     const add=(score,type,key,title,subtitle,extra)=>{
       if(seen.has(key))return;
-      seen.add(key);out.push({score,type,key,title,subtitle,...(extra||{})});
+      seen.add(key);out.push({score,order:out.length,type,key,title,subtitle,...(extra||{})});
     };
     const quick=parseQuick(input,laws,faps);
     if(quick)add(1000,quick.type==='fap'?'fap':'quick','quick',quick.type==='fap'?quick.fap.name:quick.meta.name,
@@ -97,7 +97,7 @@
         if(norm(t.title).startsWith(q))add(140,'recent','recent:'+t.url,t.title,'Senast öppnad',{url:t.url});
       }
     }
-    out.sort((a,b)=>b.score-a.score||a.title.localeCompare(b.title,'sv'));
+    out.sort((a,b)=>b.score-a.score||a.order-b.order);
     return out.slice(0,7);
   }
   return {norm,paraKey,parseQuick,resolvedQuick,rankSuggestions};

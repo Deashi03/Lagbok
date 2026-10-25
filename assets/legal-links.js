@@ -43,11 +43,19 @@
     for(const ref of refs){
       if(ref.start<at)continue;
       out+=escape(s.slice(at,ref.start));
-      const href=context.href(ref.id,ref.chapter,ref.numbers[0]);
-      const label=escape(ref.body);
-      out+='<a href="'+escape(href)+'" class="law-ref" data-ref="1" data-ref-sfs="'+escape(ref.id)+
-        '" data-ref-chapter="'+escape(ref.chapter)+'" data-ref-para="'+escape(ref.numbers[0])+
-        '" aria-label="Visa '+escape(ref.id+' '+ref.chapter+':'+ref.numbers[0])+'">'+label+'</a>';
+      function anchor(label,para){
+        const href=context.href(ref.id,ref.chapter,para);
+        return '<a href="'+escape(href)+'" class="law-ref" data-ref="1" data-ref-sfs="'+escape(ref.id)+
+          '" data-ref-chapter="'+escape(ref.chapter)+'" data-ref-para="'+escape(para)+
+          '" aria-label="Visa '+escape(ref.id+' '+ref.chapter+':'+para)+'">'+escape(label)+'</a>';
+      }
+      if(ref.numbers.length===1)out+=anchor(ref.body,ref.numbers[0]);
+      else{
+        const multi=/^([\s\S]*?)(\d+\s*[a-z]?)(\s*(?:och|eller|,)\s*)(\d+\s*[a-z]?)(\s*§{2})$/iu.exec(ref.body);
+        if(!multi){out+=escape(ref.body);continue;}
+        out+=escape(multi[1])+anchor(multi[2],ref.numbers[0])+escape(multi[3])+
+          anchor(multi[4],ref.numbers[1])+escape(multi[5]);
+      }
       at=ref.end;
     }
     return out+escape(s.slice(at));
