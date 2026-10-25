@@ -15,6 +15,6 @@ Lagtext hämtas från Sveriges riksdags öppna data och sparas separat i data/la
 python scripts/import_laws.py
 python -m unittest discover -s tests -v
 
-GitHub Actions "Kontrollera lagändringar" hämtar författningar och skapar gransknings-PR. Första importen körs manuellt med workflow_dispatch. Efter kontroll kan den PR:en slås ihop med main. "Publicera Lagboken" publicerar main via GitHub Pages; välj Settings → Pages → Source: GitHub Actions. I offline-läge fungerar enbart dokument som webbläsaren redan hunnit cachelagra.
+GitHub Actions "Kontrollera lagändringar" hämtar de första författningarna vid ändring av importskriptet och gör därefter schemalagda granskningsförslag. För publicering behöver repositoryägaren aktivera **Settings → Pages → Build and deployment → Deploy from a branch → main / (root)**. I offline-läge fungerar enbart dokument som webbläsaren redan hunnit cachelagra.
 
 Källor: Sveriges riksdag, data.riksdagen.se, samt Polismyndighetens författningssamling. Fristående privat projekt.

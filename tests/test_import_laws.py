@@ -13,6 +13,12 @@ class ParserTests(unittest.TestCase):
   result=parse_html('<hr><a class="paragraf" name="P1"><b>1 §</b></a>Text 1<a class="paragraf" name="P2a"><b>2 a §</b></a>Text 2')
   self.assertEqual(result[0]["number"],"0")
   self.assertEqual(result[0]["items"][1]["number"],"2 a")
+ def test_duplicate_chapters_are_versioned(self):
+  text='<hr><a name="K27">27 kap. Rubrik</a><a class="paragraf" name="K27P1"><b>1 §</b></a>Första lydelsen<a name="K27">27 kap. Rubrik</a><a class="paragraf" name="K27P1"><b>1 §</b></a>Andra lydelsen'
+  chapters=parse_html(text)
+  self.assertEqual(len(chapters),1)
+  self.assertEqual(len(chapters[0]["items"]),1)
+  self.assertTrue(chapters[0]["items"][0]["hasVariants"])
  def test_versions(self):
   result=parse_html('<hr><a class="paragraf" name="P1"><b>1 §</b></a>Old<a class="paragraf" name="P1"><b>1 §</b></a>New')
   self.assertTrue(result[0]["items"][0]["hasVariants"])

@@ -27,6 +27,18 @@ def num(s):
     if not m:raise ValueError("bad section "+s)
     return m[1]+(" "+m[2] if m[2] else "")
 def finish(caps):
+    # Riksdagen may repeat a whole chapter for alternative or future versions.
+    # Merge duplicate chapter identifiers WITHOUT discarding any paragraph text.
+    by_id={};merged=[]
+    for ch in caps:
+        if ch["number"] not in by_id:
+            by_id[ch["number"]]=ch;merged.append(ch)
+        else:
+            target=by_id[ch["number"]]
+            for item in ch["items"]:
+                if item["type"]=="para":add(target,item["number"],item["text"])
+                else:target["items"].append(item)
+    caps=merged
     caps=[c for c in caps if any(p["type"]=="para" for p in c["items"])]
     for c in caps:
         waiting=[]

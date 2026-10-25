@@ -368,7 +368,7 @@
     }
     if(state.current!==r)return;
     view.innerHTML=markup;
-    if(r.page==='law'&&meta)addRecent(meta.sfs+'|'+(r.chapter==null?'':r.chapter)+(r.paragraph?'|'+r.paragraph:''));
+    if(r.page==='law'&&meta)addRecent(meta.sfs+(r.chapter==null?'':'|'+r.chapter)+(r.paragraph?'|'+r.paragraph:''));
     if(r.page==='law'&&r.paragraph) {
       requestAnimationFrame(()=>{const el=$('#p-'+CSS.escape(r.paragraph));if(el)el.scrollIntoView({block:'start',behavior:'instant'});});
     } else if(reset){view.scrollTop=0;}
