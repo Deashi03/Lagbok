@@ -201,7 +201,7 @@
     const items=ch.items||[];
     return '<div class="law-reader"><div class="reader-heading"><span class="source-label">'+html(meta.name)+' · SFS '+html(meta.sfs)+'</span>' +
       '<h1>'+(ch.number==='0'?html(meta.name):ch.number+' kap. '+html(ch.title||''))+'</h1>' +
-      '<div class="tool-row"><button class="button" data-action="toc">☷ Innehåll</button>' +
+      '<div class="tool-row"><button class="button" data-action="find-local">⌕ Sök i lag</button><button class="button" data-action="toc">☷ Innehåll</button>' +
       '<button class="button" data-action="fav" data-key="'+attr(meta.sfs+'|'+ch.number)+'">'+badgeMark(meta.sfs+'|'+ch.number)+' Spara kapitel</button></div></div>' +
       '<div class="notice">Källa: Sveriges riksdag. Kontrollera ikraftträdande och gällande lydelse i originalkällan. Redaktionella navigeringsrubriker anges särskilt.</div>' +
       items.map(item=>item.type==='heading'?editorialTitle(meta,ch,item):item.type==='para'?paraHtml(meta,ch,item):'').join('<div class="read-divider"></div>') +
@@ -344,6 +344,7 @@
     $$('.bottom-nav button').forEach(b=>{b.classList.toggle('active',b.dataset.tab===tab);b.setAttribute('aria-current',b.dataset.tab===tab?'page':'false');});
     $('#back').hidden=['home','catalog','search','saved'].includes(r.page);
     $('#toc-button').hidden=r.page!=='law';
+    $('#in-law-search').hidden=r.page!=='law';
     const meta=lawById(r.sfs);
     $('#top-title').textContent = r.page==='law'?(meta?meta.name:'Lagbok'):({home:'Lagboken',catalog:'Lagbok',search:'Sök',saved:'Sparat',fap:'Polisens FAP',settings:'Inställningar',about:'Om'}[r.page]||'Lagboken');
     let markup;
@@ -377,6 +378,35 @@
     else {view.scrollTop=state.positions[location.hash]||0;}
     if((r.page==='search'||r.page==='home')&&state.query) onSearch(state.query);
   }
+  function lawSearchResults(doc,meta,q) {
+    const query=norm(q);
+    if(query.length<2)return '<div class="empty">Skriv ett sökord eller en paragraf.</div>';
+    const hits=[];
+    for(const ch of doc.chapters) {
+      for(const item of ch.items||[]) {
+        if(item.type!=='para')continue;
+        const text=String(item.text||'');
+        const needle=norm(text);
+        if(needle.includes(query)||norm(item.number+' §').includes(query)) {
+          const start=Math.max(0,needle.indexOf(query)-60);
+          hits.push({ch,item,preview:text.slice(start,start+185)});
+          if(hits.length>=100)break;
+        }
+      }
+      if(hits.length>=100)break;
+    }
+    if(!hits.length)return '<div class="empty">Inga sökträffar i denna författning.</div>';
+    return '<p class="small muted">'+hits.length+(hits.length===100?'+':'')+' träffar</p><div class="card-list">'+
+      hits.slice(0,45).map(x=>listRow((x.ch.number==='0'?'':x.ch.number+' kap. ')+x.item.number+' §',x.preview,urlFor(meta.sfs,x.ch.number,x.item.number))).join('')+
+      '</div>'+(hits.length>45?'<p class="small muted">Visar de första 45 träffarna. Skriv fler ord för att avgränsa.</p>':'');
+  }
+  function findWithinLaw() {
+    const r=route(),meta=lawById(r.sfs),doc=state.laws.get(r.sfs);
+    if(!doc||!meta)return toast('Lagtexten är ännu inte inläst.');
+    showSheet('<div class="sheet-title">Sök i '+html(meta.name)+' <button class="icon-button" data-action="close">×</button></div>'+
+      '<div class="searchbox">'+iconSearch()+'<input id="local-query" type="search" placeholder="Sök i alla kapitel" autocomplete="off"></div>'+
+      '<div id="local-results"><div class="empty">Sök bland samtliga paragrafer i författningen.</div></div>');
+  }
   function toc() {
     const r=route(),meta=lawById(r.sfs);
     if(!meta)return;
@@ -403,6 +433,10 @@
   }
   view.addEventListener('input',e=>{if(e.target.id==='query')onSearch(e.target.value);});
   sheet.addEventListener('input',e=>{
+    if(e.target.id==='local-query'){
+      const r=route(),meta=lawById(r.sfs),doc=state.laws.get(r.sfs);
+      if(meta&&doc)$('#local-results').innerHTML=lawSearchResults(doc,meta,e.target.value);
+    }
     if(e.target.id==='toc-query'){
       const r=route(),meta=lawById(r.sfs),doc=state.laws.get(r.sfs);
       if(doc&&meta)$('#toc-results').innerHTML=tocEntries(meta,doc,r,e.target.value);
@@ -430,11 +464,13 @@
       if(field){const t=field.value.trim();if(t)pref.notes[k]=t;else delete pref.notes[k];savePrefs();closeSheet();render();toast('Anteckning sparad');}
     }
     if(a==='toc')toc();
+    if(a==='find-local')findWithinLaw();
   });
   $$('.bottom-nav button').forEach(b=>b.addEventListener('click',()=>{state.query='';navigate('#/'+b.dataset.tab);}));
   $('#back').addEventListener('click',()=>{if(history.length>1)history.back();else navigate('#/home');});
   $('#menu-button').addEventListener('click',()=>sheet.hidden?menu():closeSheet());
   $('#toc-button').addEventListener('click',toc);
+  $('#in-law-search').addEventListener('click',findWithinLaw);
   scrim.addEventListener('click',closeSheet);
   window.addEventListener('popstate',()=>{closeSheet();render(false);});
   window.addEventListener('hashchange',()=>{closeSheet();render(false);});

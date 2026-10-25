@@ -4,7 +4,7 @@ En mobilanpassad lagbok för iPhone, hostad med GitHub Pages utan externa JavaSc
 
 Appen öppnas på https://deashi03.github.io/Lagbok/ **efter att Pages aktiverats och en lyckad deploy verifierats**. Installera från Safari via Dela → Lägg till på hemskärmen.
 
-Huvudflikar: Sök, Lagbok, Sparat. Polisens FAP ligger i Mer-menyn. Lagboksvyn har kapitel, ämnesindelning, innehållsförteckning och sammanhängande scroll. Favoriter, personliga anteckningar, senast öppnade, direkta lagrumshänvisningar, kopiering och textinställningar sparas lokalt i webbläsaren.
+Huvudflikar: Sök, Lagbok, Sparat. Från lagläsningen finns snabb sökning i hela den öppnade författningen. Polisens FAP ligger i Mer-menyn. Lagboksvyn har kapitel, ämnesindelning, innehållsförteckning och sammanhängande scroll. Favoriter, personliga anteckningar, senast öppnade, direkta lagrumshänvisningar, kopiering och textinställningar sparas lokalt i webbläsaren.
 
 ## Källor och juridisk varning
 
