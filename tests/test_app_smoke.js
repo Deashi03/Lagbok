@@ -70,7 +70,7 @@ async function submit(q){
  assert.match(el.view.innerHTML,/Hitta lagrum/);
  listeners['view.input'][0]({target:{id:'query',value:'BrB 24:1'}});
  assert.match(el['search-results'].innerHTML,/Direkt till/);
- assert.match(el['search-suggest'].innerHTML,/Öppna direkt med Enter/);
+ assert.match(el['search-suggest'].innerHTML,/Direkt till BrB 24:1/);
  await submit('BrB 1');
  assert.equal(location.hash,'#/law/1962%3A700/1');
  await submit('BrB 24:1');
