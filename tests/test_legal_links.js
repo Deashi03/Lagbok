@@ -33,3 +33,20 @@ console.log('Juridiska länkar: hänvisningar till andra författningar godkänd
 const range=linkify('enligt 1-4 §§ detta kapitel',more);
 assert.match(range,/data-ref-para="1"[^>]*>1<\/a>-<a[^>]*data-ref-para="4"/);
 console.log('Juridiska länkar: intervall godkända');
+
+// 0.6: uppräkningar med ett paragraftecken, listor, kapitel, stycken och "samma balk"
+const all={sfs:'1942:740',chapter:'23',href,exists:()=>true};
+const list=linkify('Ska enligt 21 kap. 3 a eller 3 b § en offentlig försvarare',all);
+assert.match(list,/data-ref-chapter="21" data-ref-para="3a"[^>]*>3 a<\/a> eller <a[^>]*data-ref-para="3b"/);
+const four=linkify('enligt 3 kap. 1, 2, 5 eller 6 § brottsbalken',all);
+assert.equal((four.match(/data-ref-sfs="1962:700" data-ref-chapter="3"/g)||[]).length,4);
+assert.match(linkify('brott enligt 6 kap. brottsbalken',all),/data-ref-sfs="1962:700" data-ref-chapter="6" aria-label/);
+assert.match(linkify('enligt 8 § första stycket 2 polislagen',all),/data-ref-sfs="1984:387" data-ref-chapter="0" data-ref-para="8"/);
+const chain=linkify('Bestämmelserna i 21 kap. 5-8 §§, 9 § tredje stycket, 10 § och 10 a § rättegångsbalken',{...all,sfs:'1964:167',chapter:'0'});
+assert.match(chain,/data-ref-chapter="21" data-ref-para="9"/);
+assert.match(chain,/data-ref-chapter="21" data-ref-para="10a"/);
+const same=linkify('insyn i 23 kap. 18 § rättegångsbalken och 23 kap. 21 a § samma balk',{...all,sfs:'1964:167',chapter:'0'});
+assert.equal((same.match(/data-ref-sfs="1942:740"/g)||[]).length,2);
+assert.doesNotMatch(linkify('1 kap. 1 och 7 §§ tryckfrihetsförordningen',{...all,sfs:'2009:400'}),/class="law-ref"/);
+assert.match(linkify('Ett kvarhållande enligt 8 a § får',all),/>8 a §<\/a>/);
+console.log('Juridiska länkar 0.6: uppräkningar, kapitel, stycken och samma balk godkända');

@@ -28,3 +28,8 @@ jobs:
           node tests/test_toc.js
           node tests/test_law_model.js
           node tests/test_editorial.js
+          node tests/test_reference_coverage.js
+      - name: Kontrollera att sökindexet matchar lagtexten
+        run: |
+          node scripts/build_indexes.js
+          git diff --exit-code --stat data/index

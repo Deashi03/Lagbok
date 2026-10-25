@@ -1,7 +1,7 @@
 import sys,unittest
 from pathlib import Path
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/"scripts"))
-from import_laws import parse_html,parse_text,validate,editorial,build_para,describe_changes,latest_amendment
+from import_laws import check_title,parse_html,parse_text,validate,editorial,build_para,describe_changes,latest_amendment
 class ParserTests(unittest.TestCase):
  def test_chapters(self):
   source='<hr><a name="K28">28 kap. Om husrannsakan</a><h4>Husrannsakan</h4><a class="paragraf" name="K28P1"><b>1 §</b></a>Text<br>ny rad<a class="paragraf" name="K28P2"><b>2 §</b></a>Andra'
@@ -60,4 +60,11 @@ class ParserTests(unittest.TestCase):
   self.assertIn("Nya paragrafer (1): 3 §",report)
   self.assertIn("Borttagna paragrafer (1): 2 §",report)
   self.assertIn("Med kommande lydelse (1): 3 §",report)
+ def test_letter_chapters(self):
+  result=parse_html('<hr><a name="K1">1 kap. Första</a><a class="paragraf" name="K1P1"><b>1 §</b></a>Ett<a name="K1a">1 a kap. Mellan</a><a class="paragraf" name="K1aP7"><b>7 §</b></a>Sju')
+  self.assertEqual([c["number"] for c in result],["1","1 a"])
+  self.assertEqual(result[1]["items"][0]["number"],"7")
+ def test_title_check(self):
+  check_title({"check":"föräldrabalk"},"Föräldrabalk (1949:381)")
+  with self.assertRaises(ValueError):check_title({"check":"föräldrabalk"},"Lag (1949:382) om något annat")
 if __name__=="__main__":unittest.main()

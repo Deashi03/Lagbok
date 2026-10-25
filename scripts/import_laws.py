@@ -14,8 +14,9 @@ ROOT=Path(__file__).resolve().parents[1]
 CATALOG=ROOT/"data/catalog.json"
 OUT=ROOT/"data/laws"
 MIN={"1942:740":250,"1962:700":150,"1984:387":30,"1947:948":15,"1998:1276":90,"1951:649":4,"2009:400":180,"2017:900":30,"1964:167":15,"1976:511":7,"1993:1617":20,"1968:64":8,"1996:67":20,"1974:152":80}
-CAP=re.compile(r'<a\s+name="K(\d+)"[^>]*>\s*\d+\s*kap\.\s*(.*?)</a>',re.I|re.S)
-PAR=re.compile(r'<a\s+class="paragraf"\s+name="(?:K(\d+))?P(\d+[a-z]?)"[^>]*>\s*<b>\s*(\d+\s*[a-z]?)\s*§\s*</b>\s*</a>',re.I|re.S)
+# Kapitel kan ha bokstav, t.ex. "1 a kap." med ankaret K1a.
+CAP=re.compile(r'<a\s+name="K(\d+[a-z]?)"[^>]*>\s*\d+\s*[a-z]?\s*kap\.\s*(.*?)</a>',re.I|re.S)
+PAR=re.compile(r'<a\s+class="paragraf"\s+name="(?:K(\d+[a-z]?))?P(\d+[a-z]?)"[^>]*>\s*<b>\s*(\d+\s*[a-z]?)\s*§\s*</b>\s*</a>',re.I|re.S)
 HEAD=re.compile(r'<h4\b[^>]*>(.*?)</h4>',re.I|re.S)
 # Riksdagen markerar lydelser med t.ex. "/Träder i kraft I:2027-01-01/" först i paragrafen.
 MARK=re.compile(r'^/\s*(Träder i kraft I|Upphör att gälla U)\s*:\s*([^/\n]*?)\s*/\s*',re.I)
@@ -108,8 +109,8 @@ def parse_html(source):
     if match:source=source[match.end():]
     source=re.sub(r'<div\s+class="sfstoc"[^>]*>.*?</div>',"",source,flags=re.S|re.I)
     markers=[]
-    for m in CAP.finditer(source):markers.append((m.start(),m.end(),"cap",m[1],clear(m[2])))
-    for m in PAR.finditer(source):markers.append((m.start(),m.end(),"para",m[1] or "0",num(m[3])))
+    for m in CAP.finditer(source):markers.append((m.start(),m.end(),"cap",num(m[1]),clear(m[2])))
+    for m in PAR.finditer(source):markers.append((m.start(),m.end(),"para",num(m[1]) if m[1] else "0",num(m[3])))
     for m in HEAD.finditer(source):
         h=clear(m[1])
         if h and len(h)<150:markers.append((m.start(),m.end(),"heading","",h))
@@ -137,9 +138,9 @@ def parse_text(raw):
         if not line:
             if p:p["raw"][-1]+="\n"
             continue
-        m=re.match(r"^(\d+)\s*kap\.\s*(.*)",line)
+        m=re.match(r"^(\d+\s*[a-z]?)\s*kap\.\s*(.*)",line)
         if m:
-            cur={"number":m[1],"title":m[2],"items":[]};chapters.append(cur);p=None;continue
+            cur={"number":num(m[1]),"title":m[2],"items":[]};chapters.append(cur);p=None;continue
         m=re.match(r"^(\d+\s*[a-z]?)\s*§\s*(.*)",line,re.I)
         if m:
             n=num(m[1]);add(cur,n,m[2] or " ");p=next(x for x in reversed(cur["items"]) if x["type"]=="para" and x["number"]==n)
@@ -165,8 +166,13 @@ def editorial(chs,sfs):
     if idx is None:return
     if idx and c["items"][idx-1]["type"]=="heading" and "husrannsakan" in c["items"][idx-1]["text"].lower():return
     c["items"].insert(idx,{"type":"heading","text":"Husrannsakan","editorial":True,"nextPara":"1"})
-def document(id,name,method,chs):
-    return {"sfs":id,"title":name,"sourceUrl":"https://data.riksdagen.se/dokument/sfs-"+id.replace(":","-")+".html","parser":method,
+def check_title(meta,official):
+    """Skydd mot fel SFS-nummer i katalogen: Riksdagens titel måste innehålla kontrollordet."""
+    expected=meta.get("check")
+    if expected and expected.lower() not in (official or "").lower():
+        raise ValueError("titelkontroll: väntade '"+expected+"' i '"+str(official)+"'")
+def document(id,name,method,chs,official=None):
+    return {"sfs":id,"title":name,"officialTitle":official,"sourceUrl":"https://data.riksdagen.se/dokument/sfs-"+id.replace(":","-")+".html","parser":method,
             "fetchedAt":dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds"),"latestAmendment":latest_amendment(chs),"chapters":chs}
 def paragraphs(doc):
     return {(c["number"],p["number"]):p for c in (doc or {}).get("chapters",[]) for p in c["items"] if p["type"]=="para"}
@@ -206,13 +212,17 @@ def run():
         id=meta["sfs"]
         try:
             doc=fetch(id).get("dokumentstatus",{}).get("dokument",{})
+            official=doc.get("titel")
+            check_title(meta,official)
             chs=parse_html(doc.get("html") or "")
             method="HTML"
             if count(chs)<MIN.get(id,5):
                 chs=parse_text(doc.get("text") or "");method="TEXT"
             validate(chs,id)
             editorial(chs,id)
-            output=document(id,meta["name"],method,chs)
+            output=document(id,meta["name"],method,chs,official)
+            chaptered=any(c["number"]!="0" for c in chs)
+            if meta.get("chaptered")!=chaptered:meta["chaptered"]=chaptered;changed=True
             file=OUT/(id.replace(":","-")+".json")
             previous=None
             if file.exists():
@@ -229,6 +239,8 @@ def run():
     if changed:
         catalog["generated"]=dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds")
         CATALOG.write_text(json.dumps(catalog,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
+    if changed and not report:report.append("Katalogen uppdaterad (kapitelindelning).")
     write_report(report,fail)
-    if fail:sys.exit("Manual review needed: "+", ".join(fail))
+    # Misslyckade författningar stoppar inte övriga; arbetsflödet markeras som misslyckat efter granskningsförslaget.
+    if fail and not os.environ.get("CHANGE_REPORT"):sys.exit("Manual review needed: "+", ".join(fail))
 if __name__=="__main__":run()
