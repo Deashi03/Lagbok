@@ -27,7 +27,8 @@
         '11':'Tillgrepp i skog eller mark','12':'Försök och förberedelse','13':'Begränsningar i åtalsrätten'
       },
       '9':{'1':'Bedrägeri','2':'Ringa bedrägeri','3':'Grovt bedrägeri','3 a':'Grovt fordringsbedrägeri','3 b':'Upphävd paragraf',
-        '4':'Utpressning','5':'Ocker','6':'Häleri','6 a':'Häleri – särskild bestämmelse','7':'Häleriförseelse',
+        '3 c':'Olovlig befattning med betalningsverktyg','3 d':'Företagskapning',
+        '4':'Utpressning','5':'Ocker','6':'Häleri','6 a':'Utförselhäleri','7':'Häleriförseelse',
         '7 a':'Upphävd paragraf','8':'Oredligt förfarande','9':'Svindleri','10':'Ockerpantning',
         '11':'Förstadier','12':'Begränsningar i åtalsrätten'}
     },

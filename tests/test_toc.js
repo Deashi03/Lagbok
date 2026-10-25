@@ -21,6 +21,8 @@ assert.equal(toc.chapterMatches(data,groups,'reell husrannsakan'),true);
 assert.equal(toc.chapterMatches(data,groups,'10 a §'),true);
 assert.equal(toc.chapterMatches(data,groups,'häktning'),false);
 assert.equal(toc.description('1962:700','8',{number:'3',text:'Har upphävts.'}).text,'Upphävd paragraf');
+assert.equal(toc.description('1962:700','9',{number:'6 a',text:'Utförselhäleri'}).text,'Utförselhäleri');
+assert.equal(toc.description('1962:700','9',{number:'3 d',text:'Företagskapning'}).text,'Företagskapning');
 const others=toc.chapterGroups('1998:1276',{number:'1',title:'Allmänt',items:[{type:'para',number:'1',text:'Denna förordning gäller trafik på väg.'}]});
 assert.ok(others[0].paragraphs[0].title.includes('Denna förordning'));
 console.log('Innehållsförteckning: rubriceringar och grupper godkända');
