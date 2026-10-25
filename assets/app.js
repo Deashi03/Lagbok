@@ -6,14 +6,15 @@
   const view = $('#view');
   const sheet = $('#sheet');
   const scrim = $('#scrim');
-  const defaults = {favourites:[], recents:[], notes:{}, theme:'light', fontSize:1, lineHeight:1.55, readingMode:'standard'};
+  const defaults = {favourites:[], recents:[], notes:{}, theme:'light', fontSize:1, lineHeight:1.55, readingMode:'standard', focusReader:'off'};
   let pref;
   try { pref = Object.assign({}, defaults, JSON.parse(localStorage.getItem('lagboken-settings') || '{}')); }
   catch (_) { pref = Object.assign({}, defaults); }
   if(pref.theme==='system' && !pref.themeChosen){pref.theme='light';try{localStorage.setItem('lagboken-settings',JSON.stringify(pref))}catch(_){}}
   const searchCore=window.LagbokSearch;
   const legalLinks=window.LagbokReferences;
-  const state = {catalog:[],fap:[],laws:new Map(),loading:new Map(),query:'',searchEpoch:0,positions:{},current:null,previous:[],savedOnHome:false,focus:false};
+  const tocModel=window.LagbokTOC;
+  const state = {catalog:[],fap:[],laws:new Map(),loading:new Map(),query:'',searchEpoch:0,positions:{},current:null,previous:[],savedOnHome:false,focus:pref.focusReader==='on',visibleParagraph:null};
   const source = 'https://data.riksdagen.se/dokument/sfs-';
   const html = (s) => String(s == null ? '' : s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const attr = html;
@@ -41,9 +42,11 @@
   }
   function navigate(hash,replace) {
     state.positions[location.hash || '#/home'] = view.scrollTop;
+    state.visibleParagraph=null;
     closeSheet();
     const dest = hash || '#/catalog';
     if(!dest.startsWith('#/law/'))state.focus=false;
+    else state.focus=pref.focusReader==='on';
     if ((location.hash || '#/home') === dest && !replace) { render(); return; }
     if (replace) history.replaceState(null,'',dest);
     else history.pushState(null,'',dest);
@@ -61,12 +64,13 @@
     toast.timer = setTimeout(() => el.hidden=true,2300);
   }
   function closeSheet() {
-    sheet.hidden = true; scrim.hidden = true; $('#menu-button').setAttribute('aria-expanded','false'); sheet.innerHTML = '';
+    sheet.hidden = true; scrim.hidden = true; sheet.dataset.kind=''; $('#menu-button').setAttribute('aria-expanded','false'); sheet.innerHTML = '';
   }
-  function showSheet(markup) {
+  function showSheet(markup,autoFocus=true) {
     sheet.innerHTML = markup;
+    sheet.dataset.kind='normal';
     sheet.hidden = false; scrim.hidden = false; $('#menu-button').setAttribute('aria-expanded','true');
-    setTimeout(() => { const focus = $('input',sheet); if(focus) focus.focus({preventScroll:true}); },40);
+    if(autoFocus)setTimeout(() => { const focus = $('input',sheet); if(focus) focus.focus({preventScroll:true}); },40);
   }
   function iconSearch() {return '<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="10.8" cy="10.8" r="7.2"/><path d="m16.2 16.2 5 5"/></svg>';}
   function searchBox(placeholder) {
@@ -214,7 +218,7 @@
     if(item.type==='heading')return '<h2 class="reader-subhead'+(item.editorial?' editorial':'')+'">'+html(item.text)+'</h2>';
     return '';
   }
-  function paraHtml(meta,ch,item,next){
+  function paraHtml(meta,ch,item){
     const key=meta.sfs+'|'+ch.number+'|'+item.number;
     const paragraphs=String(item.text||'').replace(/\r\n?/g,'\n').replace(/[ \t]+\n/g,'\n').split(/\n\s*\n+/).map(s=>s.trim()).filter(Boolean);
     const content=paragraphs.map(p=>{
@@ -223,87 +227,92 @@
         '<div class="legal-item-body">'+linkify(ordered[2],meta.sfs,ch.number).replace(/\n/g,'<br>')+'</div></div>';
       return '<p>'+linkify(p,meta.sfs,ch.number).replace(/\n/g,'<br>')+'</p>';
     }).join('');
-    return '<article class="paragraph reader-block" id="p-'+attr(searchCore.paraKey(item.number))+'">'+
-      '<header class="paragraph-header"><span class="paragraph-num">'+html(item.number)+' §</span>'+
-      '<div class="paragraph-actions"><button title="Spara paragraf" aria-label="Spara paragraf" class="'+(pref.favourites.includes(key)?'is-saved':'')+'" data-action="fav" data-key="'+attr(key)+'">'+badgeMark(key)+'</button>'+
-      '<button title="Fler åtgärder" aria-label="Kopiera eller anteckna vid '+attr(item.number)+' §" data-action="para-menu" data-key="'+attr(key)+'">•••</button></div></header>'+
-      '<div class="paragraph-content">'+content+'</div>'+
+    return '<article class="paragraph reader-block" id="p-'+attr(searchCore.paraKey(item.number))+'" data-paragraph="'+attr(item.number)+'">'+
+      '<header class="paragraph-header">'+
+      '<button type="button" class="paragraph-heading-button" data-action="para-menu" data-key="'+attr(key)+'" aria-label="'+attr(item.number)+' § – kopiera, spara eller anteckna">'+
+      '<span class="paragraph-num">'+html(item.number)+' §</span><span class="paragraph-heading-hint" aria-hidden="true">⋯</span></button>'+
+      '</header><div class="paragraph-content">'+content+'</div>'+
       (item.hasVariants?'<div class="notice" role="note">Flera eller framtida lydelser förekommer i källmaterialet. Kontrollera gällande lydelse.</div>':'')+
-      (pref.notes[key]?'<div class="paragraph-note">Egen anteckning finns</div>':'')+
-      (next?'<div class="paragraph-foot"><a data-link="1" class="paragraph-next" href="'+attr(urlFor(meta.sfs,ch.number,next.number))+'">Nästa: '+html(next.number)+' § →</a></div>':'')+'</article>';
+      (pref.notes[key]?'<div class="paragraph-note">Egen anteckning finns</div>':'')+'</article>';
   }
   function chapterReader(meta,data,capid){
     const ch=data.chapters.find(c=>String(c.number)===String(capid));
     if(!ch)return '<div class="page"><div class="empty">Kapitlet hittades inte.</div></div>';
-    const paras=(ch.items||[]).filter(i=>i.type==='para');
-    const idx=data.chapters.indexOf(ch),previous=data.chapters[idx-1],next=data.chapters[idx+1];
-    const short=ch.number==='0'?'Paragraferna':ch.number+' kap.';
-    const chapterStep=(c,dir)=>c?
-      '<a class="chapter-step '+dir+'" data-link="1" href="'+attr(urlFor(meta.sfs,c.number))+'" aria-label="'+
-      attr((dir==='previous'?'Föregående':'Nästa')+' kapitel '+c.number)+'">'+(dir==='previous'?'← ':'')+html(c.number==='0'?'Bestämmelser':c.number+' kap.')+(dir==='next'?' →':'')+'</a>':
-      '<span class="chapter-step '+dir+' disabled">—</span>';
-    const current=meta.name+(ch.number==='0'?'':' · '+ch.number+' kap.');
-    const modes='<div class="read-modes" role="group" aria-label="Texttäthet"><button type="button" data-action="read-mode" data-mode="standard" class="'+(pref.readingMode==='standard'?'active':'')+'" aria-pressed="'+(pref.readingMode==='standard')+'">Standard</button>'+
-      '<button type="button" data-action="read-mode" data-mode="compact" class="'+(pref.readingMode==='compact'?'active':'')+'" aria-pressed="'+(pref.readingMode==='compact')+'">Kompakt</button></div>';
-    let i=0;
-    const contents=(ch.items||[]).map(item=>{
-      if(item.type==='heading')return editorialTitle(meta,ch,item);
-      if(item.type!=='para')return '';
-      const nextPara=paras[i+1]||null;i++;
-      return paraHtml(meta,ch,item,nextPara);
-    }).join('');
-    return '<div class="reader-context"><div class="reader-crumbs"><a href="'+attr(urlFor(meta.sfs))+'" data-link="1">'+html(meta.name)+'</a>'+
-      '<span class="reader-current">'+html(short)+'</span></div>'+
-      '<button type="button" data-action="toc" aria-label="Öppna kapitelöversikt">Innehåll ☷</button>'+
-      '<button class="focus-return" data-action="toggle-focus" aria-label="Avsluta läsläge">Avsluta läsläge</button></div>'+
-      '<div class="law-reader reading-mode-'+html(pref.readingMode)+'"><header class="reader-heading">'+
-      '<span class="source-label">'+html(meta.name)+' · SFS '+html(meta.sfs)+'</span>'+
-      '<h1><span class="chapter-number">'+html(short)+'</span>'+html(ch.title||(ch.number==='0'?'Bestämmelser':''))+'</h1>'+
-      '<nav class="chapter-navigation" aria-label="Byt kapitel">'+chapterStep(previous,'previous')+
-      '<button type="button" class="chapter-menu" data-action="toc">Kapitel & §§ ▾</button>'+chapterStep(next,'next')+'</nav>'+
-      '<div class="reader-options">'+modes+
-      '<button type="button" class="reader-minor" data-action="toggle-focus">Läsläge</button>'+
-      '<button type="button" class="reader-minor '+(pref.favourites.includes(meta.sfs+'|'+ch.number)?'saved':'')+'" data-action="fav" data-key="'+attr(meta.sfs+'|'+ch.number)+'">'+badgeMark(meta.sfs+'|'+ch.number)+' Spara</button></div>'+
-      '<details class="source-disclosure"><summary>Källa och versionsinformation</summary><p>Importerad från Sveriges riksdag '+html((data.fetchedAt||'').slice(0,10))+
-      '. Importen garanterar inte gällande lydelse. Redaktionella rubriker är markerade.</p>'+
-      '<a target="_blank" rel="noopener noreferrer" href="'+attr(sourceUrl(meta.sfs))+'">Läs officiell författning hos Riksdagen ↗</a></details></header>'+
-      '<div class="statute-body">'+contents+'</div>'+
-      '<footer class="reader-end">'+(next?'<a class="paragraph-next" href="'+attr(urlFor(meta.sfs,next.number))+'" data-link="1">Nästa kapitel: '+html(next.number)+' →</a>':'')+
-      '<div class="footer-meta">Lagbok 0.3. Kontrollera gällande lydelse mot <a href="'+attr(sourceUrl(meta.sfs))+'" target="_blank" rel="noopener noreferrer">Sveriges riksdag ↗</a>.</div></footer></div>';
+    const short=ch.number==='0'?'Bestämmelser':ch.number+' kap.';
+    const content=(ch.items||[]).map(item=>item.type==='heading'?editorialTitle(meta,ch,item):
+      item.type==='para'?paraHtml(meta,ch,item):'').join('');
+    return '<div class="reader-context">'+
+      '<div class="reader-crumbs"><strong>'+html(short)+'</strong><span class="reader-current">'+html(ch.title||meta.name)+'</span></div>'+
+      '<button type="button" data-action="toc" class="reader-toc-button" aria-label="Öppna innehållsförteckning">Innehåll <span aria-hidden="true">☷</span></button>'+
+      (state.focus?'<button type="button" class="focus-return" data-action="toggle-focus">Avsluta läsläge</button>':'')+
+      '</div>'+
+      '<main class="law-reader reading-mode-'+html(pref.readingMode)+'">'+
+      '<header class="reader-heading"><h1>'+html(ch.title||(ch.number==='0'?meta.name:'Kapitel '+ch.number))+'</h1></header>'+
+      '<div class="statute-body">'+content+'</div>'+
+      '<footer class="reader-end"><span class="small muted">Slut på '+html(short)+'.</span></footer></main>';
   }
-  function tocHtml(meta,data){
-    const here=route();
-    return '<div class="sheet-title">Innehållsförteckning <button class="icon-button" data-action="close" aria-label="Stäng">×</button></div>'+
-      '<div class="searchbox">'+iconSearch()+'<input id="toc-query" type="search" placeholder="Sök kapitel eller paragraf"></div>' +
-      '<div id="toc-results">'+tocEntries(meta,data,here)+'</div>';
+  function tocHtml(meta,data,needle){
+    const here=route(),q=needle||'';
+    return '<header class="toc-header"><div class="toc-header-title"><span class="source-label">'+html(meta.name)+'</span>'+
+      '<h2>Innehåll</h2><p>Välj kapitel eller paragraf</p></div>'+
+      '<button class="icon-button" data-action="close" aria-label="Stäng innehållsförteckning">×</button></header>'+
+      '<div class="toc-search"><div class="searchbox">'+iconSearch()+
+      '<input id="toc-query" type="search" enterkeyhint="search" autocomplete="off" placeholder="Sök rubrik, kapitel eller paragraf" value="'+attr(q)+'"></div></div>'+
+      '<div class="toc-results" id="toc-results">'+tocEntries(meta,data,here,q)+'</div>'+
+      '<p class="toc-caption">Innehållsrubriker kommer från lagtexten eller är redaktionella. Övriga beskrivningar är korta utdrag ur lagtexten.</p>';
   }
   function tocEntries(meta,data,here,needle){
-    const q=norm(needle||'');
-    return data.chapters.map(ch=>{
-      const entries=(ch.items||[]).filter(i=>i.type==='heading'||i.type==='para');
-      if(q){
-        const matches=entries.filter(i=>norm((i.text||'')+' '+(i.number||'')).includes(q)||norm(ch.title).includes(q));
-        if(!matches.length&&!norm(ch.number+' kap').includes(q))return '';
-        return '<div class="section-title">'+html(ch.number==='0'?'Bestämmelser':ch.number+' kap. '+ch.title)+'</div>'+
-          matches.slice(0,60).map(i=>listRow(i.type==='heading'?i.text:i.number+' §',i.type==='heading'?'Avsnitt':String(i.text||'').slice(0,78),urlFor(meta.sfs,ch.number,i.type==='heading'?i.nextPara:i.number))).join('');
-      }
-      const headings=entries.filter(i=>i.type==='heading'),paras=entries.filter(i=>i.type==='para');
-      const shown=ch.number===here.chapter||data.chapters.length===1;
-      return '<details '+(shown?'open':'')+' class="toc-group"><summary class="list-row"><span class="grow">'+
-        html(ch.number==='0'?'Bestämmelser':ch.number+' kap. '+(ch.title||''))+
-        '<span class="chapter-subtitle">'+paras.length+' paragrafer</span></span><span class="chevron">⌄</span></summary>'+
-        '<div class="toc-indent">'+
-        headings.map(i=>listRow(i.text,'Avsnitt',urlFor(meta.sfs,ch.number,i.nextPara))).join('')+
-        '<div class="para-grid">'+paras.map(i=>'<a href="'+attr(urlFor(meta.sfs,ch.number,i.number))+'" data-link="1">'+html(i.number)+' §</a>').join('')+'</div></div></details>';
-    }).join('');
+    const q=norm(needle||''),currentPara=state.visibleParagraph||here.paragraph||null;
+    const all=[];
+    for(const ch of data.chapters){
+      const groups=tocModel.chapterGroups(meta.sfs,ch);
+      const chapMatch=q&&(norm([ch.number+' kap.',ch.title].join(' ')).includes(q));
+      const shownGroups=groups.map(g=>{
+        const groupMatch=q&&norm(g.title).includes(q);
+        return {...g,paragraphs:(!q||chapMatch||groupMatch)?g.paragraphs:
+          g.paragraphs.filter(p=>norm([p.number+' §',p.title,p.excerpt].join(' ')).includes(q))};
+      }).filter(g=>g.paragraphs.length);
+      if(q&&!shownGroups.length)continue;
+      const active=ch.number===here.chapter;
+      const expanded=!!q||active||data.chapters.length===1;
+      const chapterTitle=(ch.number==='0'?meta.name:ch.number+' kap. '+(ch.title||''));
+      const rows=shownGroups.map(g=>'<section class="toc-subgroup"><h3 class="toc-subgroup-title">'+html(g.title)+'</h3>'+
+        '<div class="toc-paragraphs">'+g.paragraphs.map(p=>{
+          const isCurrent=active&&currentPara&&searchCore.paraKey(currentPara)===searchCore.paraKey(p.number);
+          return '<a data-link="1" class="toc-paragraph'+(isCurrent?' toc-current':'')+'"'+
+            (isCurrent?' aria-current="location"':'')+
+            ' href="'+attr(urlFor(meta.sfs,ch.number,p.number))+'"><span class="toc-paragraph-number">'+html(p.number)+' §</span>'+
+            '<span class="toc-paragraph-title">'+html(p.title)+'</span></a>';
+        }).join('')+'</div></section>').join('');
+      all.push('<details class="toc-chapter" '+(expanded?'open':'')+'>'+
+        '<summary class="toc-chapter-summary'+(active?' toc-current-chapter':'')+'"><span class="toc-chapter-heading">'+html(chapterTitle)+
+        '</span><span class="toc-chapter-info">'+groups.reduce((n,g)=>n+g.paragraphs.length,0)+' paragrafer</span>'+
+        '<span class="toc-chevron" aria-hidden="true">⌄</span></summary><div class="toc-chapter-body">'+rows+'</div></details>');
+    }
+    return all.length?all.join(''):'<div class="empty">Inga kapitel eller paragrafer matchar sökningen.</div>';
   }
   function menu() {
-    showSheet('<div class="sheet-title">Mer <button class="icon-button" data-action="close">×</button></div>' +
+    const r=route(),law=r.page==='law'?lawById(r.sfs):null;
+    const chapterKey=law&&r.chapter!=null?r.sfs+'|'+r.chapter:null;
+    showSheet('<div class="sheet-title">Mer <button class="icon-button" data-action="close">×</button></div>'+
       '<div class="card-list">'+
-      listRow('Polisens FAP','Föreskrifter och allmänna råd','#/fap')+
-      listRow('Inställningar','Tema, textstorlek och läsning','#/settings')+
-      listRow('Om lagboken','Källor, uppdateringar och ansvarsbegränsning','#/about')+
-      '</div>');
+      (chapterKey?'<button class="list-row sheet-menu-row" type="button" data-action="fav" data-key="'+attr(chapterKey)+'">'+
+        '<span class="grow"><span class="row-title">'+(pref.favourites.includes(chapterKey)?'Ta bort sparat kapitel':'Spara kapitel')+'</span></span>☆</button>':'')+
+      (law?'<button class="list-row sheet-menu-row" type="button" data-action="source-info">'+
+        '<span class="grow"><span class="row-title">Källa och versionsinformation</span><span class="row-sub">'+html(law.name)+'</span></span>›</button>':'')+
+      listRow('Läsinställningar','Lästäthet, läsläge och textstorlek','#/settings')+
+      listRow('Polisens FAP','Separat sidoregister','#/fap')+
+      listRow('Om lagboken','Information om tjänsten','#/about')+'</div>');
+  }
+  function sourceInfo(){
+    const r=route(),meta=lawById(r.sfs),data=state.laws.get(r.sfs);
+    if(!meta||!data)return;
+    const number=data.chapters.reduce((acc,c)=>acc+(c.items||[]).filter(x=>x.type==='para').length,0);
+    showSheet('<div class="sheet-title">Källa och version <button class="icon-button" data-action="close" aria-label="Stäng">×</button></div>'+
+      '<p>'+html(meta.name)+' (SFS '+html(meta.sfs)+')</p>'+
+      '<p class="small muted">'+number+' importerade paragrafer. Hämtad: '+html((data.fetchedAt||'okänt').slice(0,10))+'.</p>'+
+      '<div class="notice">Den importerade texten kan innehålla olika lydelser och övergångsregler. Kontrollera alltid tillämplig version mot den officiella källan.</div>'+
+      '<a class="button primary" href="'+attr(sourceUrl(meta.sfs))+'" rel="noopener noreferrer" target="_blank">Öppna hos Riksdagen ↗</a>');
   }
   function settingsPage(){
     return '<div class="page"><h1 class="page-title">Inställningar</h1>'+
@@ -311,6 +320,8 @@
       [['light','Mjukvitt med elegant grön (standard)'],['dark','Mörkt'],['system','Följ iPhone']].map(x=>'<option value="'+x[0]+'"'+(pref.theme===x[0]?' selected':'')+'>'+x[1]+'</option>').join('')+'</select></div>'+
       '<div class="field"><label for="reading-mode">Lästäthet</label><select data-setting="readingMode" id="reading-mode">'+
       [['standard','Standard – bekväm läsning'],['compact','Kompakt – fler paragrafer samtidigt']].map(x=>'<option value="'+x[0]+'"'+(pref.readingMode===x[0]?' selected':'')+'>'+x[1]+'</option>').join('')+'</select></div>'+
+      '<div class="field"><label for="reader-focus-setting">Läsläge</label><select data-setting="focusReader" id="reader-focus-setting">'+
+      [['off','Visa vanliga verktygsfält'],['on','Dölj verktygsfält vid läsning']].map(x=>'<option value="'+x[0]+'"'+(pref.focusReader===x[0]?' selected':'')+'>'+x[1]+'</option>').join('')+'</select></div>'+
       '<div class="field"><label for="size">Textstorlek</label><select data-setting="fontSize" id="size">'+
       [[0.94,'Liten'],[1,'Normal'],[1.12,'Stor'],[1.25,'Extra stor']].map(x=>'<option value="'+x[0]+'"'+(Number(pref.fontSize)===x[0]?' selected':'')+'>'+x[1]+'</option>').join('')+'</select></div>'+
       '<div class="field"><label for="height">Radavstånd</label><select data-setting="lineHeight" id="height">'+
@@ -444,6 +455,7 @@
   }
   async function render(reset){
     const r=route();state.current=r;
+    if(r.page==='law'&&pref.focusReader==='on')state.focus=true;
     document.documentElement.dataset.focus=(state.focus&&r.page==='law')?'true':'false';
     const tab = ['catalog','saved'].includes(r.page)?r.page:null;
     $$('.bottom-nav button').forEach(b=>{b.classList.toggle('active',b.dataset.tab===tab);b.setAttribute('aria-current',b.dataset.tab===tab?'page':'false');});
@@ -515,7 +527,14 @@
   function toc() {
     const r=route(),meta=lawById(r.sfs);
     if(!meta)return;
-    loadLaw(r.sfs).then(data=>showSheet(tocHtml(meta,data))).catch(()=>toast('Innehållsförteckning saknas tills texten importerats.'));
+    loadLaw(r.sfs).then(data=>{
+      showSheet(tocHtml(meta,data),false);
+      sheet.dataset.kind='toc';
+      requestAnimationFrame(()=>{
+        const selected=$('.toc-current',sheet)||$('.toc-current-chapter',sheet);
+        if(selected&&selected.scrollIntoView)selected.scrollIntoView({block:'center',behavior:'instant'});
+      });
+    }).catch(()=>toast('Innehållsförteckningen kunde inte läsas.'));
   }
   function note(key) {
     showSheet('<div class="sheet-title">Egen anteckning <button class="icon-button" data-action="close">×</button></div>'+
@@ -559,6 +578,7 @@
   async function toggleFocus(){
     const position=view.scrollTop;
     state.focus=!state.focus;
+    pref.focusReader=state.focus?'on':'off';savePrefs();
     await render(false);view.scrollTop=position;
   }
   async function copyParagraph(key) {
@@ -574,6 +594,23 @@
       toast('Lagrum kopierat');
     }catch(_){toast('Det gick inte att kopiera paragrafen');}
   }
+  let readerScrollPending=false;
+  view.addEventListener('scroll',()=>{
+    if(route().page!=='law'||readerScrollPending||typeof view.querySelectorAll!=='function')return;
+    readerScrollPending=true;
+    requestAnimationFrame(()=>{
+      readerScrollPending=false;
+      const paragraphs=view.querySelectorAll('.paragraph');
+      if(!paragraphs||!paragraphs.length)return;
+      const top=view.getBoundingClientRect().top+80;
+      for(const el of paragraphs){
+        if(el.getBoundingClientRect().bottom>top){
+          state.visibleParagraph=el.dataset.paragraph;
+          break;
+        }
+      }
+    });
+  },{passive:true});
   view.addEventListener('input',e=>{
     if(e.target.id==='query'||e.target.id==='fap-query')onSearch(e.target.value);
   });
@@ -601,13 +638,14 @@
     }
     if(e.target.id==='toc-query'){
       const r=route(),meta=lawById(r.sfs),doc=state.laws.get(r.sfs);
-      if(doc&&meta)$('#toc-results').innerHTML=tocEntries(meta,doc,r,e.target.value);
+      if(doc&&meta){$('#toc-results').innerHTML=tocEntries(meta,doc,r,e.target.value);$('#toc-results').scrollTop=0;}
     }
   });
   document.addEventListener('change',e=>{
     if(e.target.dataset.setting){
       const key=e.target.dataset.setting;
-      pref[key]=(key==='theme'||key==='readingMode')?e.target.value:Number(e.target.value);
+      pref[key]=(key==='theme'||key==='readingMode'||key==='focusReader')?e.target.value:Number(e.target.value);
+      if(key==='focusReader')state.focus=(e.target.value==='on');
       if(key==='theme')pref.themeChosen=true;
       savePrefs();applyPrefs();toast('Inställning sparad');
     }
@@ -623,6 +661,7 @@
     const a=btn.dataset.action,k=btn.dataset.key;
     if(a==='clear-search'){const field=$('#query');if(field){field.value='';onSearch('');field.focus();}return;}
     if(a==='para-menu'){paraMenu(k);return;}
+    if(a==='source-info'){sourceInfo();return;}
     if(a==='read-mode'){changeReaderMode(btn.dataset.mode);return;}
     if(a==='toggle-focus'){toggleFocus();return;}
     if(a==='fav')favToggle(k);
