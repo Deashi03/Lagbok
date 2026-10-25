@@ -52,7 +52,7 @@
       if(ref.numbers.length===1)out+=anchor(ref.body,ref.numbers[0]);
       else{
         const multi=/^([\s\S]*?)(\d+\s*[a-z]?)(\s*(?:och|eller|,)\s*)(\d+\s*[a-z]?)(\s*§{2})$/iu.exec(ref.body);
-        if(!multi){out+=escape(ref.body);continue;}
+        if(!multi){out+=escape(ref.body);at=ref.end;continue;}
         out+=escape(multi[1])+anchor(multi[2],ref.numbers[0])+escape(multi[3])+
           anchor(multi[4],ref.numbers[1])+escape(multi[5]);
       }

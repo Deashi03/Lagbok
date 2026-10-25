@@ -9,7 +9,7 @@ const app=fs.readFileSync(require('node:path').join(__dirname,'../assets/app.js'
 const laws={
  '1962:700':{chapters:[
    {number:'1',title:'Om brott',items:[{type:'para',number:'1',text:'Första paragrafen.'}]},
-   {number:'24',title:'Om allmänna grunder för ansvarsfrihet',items:[{type:'para',number:'1',text:'Tjugofjärde kapitlet.'}]}
+   {number:'24',title:'Om allmänna grunder för ansvarsfrihet',items:[{type:'para',number:'1',text:'Tjugofjärde kapitlet. Se 2 §.'},{type:'para',number:'2',text:'Det andra lagrummet.'}]}
  ]},
  '1947:948':{chapters:[{number:'0',title:'',items:[{type:'para',number:'12',text:'Tolfte paragrafen.'}]}]}
 };
@@ -78,6 +78,29 @@ async function submit(q){
  assert.match(el.view.innerHTML,/Tjugofjärde kapitlet/);
  assert.match(el.view.innerHTML,/reading-mode-standard/);
  assert.match(el.view.innerHTML,/chapter-navigation/);
+ assert.match(el.view.innerHTML,/data-ref-para="2"/);
+ const refTarget={
+   dataset:{refSfs:'1962:700',refChapter:'24',refPara:'2'},
+   closest(selector){return selector==='[data-ref]'?this:null}
+ };
+ listeners['document.click'][0]({target:refTarget,preventDefault(){}});
+ await settle();
+ assert.match(el.sheet.innerHTML,/Förhandsvisning/);
+ assert.match(el.sheet.innerHTML,/Det andra lagrummet/);
+ const action=(name,extra={})=>({
+   dataset:{action:name,...extra},
+   closest(selector){return selector==='[data-action]'?this:null}
+ });
+ listeners['document.click'][0]({target:action('read-mode',{mode:'compact'})});
+ await settle();
+ assert.match(el.view.innerHTML,/reading-mode-compact/);
+ listeners['document.click'][0]({target:action('toggle-focus')});
+ await settle();
+ assert.equal(document.documentElement.dataset.focus,'true');
+ listeners['document.click'][0]({target:action('toggle-focus')});
+ await settle();
+ assert.equal(document.documentElement.dataset.focus,'false');
+
  await submit('FuK 12');
  assert.equal(location.hash,'#/law/1947%3A948/0/12');
  assert.match(el.view.innerHTML,/Tolfte paragrafen/);

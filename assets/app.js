@@ -94,7 +94,9 @@
   function favToggle(target) {
     if(pref.favourites.includes(target)) pref.favourites=pref.favourites.filter(f=>f!==target);
     else pref.favourites.unshift(target);
-    savePrefs(); render();
+    savePrefs();
+    const position=view.scrollTop;
+    Promise.resolve(render(false)).then(()=>{view.scrollTop=position;});
     toast(pref.favourites.includes(target)?'Sparad i favoriter':'Borttagen från favoriter');
   }
   function favTitle(target) {
@@ -628,7 +630,7 @@
     if(a==='note')note(k);
     if(a==='save-note'){
       const field=$('#note-text');
-      if(field){const t=field.value.trim();if(t)pref.notes[k]=t;else delete pref.notes[k];savePrefs();closeSheet();render();toast('Anteckning sparad');}
+      if(field){const t=field.value.trim();if(t)pref.notes[k]=t;else delete pref.notes[k];savePrefs();closeSheet();const position=view.scrollTop;Promise.resolve(render(false)).then(()=>{view.scrollTop=position;});toast('Anteckning sparad');}
     }
     if(a==='toc')toc();
     if(a==='find-local')findWithinLaw();
