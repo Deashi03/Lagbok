@@ -68,7 +68,6 @@ jobs:
             data/catalog.json
             data/laws/*.json
             data/index/**
-            data/import-report.md
       - name: Fail if some statutes could not be imported
         run: |
           cat "${{ runner.temp }}/import-report.md" >> "$GITHUB_STEP_SUMMARY"

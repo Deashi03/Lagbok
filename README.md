@@ -51,5 +51,4 @@ Läsaren har en enda innehållsknapp, utan föregående/nästa länkar eller ver
 
 ### Lägga till en lag
 1. Lägg till en post i `data/catalog.json` med `sfs`, `name`, `type`, `aliases`, `area` och `check` (ett ord som måste finnas i Riksdagens titel).
-2. Kör arbetsflödet *Kontrollera lagändringar*. Det hämtar lagen, bygger om `data/index` och lägger resultatet på grenen `automation/sfs-updates` med rapporten `data/import-report.md`.
-3. För att arbetsflödet ska kunna öppna en pull request automatiskt: *Settings → Actions → General → Workflow permissions → Allow GitHub Actions to create and approve pull requests*.
+2. Kör arbetsflödet *Kontrollera lagändringar*. Det hämtar lagen, bygger om `data/index` och öppnar en pull request med en ändringsrapport när lagtexten har ändrats.
