@@ -316,8 +316,8 @@
       '<div class="notice">Inställningar, favoriter och anteckningar sparas lokalt på din enhet.</div></div>';
   }
   function aboutPage(){
-    return '<div class="page"><h1 class="page-title">Om lagboken</h1><p>En fristående, mobilanpassad samling av prioriterade svenska lagar och förordningar.</p>' +
-      '<div class="section-title">Rättskällor</div><p class="small muted">Författningstexterna hämtas från Sveriges riksdags öppna data. Polisens FAP länkas till Polismyndighetens författningssamling.</p>' +
+    return '<div class="page"><h1 class="page-title">Om lagboken</h1><p>En fristående, mobilanpassad lagbok med läsvy i mjukvitt, grönt och diskreta vinröda detaljer.</p>' +
+      '<div class="section-title">Rättskällor</div><p class="small muted">Författningstexterna hämtas från Sveriges riksdags öppna data. Polisens FAP visas i en intern PDF-läsare med direktlänkar till Polismyndighetens författningssamling.</p>' +
       '<div class="section-title">Uppdateringsstatus</div><p class="small">Senast genomförd datainhämtning: '+html(window.LAGBOK_GENERATED||'Se respektive författning')+'.</p>' +
       '<div class="notice">Det här är inte en officiell lagtexttjänst. En importerad lydelse kan innehålla övergångsbestämmelser och framtida ikraftträdanden. Kontrollera den tillämpliga versionen i originalkällan.</div>' +
       '<p><a href="https://github.com/Deashi03/Lagbok" target="_blank" rel="noopener noreferrer">Öppna projektet på GitHub ↗</a></p></div>';
@@ -341,7 +341,8 @@
   }
   function searchLawMatches(query){
     const n=norm(query);
-    return state.catalog.filter(l=>norm([l.name,l.sfs,(l.aliases||[]).join(' ')].join(' ')).includes(n));
+    if(n.length<3)return searchCore.rankSuggestions(query,state.catalog,[],[],[]).filter(x=>x.type==='law').map(x=>x.law);
+    return state.catalog.filter(l=>norm([l.name,l.sfs,(l.aliases||[]).join(' ')].join(' ')).includes(n)).sort((a,b)=>Number(norm(b.name).startsWith(n))-Number(norm(a.name).startsWith(n)));
   }
   function searchPage(){return catalogPage();}
   function resultsHtml(query){
