@@ -9,7 +9,7 @@ links.configure(catalog.laws);
 const key=n=>String(n).toLowerCase().replace(/\s+/g,'');
 const laws=new Map();
 for(const law of catalog.laws){
- const file=path.join(__dirname,'..','data','laws',law.sfs.replace(':','-')+'.json');
+ const file=path.join(__dirname,'..','data','laws',law.sfs.replace(/[: ]/g,'-')+'.json');
  if(fs.existsSync(file))laws.set(law.sfs,JSON.parse(fs.readFileSync(file,'utf8')));
 }
 const index=new Map();

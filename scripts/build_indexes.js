@@ -20,7 +20,7 @@ const out=path.join(root,'data/index');
 fs.rmSync(out,{recursive:true,force:true});
 fs.mkdirSync(path.join(out,'terms'),{recursive:true});
 fs.mkdirSync(path.join(out,'backlinks'),{recursive:true});
-const file=sfs=>path.join(root,'data/laws',sfs.replace(':','-')+'.json');
+const file=sfs=>path.join(root,'data/laws',sfs.replace(/[: ]/g,'-')+'.json');
 const laws=catalog.laws.filter(l=>fs.existsSync(file(l.sfs)));
 const docs=new Map(laws.map(l=>[l.sfs,JSON.parse(fs.readFileSync(file(l.sfs),'utf8'))]));
 const key=search.paraKey;
@@ -74,7 +74,7 @@ for(const [k,sources] of backlinks){
   if(!bySfs.has(sfs))bySfs.set(sfs,{});
   bySfs.get(sfs)[target]=[...sources.values()];
 }
-for(const [sfs,data] of bySfs)fs.writeFileSync(path.join(out,'backlinks',sfs.replace(':','-')+'.json'),JSON.stringify(data));
+for(const [sfs,data] of bySfs)fs.writeFileSync(path.join(out,'backlinks',sfs.replace(/[: ]/g,'-')+'.json'),JSON.stringify(data));
 // Kontrollsumma per paragraf och lag: ändras när lydelserna ändras, inte när hämtningsdatum ändras.
 const status={},upcoming=[];
 for(const law of laws){

@@ -1,7 +1,7 @@
 import sys,unittest
 from pathlib import Path
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/"scripts"))
-from import_laws import check_title,parse_html,parse_text,validate,editorial,build_para,describe_changes,latest_amendment
+from import_laws import document,quality_warnings,check_title,parse_html,parse_text,validate,editorial,build_para,describe_changes,latest_amendment
 class ParserTests(unittest.TestCase):
  def test_chapters(self):
   source='<hr><a name="K28">28 kap. Om husrannsakan</a><h4>Husrannsakan</h4><a class="paragraf" name="K28P1"><b>1 §</b></a>Text<br>ny rad<a class="paragraf" name="K28P2"><b>2 §</b></a>Andra'
@@ -67,4 +67,16 @@ class ParserTests(unittest.TestCase):
  def test_title_check(self):
   check_title({"check":"föräldrabalk"},"Föräldrabalk (1949:381)")
   with self.assertRaises(ValueError):check_title({"check":"föräldrabalk"},"Lag (1949:382) om något annat")
+ def test_transitions_are_separated(self):
+  item=build_para("10",["Sista paragrafen. Lag (1994:1034).\n\nÖvergångsbestämmelser\n1983:920\n\nDenna lag träder i kraft den 1 januari 1984.\n\n1984:131\n\n1. Denna lag träder i kraft den 1 juli 1984."])
+  self.assertEqual(item["text"],"Sista paragrafen.")
+  self.assertEqual(item["amendedBy"],"1994:1034")
+  doc=document("1942:740","RB","HTML",[{"number":"59","title":"","items":[item]}])
+  self.assertEqual(doc["transitions"],[{"sfs":"1983:920","text":"Denna lag träder i kraft den 1 januari 1984."},{"sfs":"1984:131","text":"1. Denna lag träder i kraft den 1 juli 1984."}])
+  self.assertNotIn("_transitions",doc["chapters"][0]["items"][0])
+ def test_quality_warnings(self):
+  old={"chapters":[{"number":"1","items":[{"type":"para","number":str(i),"text":"x"} for i in range(20)]},{"number":"2","items":[{"type":"para","number":"1","text":"y"}]}]}
+  new={"chapters":[{"number":"1","items":[{"type":"para","number":"1","text":"x"*16000}]}]}
+  w=" ".join(quality_warnings(old,new))
+  self.assertIn("minskade",w);self.assertIn("kapitel saknas: 2",w);self.assertIn("ovanligt långa",w)
 if __name__=="__main__":unittest.main()

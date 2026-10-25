@@ -26,6 +26,10 @@ AMEND=re.compile(r'(?:(?<=[.\n])|^)\s*((?:Lag|Förordning) ?\((\d{4}:\d+)\)\.?)\
 REPEALED=re.compile(r'^(?:Har upphävts|Har upphört att gälla|Upphävd)\b',re.I)
 LEGACY_SPLIT="\n\nALTERNATIV LYDELSE – KONTROLLERA IKRAFTTRÄDANDE:\n"
 DATE=re.compile(r'\d{4}-\d{2}-\d{2}')
+# Övergångsbestämmelser hamnar i Riksdagens text efter sista paragrafen och flyttas till en egen del.
+TRANSITIONS=re.compile(r'\n\s*(?:Ikraftträdande- och )?[ÖO]vergångsbestämmelser\s*\n')
+TRANSITION_SFS=re.compile(r'^(\d{4}:\d+(?: \d)?)\s*$',re.M)
+def slug(sfs):return sfs.replace(":","-").replace(" ","-")
 def clear(s):
     s=re.sub(r"<br\s*/?>","\n",s,flags=re.I)
     s=re.sub(r"</?(?:p|div|li|ol|ul)\b[^>]*>","\n",s,flags=re.I)
@@ -43,6 +47,9 @@ def when(label):
 def version(raw):
     """En lydelse: ren text, ändringsförfattning och eventuellt ikraftträdande/upphörande."""
     text=tidy(raw);out={}
+    cut=TRANSITIONS.search("\n"+text)
+    if cut:
+        out["_transitions"]=text[cut.end()-1:].strip();text=text[:max(0,cut.start()-1)].rstrip()
     while True:
         m=MARK.match(text)
         if not m:break
@@ -56,6 +63,7 @@ def version(raw):
     return out
 def build_para(number,raws):
     versions=[version(r) for r in raws if r and r.strip()]
+    transitions=[v.pop("_transitions") for v in versions if "_transitions" in v]
     first=versions[0]
     item={"type":"para","number":number,"text":first["text"]}
     if len(versions)>1 or "inForce" in first or "expires" in first:
@@ -63,9 +71,27 @@ def build_para(number,raws):
     elif "amendedBy" in first:
         item["amendedBy"]=first["amendedBy"]
     if all(REPEALED.match(v["text"]) for v in versions):item["repealed"]=True
+    if transitions:item["_transitions"]=transitions[0]
     return item
+def split_transitions(block):
+    """Delar övergångsbestämmelser per ändringsförfattning: [{"sfs":"2023:372","text":"…"}]."""
+    parts=[];marks=list(TRANSITION_SFS.finditer(block))
+    if not marks or marks[0].start()>0:
+        head=block[:marks[0].start()] if marks else block
+        if head.strip():parts.append({"sfs":None,"text":head.strip()})
+    for i,m in enumerate(marks):
+        end=marks[i+1].start() if i+1<len(marks) else len(block)
+        text=block[m.end():end].strip()
+        if text:parts.append({"sfs":m[1],"text":text})
+    return parts
+def take_transitions(chs):
+    found=[]
+    for c in chs:
+        for p in c["items"]:
+            if "_transitions" in p:found.append(p.pop("_transitions"))
+    return split_transitions("\n".join(found)) if found else []
 def amendment_key(sfs):
-    y,n=sfs.split(":");return (int(y),int(n))
+    y,n=sfs.split(":");return (int(y),int(n.split()[0]))
 def latest_amendment(chs):
     found=[v.get("amendedBy") for c in chs for p in c["items"] if p["type"]=="para" for v in (p.get("versions") or [p])]
     found=[f for f in found if f]
@@ -172,15 +198,29 @@ def check_title(meta,official):
     if expected and expected.lower() not in (official or "").lower():
         raise ValueError("titelkontroll: väntade '"+expected+"' i '"+str(official)+"'")
 def document(id,name,method,chs,official=None):
-    return {"sfs":id,"title":name,"officialTitle":official,"sourceUrl":"https://data.riksdagen.se/dokument/sfs-"+id.replace(":","-")+".html","parser":method,
+    transitions=take_transitions(chs)
+    out={"sfs":id,"title":name,"officialTitle":official,"sourceUrl":"https://data.riksdagen.se/dokument/sfs-"+slug(id)+".html","parser":method,
             "fetchedAt":dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds"),"latestAmendment":latest_amendment(chs),"chapters":chs}
+    if transitions:out["transitions"]=transitions
+    return out
+LONG_PARAGRAPH=15000
+def quality_warnings(old,new):
+    """Tecken på tolkningsfel: kraftigt minskat antal paragrafer, tappade kapitel eller sammanklistrad text."""
+    warn=[];a,b=paragraphs(old),paragraphs(new)
+    if old and len(b)<0.9*len(a):warn.append("antalet paragrafer minskade från "+str(len(a))+" till "+str(len(b)))
+    if old:
+        lost=sorted({c["number"] for c in old["chapters"]}-{c["number"] for c in new["chapters"]})
+        if lost:warn.append("kapitel saknas: "+", ".join(lost))
+    long=[label(k) for k,p in b.items() if max(len(v["text"]) for v in p.get("versions") or [p])>LONG_PARAGRAPH]
+    if long:warn.append("ovanligt långa paragrafer: "+", ".join(long[:10]))
+    return warn
 def paragraphs(doc):
     return {(c["number"],p["number"]):p for c in (doc or {}).get("chapters",[]) for p in c["items"] if p["type"]=="para"}
 def label(key):return (key[0]+" kap. " if key[0]!="0" else "")+key[1]+" §"
 def describe_changes(name,id,old,new):
     """Kort markdownsammanfattning av vad som ändrats, för granskning i pull request."""
     lines=["### "+name+" (SFS "+id+")"]
-    if old is None:return "\n".join(lines+["Ny författning i lagboken."])
+    if old is None:return "\n".join(lines+["Ny författning i lagboken."]+["- ⚠️ Kontrollera: "+w for w in quality_warnings(None,new)])
     a,b=paragraphs(old),paragraphs(new)
     added=[k for k in b if k not in a];removed=[k for k in a if k not in b]
     changed=[k for k in b if k in a and a[k]!=b[k]]
@@ -188,6 +228,7 @@ def describe_changes(name,id,old,new):
     if new.get("latestAmendment")!=old.get("latestAmendment"):lines.append("- Senaste ändring: SFS "+str(new.get("latestAmendment")))
     for title,keys in (("Nya paragrafer",added),("Ändrade paragrafer",changed),("Borttagna paragrafer",removed),("Med kommande lydelse",upcoming)):
         if keys:lines.append("- "+title+" ("+str(len(keys))+"): "+", ".join(label(k) for k in keys[:40])+(" …" if len(keys)>40 else ""))
+    for w in quality_warnings(old,new):lines.append("- ⚠️ Kontrollera: "+w)
     if len(lines)==1:lines.append("- Endast struktur eller metadata ändrad.")
     return "\n".join(lines)
 def write_report(report,fail):
@@ -198,7 +239,7 @@ def write_report(report,fail):
     print(text)
     if target:Path(target).write_text(text+"\n",encoding="utf-8")
 def fetch(sfs):
-    url="https://data.riksdagen.se/dokument/sfs-"+sfs.replace(":","-")+".json"
+    url="https://data.riksdagen.se/dokument/sfs-"+slug(sfs)+".json"
     req=Request(url,headers={"User-Agent":"LagbokenImporter/0.1","Accept":"application/json"})
     for attempt in range(3):
         try:
@@ -223,7 +264,7 @@ def run():
             output=document(id,meta["name"],method,chs,official)
             chaptered=any(c["number"]!="0" for c in chs)
             if meta.get("chaptered")!=chaptered:meta["chaptered"]=chaptered;changed=True
-            file=OUT/(id.replace(":","-")+".json")
+            file=OUT/(slug(id)+".json")
             previous=None
             if file.exists():
                 previous=json.loads(file.read_text(encoding="utf-8"))
@@ -237,7 +278,7 @@ def run():
         except Exception as ex:
             print(id,"FAILED",ex,file=sys.stderr);fail.append(id+" ("+meta["name"]+"): "+str(ex)[:200])
             # En författning som aldrig har kunnat importeras döljs i appen tills importen lyckas.
-            if not (OUT/(id.replace(":","-")+".json")).exists() and meta.get("available") is not False:
+            if not (OUT/(slug(id)+".json")).exists() and meta.get("available") is not False:
                 meta["available"]=False;changed=True
             continue
         if meta.get("available") is False:

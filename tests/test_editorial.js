@@ -8,7 +8,7 @@ const key=s=>String(s).replace(/\s+/g,' ').trim().toLowerCase();
 let checked=0;
 for(const [kind,table] of Object.entries({groups,titles})){
  for(const [sfs,chapters] of Object.entries(table)){
-  const file=path.join(__dirname,'..','data','laws',sfs.replace(':','-')+'.json');
+  const file=path.join(__dirname,'..','data','laws',sfs.replace(/[: ]/g,'-')+'.json');
   const law=JSON.parse(fs.readFileSync(file,'utf8'));
   for(const [chapter,entries] of Object.entries(chapters)){
    const ch=law.chapters.find(c=>c.number===chapter);

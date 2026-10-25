@@ -23,7 +23,7 @@
   const html = (s) => String(s == null ? '' : s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const attr = html;
   const norm = (v) => String(v || '').toLocaleLowerCase('sv').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[\s.-]+/g,' ').trim();
-  const sfsFile = (id) => String(id).replace(':','-');
+  const sfsFile = (id) => String(id).replace(/[: ]/g,'-');
   const sourceUrl = (id) => source + sfsFile(id) + '.html';
   const lawById = (id) => state.catalog.find(d => d.sfs === id);
   const searchText = (item) => item.versions ? item.versions.map(v=>v.text).join('\n\n') : String(item.text||'');
