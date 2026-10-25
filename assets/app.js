@@ -290,34 +290,57 @@
       '<div class="notice">Det här är inte en officiell lagtexttjänst. En importerad lydelse kan innehålla övergångsbestämmelser och framtida ikraftträdanden. Kontrollera den tillämpliga versionen i originalkällan.</div>' +
       '<p><a href="https://github.com/Deashi03/Lagbok" target="_blank" rel="noopener noreferrer">Öppna projektet på GitHub ↗</a></p></div>';
   }
-  function findDirect(q) {
-    const txt=q.trim();
-    const spec=/^(.+?)\s+(\d{1,2})\s*[:.]\s*(\d+\s*[a-z]?)\s*§?$/i.exec(txt);
-    const simple=/^(.+?)\s+(\d+\s*[a-z]?)\s*§?$/i.exec(txt);
-    let m=spec||simple;
-    if(!m)return null;
-    const key=norm(m[1]);
-    const meta=state.catalog.find(l=>norm(l.name)===key||norm(l.sfs)===key||(l.aliases||[]).some(a=>norm(a)===key));
-    if(!meta)return null;
-    return {meta,chapter:spec?spec[2]:'0',para:(spec?spec[3]:simple[2]).replace(/\s/g,'')};
+  function findDirect(q){return searchCore.parseQuick(q,state.catalog,state.fap);}
+  function quickUrl(d){
+    return d.type==='fap'?'#/fap/'+encodeURIComponent(d.fap.id):urlFor(d.meta.sfs,d.chapter,d.para);
+  }
+  function quickLabel(d){
+    return d.type==='fap'?d.fap.id:d.meta.name+' · '+(d.chapter==='0'?'':d.chapter+' kap. ')+(d.para?d.para+' §':'');
+  }
+  async function goQuick(q){
+    const direct=findDirect(q);if(!direct)return false;
+    if(direct.type==='fap'){state.query='';navigate(quickUrl(direct));return true;}
+    try{
+      const doc=await loadLaw(direct.meta.sfs);
+      const found=searchCore.resolvedQuick(direct,doc);
+      if(!found){toast('Kapitlet eller paragrafen finns inte i den importerade författningen.');return true;}
+      state.query='';navigate(quickUrl(found));return true;
+    }catch(_){toast('Lagtexten kunde inte läsas just nu.');return true;}
   }
   function searchLawMatches(query){
     const n=norm(query);
     return state.catalog.filter(l=>norm([l.name,l.sfs,(l.aliases||[]).join(' ')].join(' ')).includes(n));
   }
-  function searchPage(){
-    return '<div class="page"><h1 class="page-title">Sök</h1><p class="intro">Sök i lagar och förordningar eller skriv ett lagrum, t.ex. RB 28:1.</p>' +
-      searchBox('RB 24:7, OC, husrannsakan…') +
-      '<div id="search-results"></div>' +footer()+'</div>';
-  }
+  function searchPage(){return catalogPage();}
   function resultsHtml(query){
-    const direct=findDirect(query);
-    const laws=searchLawMatches(query);
+    const direct=findDirect(query),laws=searchLawMatches(query);
     const faps=state.fap.filter(f=>norm([f.name,f.id,f.code,(f.tags||[]).join(' ')].join(' ')).includes(norm(query)));
-    const intro=direct?'<div class="section-title">Gå direkt till</div><div class="card-list">'+listRow(direct.meta.name+' · '+(direct.chapter==='0'?'':direct.chapter+' kap. ')+direct.para+' §','Direkt till lagrum',urlFor(direct.meta.sfs,direct.chapter,direct.para))+'</div>':'';
+    const intro=direct?'<div class="section-title">Direkt till</div><div class="card-list"><a class="list-row" href="'+attr(quickUrl(direct))+'" data-quick="'+attr(query)+'"><div class="grow"><div class="row-title">'+html(quickLabel(direct))+'</div><div class="row-sub">Tryck här eller använd Enter för snabbkod</div></div><span class="chevron">›</span></a></div>':'';
     const lhtml=laws.length?'<div class="section-title">Författningar</div><div class="card-list">'+laws.map(lawRow).join('')+'</div>':'';
-    const fhtml=faps.length?'<div class="section-title">FAP</div>'+fapResults(faps.slice(0,5)):'';
-    return intro+lhtml+fhtml+'<div class="section-title">Träffar i lagtext</div><div id="text-results" class="search-results"><div class="loading">Söker i tillgänglig lagtext…</div></div>';
+    const fhtml=faps.length?'<div class="section-title">Polisens FAP</div><div class="card-list">'+fapResults(faps.slice(0,5))+'</div>':'';
+    return intro+lhtml+fhtml+'<div class="section-title">Träffar i lagtext</div><div id="text-results" class="search-results"><div class="loading">Söker i importerad lagtext…</div></div>';
+  }
+  function suggestionsHtml(query){
+    const q=norm(query);if(!q)return '';
+    const list=[],seen=new Set();
+    function add(label,sub,url,icon,quick){
+      if(seen.has(url)||list.length>=6)return;
+      seen.add(url);list.push('<a class="suggestion" role="option" href="'+attr(url)+'" '+(quick?'data-quick="'+attr(quick)+'"':'data-link="1"')+'><span class="suggestion-icon">'+icon+'</span><span><span class="suggestion-title">'+html(label)+'</span><span class="suggestion-sub">'+html(sub)+'</span></span></a>');
+    }
+    const direct=findDirect(query);
+    if(direct)add(quickLabel(direct),'Öppna direkt med Enter',quickUrl(direct),'↗',query);
+    const topics=[['husrannsakan','RB 28:1'],['häktning','RB 24:1'],['stöld','BrB 8:1'],['offentlig försvarare','RB 21:3a']];
+    topics.filter(x=>norm(x[0]).includes(q)).forEach(x=>{
+      const d=findDirect(x[1]);if(d)add(x[0]+' · '+x[1],'Föreslaget lagrum',quickUrl(d),'§',x[1]);
+    });
+    searchLawMatches(query).slice(0,4).forEach(l=>add(l.name,'SFS '+l.sfs,urlFor(l.sfs),'▤'));
+    state.fap.filter(f=>norm([f.id,f.name,f.code,(f.tags||[]).join(' ')].join(' ')).includes(q)).slice(0,3).forEach(f=>add(f.id+' · '+f.name,f.code||'Föreskrift','#/fap/'+encodeURIComponent(f.id),'▤'));
+    pref.recents.filter(x=>norm(favTitle(x)).includes(q)).slice(0,2).forEach(x=>add(favTitle(x),'Senast öppnad',favRoute(x),'◷'));
+    return list.join('');
+  }
+  function updateSuggestions(){
+    const el=$('#search-suggest'),input=$('#query');if(!el||!input)return;
+    const markup=suggestionsHtml(state.query);el.innerHTML=markup;el.hidden=!markup;input.setAttribute('aria-expanded',String(!!markup));
   }
   async function populateTextResults(q,epoch) {
     const needle=norm(q);
@@ -355,13 +378,16 @@
   function onSearch(val){
     state.query=val;
     const r=route();
-    if(r.page==='fap'){const box=$('#fap-results');if(box)box.innerHTML=fapResults(state.fap.filter(f=>norm([f.name,f.id,f.code,(f.tags||[]).join(' ')].join(' ')).includes(norm(val))));return;}
-    let target=$('#search-results')||$('#home-results');
-    if(!target)return;
-    if(!val.trim()){target.innerHTML='';state.searchEpoch++;return;}
-    target.innerHTML=resultsHtml(val);
+    if(r.page==='fap'){
+      const box=$('#fap-results');if(box)box.innerHTML=fapResults(state.fap.filter(f=>norm([f.name,f.id,f.code,(f.tags||[]).join(' ')].join(' ')).includes(norm(val))));
+      return;
+    }
+    const target=$('#search-results'),directory=$('#catalog-directory');if(!target)return;
+    const active=!!val.trim();if(directory)directory.hidden=active;
+    if(!active){target.innerHTML='';state.searchEpoch++;updateSuggestions();return;}
+    target.innerHTML=resultsHtml(val);updateSuggestions();
     const epoch=++state.searchEpoch;
-    setTimeout(()=>{if(state.searchEpoch===epoch)populateTextResults(val,epoch)},220);
+    setTimeout(()=>{if(state.searchEpoch===epoch)populateTextResults(val,epoch);},280);
   }
   async function lawPage(r){
     const meta=lawById(r.sfs);
@@ -375,20 +401,20 @@
   }
   async function render(reset){
     const r=route();state.current=r;
-    const tab = ['catalog','search','saved'].includes(r.page)?r.page:null;
+    const tab = ['catalog','saved'].includes(r.page)?r.page:null;
     $$('.bottom-nav button').forEach(b=>{b.classList.toggle('active',b.dataset.tab===tab);b.setAttribute('aria-current',b.dataset.tab===tab?'page':'false');});
     $('#back').hidden=['home','catalog','search','saved'].includes(r.page);
     $('#toc-button').hidden=r.page!=='law';
     $('#in-law-search').hidden=r.page!=='law';
     const meta=lawById(r.sfs);
-    $('#top-title').textContent = r.page==='law'?(meta?meta.name:'Lagbok'):({home:'Lagboken',catalog:'Lagbok',search:'Sök',saved:'Sparat',fap:'Polisens FAP',settings:'Inställningar',about:'Om'}[r.page]||'Lagboken');
+    $('#top-title').textContent = r.page==='law'?(meta?meta.name:'Lagbok'):({home:'Lagbok',catalog:'Lagbok',search:'Lagbok',saved:'Sparat',fap:r.sfs?'FAP':'Polisens FAP',settings:'Inställningar',about:'Om'}[r.page]||'Lagbok');
     let markup;
     switch(r.page) {
-      case 'home': markup=home();break;
+      case 'home': markup=catalogPage();break;
       case 'catalog': markup=catalogPage();break;
       case 'search': markup=searchPage();break;
       case 'saved': markup=savedPage();break;
-      case 'fap': markup=fapPage();break;
+      case 'fap': markup=r.sfs?fapReader(r.sfs):fapPage();break;
       case 'settings': markup=settingsPage();break;
       case 'about': markup=aboutPage();break;
       case 'law':
@@ -411,7 +437,7 @@
       requestAnimationFrame(()=>{if(remembered!==null)view.scrollTop=remembered;else{const el=$('#p-'+CSS.escape(r.paragraph));if(el)el.scrollIntoView({block:'start',behavior:'instant'});}});
     } else if(reset){view.scrollTop=0;}
     else {view.scrollTop=state.positions[location.hash]||0;}
-    if((r.page==='search'||r.page==='home')&&state.query) onSearch(state.query);
+    if((r.page==='catalog'||r.page==='search'||r.page==='home'||r.page==='fap')&&state.query) onSearch(state.query);
   }
   function lawSearchResults(doc,meta,q) {
     const query=norm(q);
