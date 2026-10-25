@@ -32,7 +32,7 @@ jobs:
       - name: Bootstrap initial corpus
         if: github.event_name == 'push'
         run: |
-          if [ -d data/laws ]; then
+          if git ls-files "data/laws/*.json" | grep -q .; then
             echo "Data already in repository; changes require pull-request review."
             exit 0
           fi
