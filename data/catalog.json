@@ -1,0 +1,174 @@
+{
+  "version": 1,
+  "generated": null,
+  "source": "Sveriges riksdag, Riksdagens öppna data",
+  "laws": [
+    {
+      "sfs": "1942:740",
+      "name": "Rättegångsbalken",
+      "type": "lag",
+      "aliases": [
+        "RB",
+        "rättegångsbalk",
+        "processrätt",
+        "husrannsakan",
+        "häktning"
+      ]
+    },
+    {
+      "sfs": "1962:700",
+      "name": "Brottsbalken",
+      "type": "lag",
+      "aliases": [
+        "BrB",
+        "brottsbalk",
+        "straffrätt"
+      ]
+    },
+    {
+      "sfs": "1984:387",
+      "name": "Polislagen",
+      "type": "lag",
+      "aliases": [
+        "PL",
+        "polislag"
+      ]
+    },
+    {
+      "sfs": "1947:948",
+      "name": "Förundersökningskungörelsen",
+      "type": "förordning",
+      "aliases": [
+        "FuK",
+        "förundersökningskungörelse"
+      ]
+    },
+    {
+      "sfs": "1998:1276",
+      "name": "Trafikförordningen",
+      "type": "förordning",
+      "aliases": [
+        "TrF",
+        "trafikförordning"
+      ]
+    },
+    {
+      "sfs": "1951:649",
+      "name": "Lagen om straff för vissa trafikbrott",
+      "type": "lag",
+      "aliases": [
+        "TBL",
+        "trafikbrottslagen",
+        "rattfylleri"
+      ]
+    },
+    {
+      "sfs": "2009:400",
+      "name": "Offentlighets- och sekretesslagen",
+      "type": "lag",
+      "aliases": [
+        "OSL",
+        "sekretess"
+      ]
+    },
+    {
+      "sfs": "2017:900",
+      "name": "Förvaltningslagen",
+      "type": "lag",
+      "aliases": [
+        "FL"
+      ]
+    },
+    {
+      "sfs": "1964:167",
+      "name": "Lagen med särskilda bestämmelser om unga lagöverträdare",
+      "type": "lag",
+      "aliases": [
+        "LUL",
+        "unga lagöverträdare"
+      ]
+    },
+    {
+      "sfs": "1976:511",
+      "name": "Lagen om omhändertagande av berusade personer m.m.",
+      "type": "lag",
+      "aliases": [
+        "LOB",
+        "berusning",
+        "omhändertagande"
+      ]
+    },
+    {
+      "sfs": "1993:1617",
+      "name": "Ordningslagen",
+      "type": "lag",
+      "aliases": [
+        "OL",
+        "allmän ordning"
+      ]
+    },
+    {
+      "sfs": "1968:64",
+      "name": "Narkotikastrafflagen",
+      "type": "lag",
+      "aliases": [
+        "NSL",
+        "narkotikabrott"
+      ]
+    },
+    {
+      "sfs": "1996:67",
+      "name": "Vapenlagen",
+      "type": "lag",
+      "aliases": [
+        "vapen"
+      ]
+    },
+    {
+      "sfs": "1974:152",
+      "name": "Regeringsformen",
+      "type": "lag",
+      "aliases": [
+        "RF",
+        "grundlag"
+      ]
+    }
+  ],
+  "fap": [
+    {
+      "id": "FAP 104-4",
+      "name": "Föreskrifter och allmänna råd om OC-spray (pepparspray)",
+      "code": "PMFS 2016:6",
+      "modified": "PMFS 2023:13",
+      "tags": [
+        "OC",
+        "OC-spray",
+        "pepparspray",
+        "våldsanvändning",
+        "spray"
+      ],
+      "url": "https://polisen.se/lagar-och-regler/polismyndighetens-forfattningssamling/2/"
+    },
+    {
+      "id": "FAP 104-2",
+      "name": "Föreskrifter och allmänna råd om användning av skjutvapen",
+      "code": "",
+      "tags": [
+        "skjutvapen",
+        "vapenanvändning"
+      ],
+      "url": "https://polisen.se/lagar-och-regler/polismyndighetens-forfattningssamling/"
+    },
+    {
+      "id": "FAP 776-1",
+      "name": "Föreskrifter och allmänna råd om utbildning i polisiär konflikthantering",
+      "code": "PMFS 2016:9",
+      "tags": [
+        "konflikthantering",
+        "PK",
+        "utbildning"
+      ],
+      "url": "https://polisen.se/lagar-och-regler/polismyndighetens-forfattningssamling/2/"
+    }
+  ]
+}
