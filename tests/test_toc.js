@@ -11,12 +11,27 @@ const data={
  {type:'para',number:'10 a',text:'Genomsökning på distans innebär att söka efter handlingar.'}
  ]};
 const groups=toc.chapterGroups('1942:740',data);
-assert.equal(groups[0].title,'Husrannsakan – reell och personell');
+// Källans egna rubriker har företräde i kapitel som har sådana.
+assert.equal(groups[0].title,'Husrannsakan');
+assert.equal(groups[0].first,'1');
 assert.equal(groups[0].paragraphs[0].title,'Reell husrannsakan');
 assert.equal(groups[0].paragraphs[1].title,'Personell husrannsakan');
-assert.equal(groups[1].title,'Proportionalitet, beslut och verkställighet');
-assert.equal(groups[2].title,'Genomsökning på distans');
-assert.equal(groups[2].origin,'källa');
+assert.equal(groups[0].paragraphs[2].title,'Proportionalitet');
+assert.equal(groups[1].title,'Genomsökning på distans');
+assert.equal(groups[1].origin,'källa');
+assert.equal(groups[1].first,'10 a');
+// Redaktionella grupper används i kapitel utan rubriker.
+const brb3=toc.chapterGroups('1962:700',{number:'3',title:'Om brott mot liv och hälsa',items:[
+ {type:'para',number:'1',text:'Den som berövar annan livet'},{type:'para',number:'2',text:'Dråp'},
+ {type:'para',number:'5',text:'Misshandel'},{type:'para',number:'7',text:'Vållande'}]});
+assert.deepEqual(brb3.map(g=>g.title),['Uppsåtligt dödande','Misshandel','Vållande- och farebrott']);
+assert.equal(brb3[0].paragraphs[0].title,'Mord');
+// Underrubriker behåller sin överordnade rubrik.
+const nested=toc.chapterGroups('1942:740',{number:'27',title:'',items:[
+ {type:'heading',text:'Hemliga tvångsmedel'},{type:'heading',text:'Hemlig avlyssning'},{type:'para',number:'18',text:'Text om avlyssning.'}]});
+assert.equal(nested[0].title,'Hemlig avlyssning');
+assert.equal(nested[0].parent,'Hemliga tvångsmedel');
+assert.equal(toc.description('1962:700','3',{number:'4',text:'Text',repealed:true}).text,'Upphävd paragraf');
 assert.equal(toc.chapterMatches(data,groups,'reell husrannsakan'),true);
 assert.equal(toc.chapterMatches(data,groups,'10 a §'),true);
 assert.equal(toc.chapterMatches(data,groups,'häktning'),false);

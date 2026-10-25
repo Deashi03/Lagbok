@@ -27,7 +27,11 @@ jobs:
       - name: Parser tests
         run: python -m unittest discover -s tests -v
       - name: Fetch statutes
+        env:
+          CHANGE_REPORT: ${{ runner.temp }}/changes.md
         run: python scripts/import_laws.py
+      - name: Check editorial headings against new text
+        run: node tests/test_editorial.js && node tests/test_toc.js
       - name: Bootstrap initial corpus
         if: github.event_name == 'push'
         run: |
@@ -47,10 +51,7 @@ jobs:
           branch: automation/sfs-updates
           title: 'Granska importerade och ändrade SFS-författningar'
           commit-message: 'data: import SFS from Riksdagen'
-          body: |
-            Kontrollera lagtext, ikraftträdande, övergångsbestämmelser och
-            alternativa lydelser. Detta är automatiskt hämtad text och
-            är INTE fullständigt juridiskt kvalitetssäkrad.
+          body-path: ${{ runner.temp }}/changes.md
           add-paths: |
             data/catalog.json
             data/laws/*.json

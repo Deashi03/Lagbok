@@ -3,6 +3,7 @@
 import datetime as dt
 import html
 import json
+import os
 from pathlib import Path
 import re
 import sys
@@ -16,12 +17,58 @@ MIN={"1942:740":250,"1962:700":150,"1984:387":30,"1947:948":15,"1998:1276":90,"1
 CAP=re.compile(r'<a\s+name="K(\d+)"[^>]*>\s*\d+\s*kap\.\s*(.*?)</a>',re.I|re.S)
 PAR=re.compile(r'<a\s+class="paragraf"\s+name="(?:K(\d+))?P(\d+[a-z]?)"[^>]*>\s*<b>\s*(\d+\s*[a-z]?)\s*§\s*</b>\s*</a>',re.I|re.S)
 HEAD=re.compile(r'<h4\b[^>]*>(.*?)</h4>',re.I|re.S)
+# Riksdagen markerar lydelser med t.ex. "/Träder i kraft I:2027-01-01/" först i paragrafen.
+MARK=re.compile(r'^/\s*(Träder i kraft I|Upphör att gälla U)\s*:\s*([^/\n]*?)\s*/\s*',re.I)
+# Markeringar för rubriker och kapitel hamnar i föregående paragrafs text och tas bort därifrån.
+NOTE=re.compile(r'\s*/\s*(?:Rubriken|Kapitlet)\s+(?:träder i kraft|upphör att gälla)[^/\n]*/\s*',re.I)
+AMEND=re.compile(r'(?:(?<=[.\n])|^)\s*((?:Lag|Förordning) ?\((\d{4}:\d+)\)\.?)\s*$')
+REPEALED=re.compile(r'^(?:Har upphävts|Har upphört att gälla|Upphävd)\b',re.I)
+LEGACY_SPLIT="\n\nALTERNATIV LYDELSE – KONTROLLERA IKRAFTTRÄDANDE:\n"
+DATE=re.compile(r'\d{4}-\d{2}-\d{2}')
 def clear(s):
     s=re.sub(r"<br\s*/?>","\n",s,flags=re.I)
     s=re.sub(r"</?(?:p|div|li|ol|ul)\b[^>]*>","\n",s,flags=re.I)
     s=html.unescape(re.sub(r"<[^>]*>","",s)).replace("\xa0"," ")
     s=re.sub(r"[ \t]+"," ",s)
     return re.sub(r"\n{3,}","\n\n",re.sub(r" *\n *","\n",s)).strip()
+def tidy(s):
+    s=str(s or "").replace("\r","").replace("\xa0"," ")
+    s="\n".join(re.sub(r"[ \t]+"," ",line).strip() for line in s.split("\n"))
+    return re.sub(r"\n{3,}","\n\n",s).strip()
+def when(label):
+    label=re.sub(r"\s+genom\s+(?:lag|förordning)\s*\(\d{4}:\d+\)\.?$","",label.strip(),flags=re.I).rstrip(".")
+    m=DATE.search(label)
+    return {"date":m[0] if m else None,"label":label}
+def version(raw):
+    """En lydelse: ren text, ändringsförfattning och eventuellt ikraftträdande/upphörande."""
+    text=tidy(raw);out={}
+    while True:
+        m=MARK.match(text)
+        if not m:break
+        out["inForce" if m[1].lower().startswith("träder") else "expires"]=when(m[2])
+        text=text[m.end():]
+    text=tidy(NOTE.sub("\n\n",text))
+    m=AMEND.search(text)
+    if m and m.start(1)>0:
+        out["amendedBy"]=m[2];text=text[:m.start()].rstrip()
+    out["text"]=text
+    return out
+def build_para(number,raws):
+    versions=[version(r) for r in raws if r and r.strip()]
+    first=versions[0]
+    item={"type":"para","number":number,"text":first["text"]}
+    if len(versions)>1 or "inForce" in first or "expires" in first:
+        item["versions"]=versions
+    elif "amendedBy" in first:
+        item["amendedBy"]=first["amendedBy"]
+    if all(REPEALED.match(v["text"]) for v in versions):item["repealed"]=True
+    return item
+def amendment_key(sfs):
+    y,n=sfs.split(":");return (int(y),int(n))
+def latest_amendment(chs):
+    found=[v.get("amendedBy") for c in chs for p in c["items"] if p["type"]=="para" for v in (p.get("versions") or [p])]
+    found=[f for f in found if f]
+    return max(found,key=amendment_key) if found else None
 def num(s):
     m=re.fullmatch(r"(\d+)\s*([a-z]?)",s.strip().lower())
     if not m:raise ValueError("bad section "+s)
@@ -36,11 +83,13 @@ def finish(caps):
         else:
             target=by_id[ch["number"]]
             for item in ch["items"]:
-                if item["type"]=="para":add(target,item["number"],item["text"])
+                if item["type"]=="para":
+                    for raw in item["raw"]:add(target,item["number"],raw)
                 else:target["items"].append(item)
     caps=merged
     caps=[c for c in caps if any(p["type"]=="para" for p in c["items"])]
     for c in caps:
+        c["items"]=[build_para(x["number"],x["raw"]) if x["type"]=="para" else x for x in c["items"]]
         waiting=[]
         for p in c["items"]:
             if p["type"]=="heading":waiting.append(p)
@@ -52,10 +101,8 @@ def finish(caps):
 def add(c,n,text):
     if not text:return
     prev=next((i for i in reversed(c["items"]) if i["type"]=="para" and i["number"]==n),None)
-    if prev:
-        prev["hasVariants"]=True
-        prev["text"]+="\n\nALTERNATIV LYDELSE – KONTROLLERA IKRAFTTRÄDANDE:\n"+text
-    else:c["items"].append({"type":"para","number":n,"text":text})
+    if prev:prev["raw"].append(text)
+    else:c["items"].append({"type":"para","number":n,"raw":[text]})
 def parse_html(source):
     match=re.search(r"<hr\b[^>]*>",source,re.I)
     if match:source=source[match.end():]
@@ -88,15 +135,15 @@ def parse_text(raw):
     for line in raw.splitlines():
         line=line.strip()
         if not line:
-            if p:p["text"]+="\n"
+            if p:p["raw"][-1]+="\n"
             continue
         m=re.match(r"^(\d+)\s*kap\.\s*(.*)",line)
         if m:
             cur={"number":m[1],"title":m[2],"items":[]};chapters.append(cur);p=None;continue
         m=re.match(r"^(\d+\s*[a-z]?)\s*§\s*(.*)",line,re.I)
         if m:
-            n=num(m[1]);add(cur,n,m[2]);p=next(x for x in reversed(cur["items"]) if x["type"]=="para" and x["number"]==n)
-        elif p:p["text"]+="\n"+line
+            n=num(m[1]);add(cur,n,m[2] or " ");p=next(x for x in reversed(cur["items"]) if x["type"]=="para" and x["number"]==n)
+        elif p:p["raw"][-1]+="\n"+line
         elif len(line)<110 and not re.match(r"^\d+\s",line):
             cur["items"].append({"type":"heading","text":line,"editorial":False})
     return finish(chapters)
@@ -108,7 +155,7 @@ def validate(chs,id):
         for p in c["items"]:
             if p["type"]!="para":continue
             key=(c["number"],p["number"])
-            if key in seen or len(p["text"])<4:raise ValueError("duplicate or empty section "+str(key))
+            if key in seen or any(len(v["text"])<4 for v in p.get("versions") or [p]):raise ValueError("duplicate or empty section "+str(key))
             seen.add(key)
 def editorial(chs,sfs):
     if sfs!="1942:740":return
@@ -118,6 +165,32 @@ def editorial(chs,sfs):
     if idx is None:return
     if idx and c["items"][idx-1]["type"]=="heading" and "husrannsakan" in c["items"][idx-1]["text"].lower():return
     c["items"].insert(idx,{"type":"heading","text":"Husrannsakan","editorial":True,"nextPara":"1"})
+def document(id,name,method,chs):
+    return {"sfs":id,"title":name,"sourceUrl":"https://data.riksdagen.se/dokument/sfs-"+id.replace(":","-")+".html","parser":method,
+            "fetchedAt":dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds"),"latestAmendment":latest_amendment(chs),"chapters":chs}
+def paragraphs(doc):
+    return {(c["number"],p["number"]):p for c in (doc or {}).get("chapters",[]) for p in c["items"] if p["type"]=="para"}
+def label(key):return (key[0]+" kap. " if key[0]!="0" else "")+key[1]+" §"
+def describe_changes(name,id,old,new):
+    """Kort markdownsammanfattning av vad som ändrats, för granskning i pull request."""
+    lines=["### "+name+" (SFS "+id+")"]
+    if old is None:return "\n".join(lines+["Ny författning i lagboken."])
+    a,b=paragraphs(old),paragraphs(new)
+    added=[k for k in b if k not in a];removed=[k for k in a if k not in b]
+    changed=[k for k in b if k in a and a[k]!=b[k]]
+    upcoming=[k for k in changed+added if any("inForce" in v for v in b[k].get("versions",[]))]
+    if new.get("latestAmendment")!=old.get("latestAmendment"):lines.append("- Senaste ändring: SFS "+str(new.get("latestAmendment")))
+    for title,keys in (("Nya paragrafer",added),("Ändrade paragrafer",changed),("Borttagna paragrafer",removed),("Med kommande lydelse",upcoming)):
+        if keys:lines.append("- "+title+" ("+str(len(keys))+"): "+", ".join(label(k) for k in keys[:40])+(" …" if len(keys)>40 else ""))
+    if len(lines)==1:lines.append("- Endast struktur eller metadata ändrad.")
+    return "\n".join(lines)
+def write_report(report,fail):
+    target=os.environ.get("CHANGE_REPORT")
+    text="## Ändringar från Riksdagens öppna data\n\n"+("\n\n".join(report) if report else "Inga ändringar i lagtexten.")
+    if fail:text+="\n\n**Kunde inte importeras:** "+", ".join(fail)
+    text+="\n\nKontrollera lagtext, ikraftträdande och övergångsbestämmelser innan sammanslagning. Redaktionella rubriker kontrolleras av testerna."
+    print(text)
+    if target:Path(target).write_text(text+"\n",encoding="utf-8")
 def fetch(sfs):
     url="https://data.riksdagen.se/dokument/sfs-"+sfs.replace(":","-")+".json"
     req=Request(url,headers={"User-Agent":"LagbokenImporter/0.1","Accept":"application/json"})
@@ -128,7 +201,7 @@ def fetch(sfs):
             if attempt==2:raise
             time.sleep(attempt+1)
 def run():
-    catalog=json.loads(CATALOG.read_text(encoding="utf-8"));changed=False;fail=[]
+    catalog=json.loads(CATALOG.read_text(encoding="utf-8"));changed=False;fail=[];report=[]
     for meta in catalog["laws"]:
         id=meta["sfs"]
         try:
@@ -139,12 +212,14 @@ def run():
                 chs=parse_text(doc.get("text") or "");method="TEXT"
             validate(chs,id)
             editorial(chs,id)
-            output={"sfs":id,"title":meta["name"],"sourceUrl":"https://data.riksdagen.se/dokument/sfs-"+id.replace(":","-")+".html","parser":method,"fetchedAt":dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds"),"chapters":chs}
+            output=document(id,meta["name"],method,chs)
             file=OUT/(id.replace(":","-")+".json")
+            previous=None
             if file.exists():
                 previous=json.loads(file.read_text(encoding="utf-8"))
                 if {k:v for k,v in output.items() if k!="fetchedAt"}=={k:v for k,v in previous.items() if k!="fetchedAt"}:
                     print(id,"unchanged");continue
+            report.append(describe_changes(meta["name"],id,previous,output))
             OUT.mkdir(parents=True,exist_ok=True)
             file.write_text(json.dumps(output,ensure_ascii=False,separators=(",",":"))+"\n",encoding="utf-8")
             print(id,"imported",count(chs),"paragraphs",method)
@@ -154,5 +229,6 @@ def run():
     if changed:
         catalog["generated"]=dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds")
         CATALOG.write_text(json.dumps(catalog,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
+    write_report(report,fail)
     if fail:sys.exit("Manual review needed: "+", ".join(fail))
 if __name__=="__main__":run()

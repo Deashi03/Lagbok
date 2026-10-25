@@ -22,3 +22,14 @@ console.log('Juridiska länkar: 9 kontroller godkända');
 
 assert.match(linkify('Se 1 och 2 §§ i detta kapitel',local),/data-ref-para="1"/);
 assert.match(linkify('Se 1 och 2 §§ i detta kapitel',local),/data-ref-para="2"/);
+
+const more={sfs:'1962:700',chapter:'24',href,exists:()=>true};
+assert.match(linkify('enligt 10 § polislagen (1984:387)',more),/data-ref-sfs="1984:387"/);
+assert.match(linkify('enligt 2 § lagen (1976:511) om omhändertagande av berusade personer',more),/data-ref-sfs="1976:511"[^>]*data-ref-chapter="0"/);
+assert.match(linkify('35 kap. 21 § offentlighets- och sekretesslagen',more),/data-ref-sfs="2009:400"/);
+assert.doesNotMatch(linkify('3 och 4 §§ lagen (2025:1062) om polisens användning av skjutvapen',more),/class="law-ref"/);
+assert.match(linkify('24 kap. 7 § första stycket rättegångsbalken',more),/data-ref-sfs="1942:740"/);
+console.log('Juridiska länkar: hänvisningar till andra författningar godkända');
+const range=linkify('enligt 1-4 §§ detta kapitel',more);
+assert.match(range,/data-ref-para="1"[^>]*>1<\/a>-<a[^>]*data-ref-para="4"/);
+console.log('Juridiska länkar: intervall godkända');

@@ -199,3 +199,40 @@ html[data-focus="true"] .bottom-nav{display:none}
  .toc-results{padding-left:16px;padding-right:16px}
  .toc-paragraph{grid-template-columns:43px minmax(0,1fr)}
 }
+
+/* 0.5 – lydelser, rubriker i lagtexten, kapitelavsnitt och direkta hänvisningar */
+.paragraph-heading-button{display:inline-flex;align-items:baseline;gap:9px;flex-wrap:wrap;text-align:left}
+.paragraph-title{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;font-size:14px;font-weight:680;color:var(--text);letter-spacing:0}
+.reader-section{font-family:Georgia,"Iowan Old Style",serif;font-size:19px;font-weight:600;color:var(--text);margin:30px 0 4px;line-height:1.3}
+.reader-subhead{scroll-margin-top:50px;padding-top:6px;border-top:1px solid var(--border)}
+.statute-body>.reader-subhead:first-child{border-top:0;margin-top:4px}
+.reader-subhead.editorial{font-size:15px;color:var(--accent)}
+.reader-subhead.editorial:after{content:"Redaktionell rubrik";display:block;font-size:10px;font-weight:500;color:var(--secondary);margin:3px 0 0;letter-spacing:.04em;text-transform:uppercase}
+.paragraph.repealed{display:flex;gap:10px;align-items:baseline;padding:9px 0;color:var(--secondary)}
+.paragraph.repealed .paragraph-num{font-size:16px;color:var(--secondary)}
+.repealed-text{font-size:13px}
+.amended{font-size:11px;color:var(--secondary);margin:8px 0 0;letter-spacing:.01em}
+.lydelse-status{display:inline-block;font-size:11px;font-weight:650;color:var(--secondary);background:var(--soft);border-radius:6px;padding:4px 8px;margin:4px 0 8px}
+.lydelse-status.upcoming{color:var(--wine);background:transparent;border:1px solid var(--wine)}
+.lydelse{margin-top:12px;border:1px solid var(--border);border-radius:10px;padding:0 12px}
+.lydelse summary{cursor:pointer;list-style:none;font-size:12px;font-weight:680;color:var(--wine);padding:10px 0;display:flex;justify-content:space-between;gap:8px}
+.lydelse summary::-webkit-details-marker{display:none}.lydelse summary:after{content:"⌄";color:var(--secondary)}
+.lydelse[open] summary:after{content:"⌃"}.lydelse[open]{padding-bottom:10px;background:var(--soft)}
+.lydelse .paragraph-content{font-size:calc(15px * var(--fontscale))}
+.paragraph.is-target{animation:target-flash 2.2s ease-out}
+@keyframes target-flash{0%,35%{background:var(--soft-green);box-shadow:-19px 0 0 var(--soft-green),19px 0 0 var(--soft-green)}100%{background:transparent;box-shadow:none}}
+.return-chip{position:sticky;bottom:12px;left:0;display:block;margin:0 auto 14px;max-width:calc(100% - 32px);width:max-content;border:0;border-radius:999px;background:var(--accent);color:var(--panel);font-size:13px;font-weight:680;padding:11px 17px;box-shadow:0 6px 18px #10241740;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;z-index:5}
+.reader-next{display:flex;flex-direction:column;gap:3px;margin-top:14px;padding:13px 14px;border:1px solid var(--border);border-radius:10px;text-decoration:none;color:var(--accent);font-weight:680;font-size:14px}
+.reader-next:active{background:var(--soft)}
+.chapter-item>summary{list-style:none}.chapter-item>summary::-webkit-details-marker{display:none}
+.chapter-toggle{transition:transform .15s}.chapter-item[open] .chapter-toggle{transform:rotate(180deg)}
+.chapter-item[open]>summary{border-bottom-color:transparent}
+.chapter-sections{border-bottom:1px solid var(--border);padding:0 0 8px 12px;border-left:2px solid var(--soft-green);margin:0 0 0 2px}
+.chapter-section{display:flex;align-items:center;gap:10px;padding:10px 4px;text-decoration:none;color:var(--text);border-radius:8px;min-height:44px}
+.chapter-section:active{background:var(--soft)}.chapter-section .grow{flex:1;min-width:0}
+.chapter-section.all{color:var(--accent);font-weight:680;font-size:13px}
+.chapter-section-title{display:block;font-size:14px;font-weight:620;line-height:1.3}
+.chapter-section-parent{display:block;font-size:11px;color:var(--secondary);margin-bottom:2px}
+.chapter-section-range{font-size:12px;color:var(--secondary);white-space:nowrap}
+.toc-subgroup-title a{color:inherit;text-decoration:none}
+.toc-subgroup-parent{font-size:11px;color:var(--secondary);padding:8px 4px 0;text-transform:uppercase;letter-spacing:.05em}

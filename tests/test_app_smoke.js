@@ -5,12 +5,16 @@ const vm=require('node:vm');
 const search=require('../assets/search-core.js');
 const legalLinks=require('../assets/legal-links.js');
 const tocModel=require('../assets/toc-model.js');
+const lawModel=require('../assets/law-model.js');
 const catalog=require('../data/catalog.json');
 const app=fs.readFileSync(require('node:path').join(__dirname,'../assets/app.js'),'utf8');
 const laws={
  '1962:700':{chapters:[
    {number:'1',title:'Om brott',items:[{type:'para',number:'1',text:'Första paragrafen.'}]},
-   {number:'24',title:'Om allmänna grunder för ansvarsfrihet',items:[{type:'para',number:'1',text:'Tjugofjärde kapitlet. Se 2 §.'},{type:'para',number:'2',text:'Det andra lagrummet.'}]}
+   {number:'24',title:'Om allmänna grunder för ansvarsfrihet',items:[{type:'para',number:'1',text:'Tjugofjärde kapitlet. Se 2 §.',amendedBy:'1994:458'},
+     {type:'para',number:'2',text:'Det andra lagrummet.',versions:[{text:'Det andra lagrummet.',expires:{date:null,label:'den dag som regeringen bestämmer'}},{text:'Framtida lydelse.',inForce:{date:'2099-01-01'}}]},
+     {type:'para',number:'3',text:'Har upphävts genom lag (2000:1).',repealed:true},{type:'para',number:'4',text:'Nöd.'}]},
+   {number:'25',title:'Om böter m.m.',items:[{type:'para',number:'1',text:'Böter.'}]}
  ]},
  '1947:948':{chapters:[{number:'0',title:'',items:[{type:'para',number:'12',text:'Tolfte paragrafen.'}]}]}
 };
@@ -43,7 +47,7 @@ const history={
  replaceState(_s,_t,url){location.hash=url}
 };
 const window={
- LagbokSearch:search,LagbokReferences:legalLinks,LagbokTOC:tocModel,
+ LagbokSearch:search,LagbokReferences:legalLinks,LagbokTOC:tocModel,LagbokLaw:lawModel,
  matchMedia:()=>({matches:false,addEventListener(){}}),
  addEventListener(name,fn){(listeners['window.'+name]??=[]).push(fn)}
 };
@@ -84,14 +88,28 @@ async function submit(q){
  assert.equal((el.view.innerHTML.match(/data-action="toc"/g)||[]).length,1);
  assert.match(el.view.innerHTML,/paragraph-heading-button/);
  assert.match(el.view.innerHTML,/data-ref-para="2"/);
+ // 0.5: redaktionell rubrik, ändrings-SFS, lydelser, upphävd paragraf och nästa kapitel
+ assert.match(el.view.innerHTML,/paragraph-title">Nödvärn</);
+ assert.match(el.view.innerHTML,/Nödvärn och laga befogenhet/);
+ assert.match(el.view.innerHTML,/Ändrad genom SFS 1994:458/);
+ assert.match(el.view.innerHTML,/Gäller till den dag regeringen bestämmer/);
+ assert.match(el.view.innerHTML,/Kommande lydelse · träder i kraft 1 januari 2099/);
+ assert.match(el.view.innerHTML,/Framtida lydelse/);
+ assert.match(el.view.innerHTML,/class="paragraph reader-block repealed"/);
+ assert.match(el.view.innerHTML,/Nästa kapitel/);
+ // Hänvisningar öppnas direkt och ger en tillbaka-knapp.
  const refTarget={
    dataset:{refSfs:'1962:700',refChapter:'24',refPara:'2'},
-   closest(selector){return selector==='[data-ref]'?this:null}
+   closest(selector){
+     if(selector==='[data-ref]')return this;
+     if(selector==='.paragraph')return {dataset:{paragraph:'1'}};
+     return null;
+   }
  };
  listeners['document.click'][0]({target:refTarget,preventDefault(){}});
  await settle();
- assert.match(el.sheet.innerHTML,/Förhandsvisning/);
- assert.match(el.sheet.innerHTML,/Det andra lagrummet/);
+ assert.equal(location.hash,'#/law/1962%3A700/24/2');
+ assert.match(el.view.innerHTML,/Tillbaka till BrB 24:1/);
  listeners['document.click'][0]({target:{
    dataset:{action:'toc'},
    closest(selector){return selector==='[data-action]'?this:null}
@@ -101,16 +119,16 @@ async function submit(q){
  assert.match(el.sheet.innerHTML,/toc-paragraphs/);
  assert.match(el.sheet.innerHTML,/toc-current/);
  assert.doesNotMatch(el.sheet.innerHTML,/para-grid/);
- assert.match(el.sheet.innerHTML,/Tjugofjärde kapitlet/);
+ assert.match(el.sheet.innerHTML,/Nödvärn och laga befogenhet/);
  const selectPara={
    closest(selector){
-     if(selector==='a[data-link]')return {getAttribute:()=> '#/law/1962%3A700/24/2'};
+     if(selector==='a[data-link]')return {getAttribute:()=> '#/law/1962%3A700/24/1'};
      return null;
    }
  };
  listeners['document.click'][0]({target:selectPara,preventDefault(){}});
  await settle();
- assert.equal(location.hash,'#/law/1962%3A700/24/2');
+ assert.equal(location.hash,'#/law/1962%3A700/24/1');
  assert.equal(el.sheet.hidden,true);
 
  const action=(name,extra={})=>({
@@ -134,5 +152,12 @@ async function submit(q){
  assert.equal(location.hash,'#/fap/FAP%20104-04');
  assert.match(el.view.innerHTML,/fap-frame/);
  assert.match(el.view.innerHTML,/polisen\.se/);
- console.log('Appflöden 0.4: sökning, vertikal innehållsförteckning, läsning och FAP godkända');
+ 
+ // Kapitellistan låter användaren välja avsnitt innan läsningen börjar.
+ location.hash='#/law/1962%3A700';
+ await listeners['window.hashchange'][0]();await settle();
+ assert.match(el.view.innerHTML,/chapter-item/);
+ assert.match(el.view.innerHTML,/Hela kapitlet/);
+ assert.match(el.view.innerHTML,/href="#\/law\/1962%3A700\/24\/4"[^>]*><span class="grow"><span class="chapter-section-title">Nöd</);
+ console.log('Appflöden 0.5: sökning, kapitelavsnitt, lydelser, direkta hänvisningar och FAP godkända');
 })().catch(error=>{console.error(error);process.exitCode=1});
