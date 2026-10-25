@@ -1,6 +1,6 @@
 {
   "version": "0.6",
-  "generated": "2026-10-25T22:42:34+00:00",
+  "generated": "2026-10-25T22:52:16+00:00",
   "source": "Sveriges riksdag, Riksdagens öppna data",
   "laws": [
     {
@@ -433,8 +433,7 @@
       ],
       "chaptered": false,
       "area": "process",
-      "check": "tingsrättsinstruktion",
-      "available": false
+      "check": "tingsrättsinstruktion"
     },
     {
       "sfs": "2015:743",
@@ -446,8 +445,7 @@
       ],
       "chaptered": false,
       "area": "process",
-      "check": "instruktion för åklagarmyndigheten",
-      "available": false
+      "check": "instruktion för åklagarmyndigheten"
     },
     {
       "sfs": "2010:1932",
@@ -505,8 +503,7 @@
       ],
       "chaptered": false,
       "area": "process",
-      "check": "särskild personutredning",
-      "available": false
+      "check": "särskild personutredning"
     },
     {
       "sfs": "2010:610",

@@ -52,6 +52,8 @@ jobs:
           git push origin HEAD:main
       - name: Build search index and reference register
         run: node scripts/build_indexes.js
+      - name: Save import report
+        run: cp data/import-report.md "${{ runner.temp }}/import-report.md"
       - name: Propose changes for legal review
         # Kräver att "Allow GitHub Actions to create and approve pull requests" är påslaget.
         # Utan det finns ändringarna ändå kvar på grenen automation/sfs-updates.
@@ -69,7 +71,7 @@ jobs:
             data/import-report.md
       - name: Fail if some statutes could not be imported
         run: |
-          cat data/import-report.md >> "$GITHUB_STEP_SUMMARY"
-          if grep -q "Kunde inte importeras" data/import-report.md; then
+          cat "${{ runner.temp }}/import-report.md" >> "$GITHUB_STEP_SUMMARY"
+          if grep -q "Kunde inte importeras" "${{ runner.temp }}/import-report.md"; then
             exit 1
           fi
