@@ -29,14 +29,14 @@ jobs:
         run: python -m unittest discover -s tests -v
       - name: Fetch statutes
         env:
-          CHANGE_REPORT: ${{ runner.temp }}/changes.md
+          CHANGE_REPORT: data/import-report.md
         run: python scripts/import_laws.py
       - name: Check editorial headings against new text
         # Fel här ska synas i granskningen men inte hindra att förslaget skapas.
         continue-on-error: true
         run: |
           if ! node tests/test_editorial.js > editorial.log 2>&1; then
-            printf '\n\n**Redaktionella rubriker behöver ses över:**\n\n```\n%s\n```\n' "$(tail -5 editorial.log)" >> "${{ runner.temp }}/changes.md"
+            printf '\n\n**Redaktionella rubriker behöver ses över:**\n\n```\n%s\n```\n' "$(tail -5 editorial.log)" >> data/import-report.md
           fi
       - name: Bootstrap initial corpus
         if: github.event_name == 'push'
@@ -53,18 +53,23 @@ jobs:
       - name: Build search index and reference register
         run: node scripts/build_indexes.js
       - name: Propose changes for legal review
+        # Kräver att "Allow GitHub Actions to create and approve pull requests" är påslaget.
+        # Utan det finns ändringarna ändå kvar på grenen automation/sfs-updates.
+        continue-on-error: true
         uses: peter-evans/create-pull-request@v7
         with:
           branch: automation/sfs-updates
           title: 'Granska importerade och ändrade SFS-författningar'
           commit-message: 'data: import SFS from Riksdagen'
-          body-path: ${{ runner.temp }}/changes.md
+          body-path: data/import-report.md
           add-paths: |
             data/catalog.json
             data/laws/*.json
             data/index/**
+            data/import-report.md
       - name: Fail if some statutes could not be imported
         run: |
-          if grep -q "Kunde inte importeras" "${{ runner.temp }}/changes.md"; then
-            cat "${{ runner.temp }}/changes.md"; exit 1
+          cat data/import-report.md >> "$GITHUB_STEP_SUMMARY"
+          if grep -q "Kunde inte importeras" data/import-report.md; then
+            exit 1
           fi

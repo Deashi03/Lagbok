@@ -47,12 +47,13 @@ const history={
  replaceState(_s,_t,url){location.hash=url}
 };
 const window={
- LagbokSearch:search,LagbokReferences:legalLinks,LagbokTOC:tocModel,LagbokLaw:lawModel,
+ LagbokSearch:search,LagbokReferences:legalLinks,LagbokTOC:tocModel,LagbokLaw:lawModel,LagbokIndex:require('../assets/search-index.js'),LagbokHighlights:require('../assets/highlights.js'),
  matchMedia:()=>({matches:false,addEventListener(){}}),
  addEventListener(name,fn){(listeners['window.'+name]??=[]).push(fn)}
 };
 async function fakeFetch(url){
  if(url==='data/catalog.json')return {ok:true,json:async()=>catalog};
+ if(url.startsWith('data/index/'))return {ok:false,json:async()=>({})};
  const parts=/(\d{4})-(\d+)\.json/.exec(url);
  const record=parts?laws[parts[1]+':'+parts[2]]:null;
  return {ok:!!record,json:async()=>record};

@@ -46,7 +46,7 @@ const fs=require('node:fs');
 const path=require('node:path');
 const catalog=require('../data/catalog.json');
 let total=0;
-for(const law of catalog.laws){
+for(const law of catalog.laws.filter(l=>l.available!==false)){
  const pathname=path.join(__dirname,'..','data','laws',law.sfs.replace(':','-')+'.json');
  const source=JSON.parse(fs.readFileSync(pathname,'utf8'));
  for(const chapter of source.chapters){

@@ -193,7 +193,7 @@ def describe_changes(name,id,old,new):
 def write_report(report,fail):
     target=os.environ.get("CHANGE_REPORT")
     text="## Ändringar från Riksdagens öppna data\n\n"+("\n\n".join(report) if report else "Inga ändringar i lagtexten.")
-    if fail:text+="\n\n**Kunde inte importeras:** "+", ".join(fail)
+    if fail:text+="\n\n**Kunde inte importeras:**\n"+"\n".join("- "+f for f in fail)
     text+="\n\nKontrollera lagtext, ikraftträdande och övergångsbestämmelser innan sammanslagning. Redaktionella rubriker kontrolleras av testerna."
     print(text)
     if target:Path(target).write_text(text+"\n",encoding="utf-8")
@@ -235,7 +235,13 @@ def run():
             print(id,"imported",count(chs),"paragraphs",method)
             changed=True
         except Exception as ex:
-            print(id,"FAILED",ex,file=sys.stderr);fail.append(id)
+            print(id,"FAILED",ex,file=sys.stderr);fail.append(id+" ("+meta["name"]+"): "+str(ex)[:200])
+            # En författning som aldrig har kunnat importeras döljs i appen tills importen lyckas.
+            if not (OUT/(id.replace(":","-")+".json")).exists() and meta.get("available") is not False:
+                meta["available"]=False;changed=True
+            continue
+        if meta.get("available") is False:
+            meta.pop("available");changed=True
     if changed:
         catalog["generated"]=dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds")
         CATALOG.write_text(json.dumps(catalog,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")

@@ -1,6 +1,6 @@
 {
   "version": "0.6",
-  "generated": "2026-10-25T20:05:25+00:00",
+  "generated": "2026-10-25T22:42:34+00:00",
   "source": "Sveriges riksdag, Riksdagens öppna data",
   "laws": [
     {
@@ -170,7 +170,7 @@
         "föräldrabalk",
         "vårdnad"
       ],
-      "chaptered": false,
+      "chaptered": true,
       "area": "civil",
       "check": "föräldrabalk"
     },
@@ -182,7 +182,7 @@
         "ÄktB",
         "äktenskapsbalk"
       ],
-      "chaptered": false,
+      "chaptered": true,
       "area": "civil",
       "check": "äktenskapsbalk"
     },
@@ -195,7 +195,7 @@
         "ärvdabalk",
         "arv"
       ],
-      "chaptered": false,
+      "chaptered": true,
       "area": "civil",
       "check": "ärvdabalk"
     },
@@ -208,7 +208,7 @@
         "jordabalk",
         "hyra"
       ],
-      "chaptered": false,
+      "chaptered": true,
       "area": "civil",
       "check": "jordabalk"
     },
@@ -221,7 +221,7 @@
         "miljöbalk",
         "miljöbrott"
       ],
-      "chaptered": false,
+      "chaptered": true,
       "area": "civil",
       "check": "miljöbalk"
     },
@@ -234,7 +234,7 @@
         "utsökningsbalk",
         "utmätning"
       ],
-      "chaptered": false,
+      "chaptered": true,
       "area": "process",
       "check": "utsökningsbalk"
     },
@@ -246,7 +246,7 @@
         "SFB",
         "socialförsäkringsbalk"
       ],
-      "chaptered": false,
+      "chaptered": true,
       "area": "forvaltning",
       "check": "socialförsäkringsbalk"
     },
@@ -259,7 +259,7 @@
         "tryckfrihet",
         "allmänna handlingar"
       ],
-      "chaptered": false,
+      "chaptered": true,
       "area": "grundlag",
       "check": "tryckfrihetsförordning"
     },
@@ -271,7 +271,7 @@
         "YGL",
         "yttrandefrihet"
       ],
-      "chaptered": false,
+      "chaptered": true,
       "area": "grundlag",
       "check": "yttrandefrihetsgrundlag"
     },
@@ -344,7 +344,7 @@
         "tullbefogenhet",
         "tull"
       ],
-      "chaptered": false,
+      "chaptered": true,
       "area": "polis",
       "check": "tullbefogenhet"
     },
@@ -356,7 +356,7 @@
         "BDL",
         "brottsdatalag"
       ],
-      "chaptered": false,
+      "chaptered": true,
       "area": "polis",
       "check": "brottsdatalag"
     },
@@ -369,7 +369,7 @@
         "polisdatalagen",
         "personuppgifter polis"
       ],
-      "chaptered": false,
+      "chaptered": true,
       "area": "polis",
       "check": "polisens behandling av personuppgifter"
     },
@@ -395,7 +395,7 @@
         "avvisning",
         "utvisning"
       ],
-      "chaptered": false,
+      "chaptered": true,
       "area": "forvaltning",
       "check": "utlänningslag"
     },
@@ -432,7 +432,8 @@
       ],
       "chaptered": false,
       "area": "process",
-      "check": "domstolsförordning"
+      "check": "domstolsförordning",
+      "available": false
     },
     {
       "sfs": "2015:743",
@@ -444,7 +445,8 @@
       ],
       "chaptered": false,
       "area": "process",
-      "check": "åklagarförordning"
+      "check": "åklagarförordning",
+      "available": false
     },
     {
       "sfs": "2010:1932",
@@ -501,7 +503,8 @@
       ],
       "chaptered": false,
       "area": "process",
-      "check": "rättspsykiatrisk undersökning"
+      "check": "rättspsykiatrisk undersökning",
+      "available": false
     },
     {
       "sfs": "2010:610",
@@ -512,7 +515,7 @@
         "fängelselag",
         "kriminalvård"
       ],
-      "chaptered": false,
+      "chaptered": true,
       "area": "frihet",
       "check": "fängelselag"
     },
@@ -525,7 +528,7 @@
         "häkteslag",
         "häkte"
       ],
-      "chaptered": false,
+      "chaptered": true,
       "area": "frihet",
       "check": "häkteslag"
     },
@@ -623,7 +626,7 @@
         "alkohollag",
         "alkohol"
       ],
-      "chaptered": false,
+      "chaptered": true,
       "area": "straff",
       "check": "alkohollag"
     },
@@ -636,7 +639,7 @@
         "körkortslag",
         "körkort"
       ],
-      "chaptered": false,
+      "chaptered": true,
       "area": "trafik",
       "check": "körkortslag"
     },
@@ -685,7 +688,7 @@
         "skadeståndslag",
         "skadestånd"
       ],
-      "chaptered": false,
+      "chaptered": true,
       "area": "civil",
       "check": "skadeståndslag"
     },

@@ -3,6 +3,8 @@
    data/index/paras.json          – alla paragrafer: [lag, kapitel, paragraf, rubrik]
    data/index/terms/<xx>.json     – ord -> paragrafnummer (deltakodade), uppdelat på ordets två första tecken
    data/index/backlinks/<sfs>.json – "kapitel|paragraf" -> paragrafer som hänvisar hit
+   data/index/status.json         – per lag: senaste ändring och kontrollsumma (för ändringsbevakning)
+   data/index/upcoming.json       – alla kommande lydelser med datum
    Körs av importen och kontrolleras i CI, så att indexet alltid matchar lagtexten. */
 'use strict';
 const fs=require('node:fs');
@@ -11,6 +13,7 @@ const root=path.join(__dirname,'..');
 const links=require(path.join(root,'assets/legal-links.js'));
 const toc=require(path.join(root,'assets/toc-model.js'));
 const search=require(path.join(root,'assets/search-core.js'));
+const lawModel=require(path.join(root,'assets/law-model.js'));
 const catalog=JSON.parse(fs.readFileSync(path.join(root,'data/catalog.json'),'utf8'));
 links.configure(catalog.laws);
 const out=path.join(root,'data/index');
@@ -64,6 +67,7 @@ for(const [term,list] of [...postings].sort((a,b)=>a[0]<b[0]?-1:1)){
   let prev=0;shards.get(shard)[term]=list.map(n=>{const d=n-prev;prev=n;return d;});
 }
 for(const [name,data] of shards)fs.writeFileSync(path.join(out,'terms',name+'.json'),JSON.stringify(data));
+fs.writeFileSync(path.join(out,'shards.json'),JSON.stringify([...shards.keys()]));
 const bySfs=new Map();
 for(const [k,sources] of backlinks){
   const [sfs,target]=k.split('#');
@@ -71,5 +75,21 @@ for(const [k,sources] of backlinks){
   bySfs.get(sfs)[target]=[...sources.values()];
 }
 for(const [sfs,data] of bySfs)fs.writeFileSync(path.join(out,'backlinks',sfs.replace(':','-')+'.json'),JSON.stringify(data));
+// Kontrollsumma per paragraf och lag: ändras när lydelserna ändras, inte när hämtningsdatum ändras.
+const status={},upcoming=[];
+for(const law of laws){
+  const doc=docs.get(law.sfs);
+  for(const ch of doc.chapters)for(const item of ch.items){
+    if(item.type!=='para')continue;
+    for(const v of item.versions||[]){
+      if(!v.inForce)continue;
+      upcoming.push([v.inForce.date||'',law.sfs,ch.number,String(item.number)]);
+    }
+  }
+  status[law.sfs]={amended:doc.latestAmendment||null,hash:lawModel.snapshot(doc).hash};
+}
+upcoming.sort((a,b)=>(a[0]||'9999').localeCompare(b[0]||'9999')||a[1].localeCompare(b[1]));
+fs.writeFileSync(path.join(out,'status.json'),JSON.stringify(status));
+fs.writeFileSync(path.join(out,'upcoming.json'),JSON.stringify(upcoming));
 let refs=0;for(const v of backlinks.values())refs+=v.size;
 console.log('Index: '+paras.length+' paragrafer, '+postings.size+' ord i '+shards.size+' delar, '+refs+' hänvisningar till '+backlinks.size+' paragrafer');

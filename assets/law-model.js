@@ -40,5 +40,22 @@
     if(v.expires)return 'Gäller till '+(v.expires.date?formatDate(v.expires.date):'den dag regeringen bestämmer');
     return 'Annan lydelse i källan';
   }
-  return {today,status,resolve,describe,formatDate};
+  // Kontrollsummor för ändringsbevakning. Samma beräkning används i scripts/build_indexes.js.
+  function hash(s){let h=5381;for(let i=0;i<s.length;i++)h=((h<<5)+h+s.charCodeAt(i))|0;return (h>>>0).toString(36);}
+  function paraHash(item){return hash(JSON.stringify(item.versions||[item.text]));}
+  function snapshot(doc){
+    const paras={},parts=[];
+    for(const ch of doc.chapters)for(const item of ch.items){
+      if(item.type!=='para')continue;
+      const h=paraHash(item);paras[ch.number+'|'+item.number]=h;parts.push(ch.number+'|'+item.number+'|'+h);
+    }
+    return {hash:hash(parts.join(';')),paras};
+  }
+  function diff(before,doc){
+    const now=snapshot(doc),added=[],changed=[],removed=[];
+    for(const k in now.paras){if(!(k in before.paras))added.push(k);else if(before.paras[k]!==now.paras[k])changed.push(k);}
+    for(const k in before.paras)if(!(k in now.paras))removed.push(k);
+    return {added,changed,removed,snapshot:now};
+  }
+  return {today,status,resolve,describe,formatDate,hash,paraHash,snapshot,diff};
 });

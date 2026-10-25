@@ -64,6 +64,27 @@
       '24':{'1':'Nödvärn','2':'Laga befogenhet vid rymning och motstånd','3':'Våld vid myteri och strid','4':'Nöd',
         '5':'Hjälp till den som har rätt att ingripa','6':'Excess','7':'Samtycke','8':'Order','9':'Straffrättsvillfarelse'}
     },
+    '1984:387':{
+      '0':{'1':'Polisverksamhetens ändamål','2':'Polismyndighetens uppgifter','2 a':'Särskilt personsäkerhetsarbete','2 b':'Särskilda avdelningar',
+        '3':'Säkerhetspolisens uppgifter','4':'Polisman','6':'Samverkan','7':'Jäv','8':'Behovs- och proportionalitetsprincipen',
+        '9':'Rapporteringsskyldighet','10':'Våldsanvändning','10 a':'Fängsel','11':'Tillfälligt omhändertagande enligt särskild föreskrift',
+        '12':'Omhändertagande av unga under 18 år','12 a':'Omhändertagande i avvaktan på LVM-beslut','13':'Ordningsstörning: avvisa, avlägsna, omhänderta',
+        '13 a':'Avvisande från avspärrat område','13 b':'Inställd eller upplöst allmän sammankomst','13 c':'Folksamling som stör ordningen',
+        '14':'Kvarhållande för identifiering','15':'Underrättelse om omhändertagande','16':'Förhör och längsta tid','17':'Hänsyn vid omhändertagande',
+        '18':'Förhållandet till gripande','19':'Skyddsvisitation','19 a':'Kroppsvisitation vid förhör','20':'Tillträde för att söka efter person',
+        '20 a':'Genomsökning av fordon efter vapen','20 b':'Tillträde till gemensamma utrymmen','21':'Tillträde när någon kan behöva hjälp',
+        '22':'Stoppa fordon','22 a':'Visitation i säkerhetszon','22 b':'Beslut om säkerhetszon','22 c':'Säkerhetszonens varaktighet',
+        '22 d':'Beslutets innehåll','22 e':'Upphävande av säkerhetszon','22 f':'Överklagande','23 a':'Arrestantvakt och passkontrollant',
+        '23 b':'Tystnadsplikt för arrestantvakt','24':'Avspärrning och utrymning','24 a':'Omhändertagande av egendom vid risk för trafikbrott',
+        '24 b':'Anmälan om omhändertagen egendom','24 c':'Omhändertagandets längd','24 d':'Egendom som inte hämtas',
+        '25':'Uppgifter från transportföretag','27':'Protokoll över ingripanden','28':'Protokoll över fängsel och tekniska hjälpmedel',
+        '29 a':'Transport av frihetsberövade','30':'Verkställighetsföreskrifter'}
+    },
+    '1976:511':{
+      '0':{'1':'Omhändertagande av berusad','2':'Hänsyn vid omhändertagande','3':'Läkarundersökning','4':'Kvarhållande och förvar',
+        '5':'Anmälan till förman','6':'Tillsyn','7':'Underrättelse och frigivning','7 a':'Omprövning vid förvar hos Kriminalvården',
+        '8':'Omhändertagande av berusningsmedel','9':'Förhållandet till gripande','10':'Ordningsvakter'}
+    },
     '1942:740':{
       '28':{
         '1':'Reell husrannsakan','2':'Personell husrannsakan','2 a':'Personell husrannsakan i transportmedel',

@@ -37,3 +37,19 @@ Läsaren har en enda innehållsknapp, utan föregående/nästa länkar eller ver
 1. GitHub Actions kör `scripts/import_laws.py` varje vardag och öppnar en pull request när något har ändrats. Beskrivningen listar nya, ändrade, borttagna och kommande paragrafer per författning.
 2. `tests/test_editorial.js` kontrollerar att alla redaktionella rubriker i `assets/editorial.js` fortfarande pekar på befintliga paragrafer som inte är upphävda. En lagändring som flyttar en paragraf syns därför direkt som ett fel.
 3. Redaktionella rubriker ligger bara i `assets/editorial.js` och påverkar aldrig själva lagtexten. Fler författningar läggs till i `data/catalog.json`.
+
+## Version 0.6
+- **55 författningar** (tidigare 14): alla balkar utom Handelsbalken samt lagar och förordningar för polis, domstol, åklagare, frihetsberövande, tvångsvård och specialstraffrätt. Katalogen är indelad i områden.
+- **Hänvisningar** länkas i alla vanliga former: "21 kap. 3 a eller 3 b §", "1, 2, 5 eller 6 §", "1–4 §§", "6 kap. brottsbalken", "8 § första stycket 2 polislagen" och "samma balk". `tests/test_reference_coverage.js` mäter täckningen över all lagtext (98 %).
+- **Menyknappen** ⋯ ligger längst till höger på paragrafraden.
+- **Sökindex**: fritextsökningen går mot ett färdigbyggt index (`data/index`) och laddar bara de lagar som syns i träfflistan. Sökorden markeras i lagtexten.
+- **Överstrykningar och samlingar**: markera text för att stryka under den i gult, grönt eller rosa, med valfri anteckning. Samla paragrafer i egna samlingar.
+- **Hänvisat från**: varje paragraf visar vilka andra paragrafer som hänvisar till den.
+- **Ändringsbevakning**: bevaka lagar (lagar med favoriter bevakas automatiskt). Under *Sparat* syns *Nytt sedan sist* och en tidslinje över kommande ändringar.
+- Dela länk och kopiera kort hänvisning (t.ex. "RB 23:8 b") från paragrafmenyn. Svep åt sidan för att byta kapitel. Offline per område.
+- Importen rättar kapitel med bokstav (t.ex. vapenlagen 1 a kap.) och kontrollerar att Riksdagens titel stämmer med katalogen innan en lag läggs in.
+
+### Lägga till en lag
+1. Lägg till en post i `data/catalog.json` med `sfs`, `name`, `type`, `aliases`, `area` och `check` (ett ord som måste finnas i Riksdagens titel).
+2. Kör arbetsflödet *Kontrollera lagändringar*. Det hämtar lagen, bygger om `data/index` och lägger resultatet på grenen `automation/sfs-updates` med rapporten `data/import-report.md`.
+3. För att arbetsflödet ska kunna öppna en pull request automatiskt: *Settings → Actions → General → Workflow permissions → Allow GitHub Actions to create and approve pull requests*.
