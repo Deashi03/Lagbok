@@ -192,6 +192,7 @@
       '<button title="Anteckning" aria-label="Anteckning" data-action="note" data-key="'+attr(key)+'">✎</button>' +
       '<button title="Spara paragraf" aria-label="Spara paragraf" class="'+(pref.favourites.includes(key)?'is-saved':'')+'" data-action="fav" data-key="'+attr(key)+'">'+badgeMark(key)+'</button></div></div>' +
       '<div class="paragraph-content">'+linkify(item.text,meta.sfs,ch.number)+'</div>' +
+      (item.hasVariants?'<div class="notice" role="note">Observera: bestämmelsen innehåller flera lydelser eller framtida ikraftträdanden i källmaterialet. Kontrollera vilken lydelse som är gällande.</div>':'')+
       (pref.notes[key]?'<div class="paragraph-note">✎ Egen anteckning sparad</div>':'')+'</article>';
   }
   function chapterReader(meta,data,capid){
@@ -370,7 +371,8 @@
     view.innerHTML=markup;
     if(r.page==='law'&&meta)addRecent(meta.sfs+(r.chapter==null?'':'|'+r.chapter)+(r.paragraph?'|'+r.paragraph:''));
     if(r.page==='law'&&r.paragraph) {
-      requestAnimationFrame(()=>{const el=$('#p-'+CSS.escape(r.paragraph));if(el)el.scrollIntoView({block:'start',behavior:'instant'});});
+      const remembered=!reset&&Object.prototype.hasOwnProperty.call(state.positions,location.hash)?state.positions[location.hash]:null;
+      requestAnimationFrame(()=>{if(remembered!==null)view.scrollTop=remembered;else{const el=$('#p-'+CSS.escape(r.paragraph));if(el)el.scrollIntoView({block:'start',behavior:'instant'});}});
     } else if(reset){view.scrollTop=0;}
     else {view.scrollTop=state.positions[location.hash]||0;}
     if((r.page==='search'||r.page==='home')&&state.query) onSearch(state.query);
