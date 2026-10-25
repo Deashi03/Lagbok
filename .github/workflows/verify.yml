@@ -24,3 +24,4 @@ jobs:
         run: |
           node tests/test_search.js
           node tests/test_app_smoke.js
+          node tests/test_legal_links.js

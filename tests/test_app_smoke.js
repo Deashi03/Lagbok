@@ -3,6 +3,7 @@ const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const vm=require('node:vm');
 const search=require('../assets/search-core.js');
+const legalLinks=require('../assets/legal-links.js');
 const catalog=require('../data/catalog.json');
 const app=fs.readFileSync(require('node:path').join(__dirname,'../assets/app.js'),'utf8');
 const laws={
@@ -41,7 +42,7 @@ const history={
  replaceState(_s,_t,url){location.hash=url}
 };
 const window={
- LagbokSearch:search,
+ LagbokSearch:search,LagbokReferences:legalLinks,
  matchMedia:()=>({matches:false,addEventListener(){}}),
  addEventListener(name,fn){(listeners['window.'+name]??=[]).push(fn)}
 };
@@ -66,7 +67,7 @@ async function submit(q){
 }
 (async()=>{
  await settle();
- assert.match(el.view.innerHTML,/VERSION 0\.2/);
+ assert.match(el.view.innerHTML,/Hitta lagrum/);
  listeners['view.input'][0]({target:{id:'query',value:'BrB 24:1'}});
  assert.match(el['search-results'].innerHTML,/Direkt till/);
  assert.match(el['search-suggest'].innerHTML,/Öppna direkt med Enter/);
@@ -75,6 +76,8 @@ async function submit(q){
  await submit('BrB 24:1');
  assert.equal(location.hash,'#/law/1962%3A700/24/1');
  assert.match(el.view.innerHTML,/Tjugofjärde kapitlet/);
+ assert.match(el.view.innerHTML,/reading-mode-standard/);
+ assert.match(el.view.innerHTML,/chapter-navigation/);
  await submit('FuK 12');
  assert.equal(location.hash,'#/law/1947%3A948/0/12');
  assert.match(el.view.innerHTML,/Tolfte paragrafen/);
@@ -82,5 +85,5 @@ async function submit(q){
  assert.equal(location.hash,'#/fap/FAP%20104-04');
  assert.match(el.view.innerHTML,/fap-frame/);
  assert.match(el.view.innerHTML,/polisen\.se/);
- console.log('Appflöden: sökning, förslag, kapitel, lagrum och FAP godkända');
+ console.log('Appflöden 0.3: sökning, förslag, läsvy, kapitel, lagrum och FAP godkända');
 })().catch(error=>{console.error(error);process.exitCode=1});

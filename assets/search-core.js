@@ -70,9 +70,10 @@
       let score=0;
       if(name===q||aliases.includes(q))score=950;
       else if(name.startsWith(q))score=810;
-      else if(aliases.some(a=>a.startsWith(q)))score=760;
+      else if(aliases.some(a=>a.length<=5&&a.startsWith(q)))score=760;
       else if(q.length>=2&&name.split(/\s+/).some(w=>w.startsWith(q)))score=500;
       else if(q.length>=3&&name.includes(q))score=250;
+      else if(q.length>=3&&aliases.some(a=>a.startsWith(q)))score=430;
       else if(q.length>=3&&aliases.some(a=>a.includes(q)))score=200;
       if(score)add(score,'law','law:'+l.sfs,l.name,(l.aliases||[])[0]+' · SFS '+l.sfs,{law:l});
     }
