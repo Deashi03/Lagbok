@@ -136,39 +136,143 @@
   ],
   "fap": [
     {
-      "id": "FAP 104-4",
+      "id": "FAP 104-04",
       "name": "Föreskrifter och allmänna råd om OC-spray (pepparspray)",
-      "code": "PMFS 2016:6",
+      "code": "PMFS 2016:06",
       "modified": "PMFS 2023:13",
       "tags": [
         "OC",
         "OC-spray",
         "pepparspray",
+        "försvarsspray",
         "våldsanvändning",
+        "sanering",
         "spray"
       ],
       "url": "https://polisen.se/lagar-och-regler/polismyndighetens-forfattningssamling/2/"
     },
     {
-      "id": "FAP 104-2",
-      "name": "Polismyndighetens föreskrifter om användning av skjutvapen i polisverksamhet",
-      "code": "PMFS 2023:2",
+      "id": "FAP 776-01",
+      "name": "Föreskrifter och allmänna råd om utbildning i polisiär konflikthantering",
+      "code": "PMFS 2016:09",
       "tags": [
-        "skjutvapen",
-        "vapenanvändning"
+        "polisiär konflikthantering",
+        "PK",
+        "utbildning",
+        "instruktör",
+        "taktik",
+        "OC"
       ],
       "url": "https://polisen.se/lagar-och-regler/polismyndighetens-forfattningssamling/2/"
     },
     {
-      "id": "FAP 776-1",
-      "name": "Föreskrifter och allmänna råd om utbildning i polisiär konflikthantering",
-      "code": "PMFS 2016:9",
+      "id": "FAP 104-07",
+      "name": "Föreskrifter och allmänna råd om elchockvapen",
+      "code": "PMFS 2021:04",
+      "modified": "PMFS 2023:12",
       "tags": [
-        "konflikthantering",
-        "PK",
-        "utbildning"
+        "elchockvapen",
+        "taser",
+        "våldsanvändning"
       ],
       "url": "https://polisen.se/lagar-och-regler/polismyndighetens-forfattningssamling/2/"
+    },
+    {
+      "id": "FAP 104-09",
+      "name": "Föreskrifter och allmänna råd om expanderbar batong",
+      "code": "PMFS 2019:05",
+      "tags": [
+        "batong",
+        "expanderbar batong",
+        "våldsanvändning"
+      ],
+      "url": "https://polisen.se/lagar-och-regler/polismyndighetens-forfattningssamling/2/"
+    },
+    {
+      "id": "FAP 104-06",
+      "name": "Föreskrifter och allmänna råd om distraktionsgranat",
+      "code": "PMFS 2019:04",
+      "modified": "PMFS 2023:11",
+      "tags": [
+        "distraktionsgranat",
+        "ljudgranat",
+        "insats"
+      ],
+      "url": "https://polisen.se/lagar-och-regler/polismyndighetens-forfattningssamling/2/"
+    },
+    {
+      "id": "FAP 104-01",
+      "name": "Föreskrifter och allmänna råd om hjälpmedel för att stoppa fordon",
+      "code": "PMFS 2016:10",
+      "modified": "PMFS 2023:14",
+      "tags": [
+        "spikmatta",
+        "stoppa fordon",
+        "fordonsstopp",
+        "polislagen 10",
+        "fordon"
+      ],
+      "url": "https://polisen.se/lagar-och-regler/polismyndighetens-forfattningssamling/2/"
+    },
+    {
+      "id": "FAP 102-01",
+      "name": "Föreskrifter och allmänna råd om polisarrester",
+      "code": "PMFS 2015:07",
+      "modified": "PMFS 2018:02",
+      "tags": [
+        "arrest",
+        "polisarrest",
+        "förvar",
+        "frihetsberövande"
+      ],
+      "url": "https://polisen.se/lagar-och-regler/polismyndighetens-forfattningssamling/2/"
+    },
+    {
+      "id": "FAP 261-01",
+      "name": "Föreskrifter och allmänna råd om ordningsbot",
+      "code": "PMFS 2020:09",
+      "tags": [
+        "ordningsbot",
+        "böter",
+        "trafik",
+        "bot"
+      ],
+      "url": "https://polisen.se/lagar-och-regler/polismyndighetens-forfattningssamling/2/"
+    },
+    {
+      "id": "FAP 104-05",
+      "name": "Föreskrifter och allmänna råd om hantering av statliga myndigheters skjutvapen",
+      "code": "PMFS 2026:10",
+      "tags": [
+        "skjutvapen",
+        "tjänstevapen",
+        "hantering av vapen"
+      ],
+      "url": "https://polisen.se/lagar-och-regler/polismyndighetens-forfattningssamling/"
+    },
+    {
+      "id": "FAP 761-01",
+      "name": "Föreskrifter om aspirantutbildning",
+      "code": "PMFS 2024:05",
+      "tags": [
+        "polisaspirant",
+        "aspirant",
+        "polisutbildning"
+      ],
+      "url": "https://polisen.se/lagar-och-regler/polismyndighetens-forfattningssamling/"
+    },
+    {
+      "id": "FAP 473-01",
+      "name": "Föreskrifter och allmänna råd om upptagning av biometriska underlag och signalement",
+      "code": "PMFS 2025:08",
+      "tags": [
+        "biometri",
+        "fingeravtryck",
+        "signalement",
+        "fotografering"
+      ],
+      "url": "https://polisen.se/lagar-och-regler/polismyndighetens-forfattningssamling/"
     }
-  ]
+  ],
+  "fapCheckedAt": "2026-10-25"
 }

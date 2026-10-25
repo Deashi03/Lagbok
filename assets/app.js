@@ -416,7 +416,7 @@
   document.addEventListener('click',e=>{
     const close=e.target.closest('[data-action="close"]'); if(close){closeSheet();return;}
     const anchor=e.target.closest('a[data-link]');
-    if(anchor){e.preventDefault();navigate(anchor.getAttribute('href'));return;}
+    if(anchor){e.preventDefault();const dest=anchor.getAttribute('href');if(dest==='#/fap')state.query='';navigate(dest);return;}
     const btn=e.target.closest('[data-action]');
     if(!btn)return;
     const a=btn.dataset.action,k=btn.dataset.key;
