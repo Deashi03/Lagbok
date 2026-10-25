@@ -34,7 +34,7 @@ Läsaren har en enda innehållsknapp, utan föregående/nästa länkar eller ver
 - iPhone-ikon för hemskärmen.
 
 ### Så uppdateras lagtexten
-1. GitHub Actions kör `scripts/import_laws.py` varje vardag och öppnar en pull request när något har ändrats. Beskrivningen listar nya, ändrade, borttagna och kommande paragrafer per författning.
+1. GitHub Actions kör `scripts/import_laws.py` den 1 varje månad (och vid behov manuellt) och öppnar en pull request när något har ändrats. Beskrivningen listar nya, ändrade, borttagna och kommande paragrafer per författning.
 2. `tests/test_editorial.js` kontrollerar att alla redaktionella rubriker i `assets/editorial.js` fortfarande pekar på befintliga paragrafer som inte är upphävda. En lagändring som flyttar en paragraf syns därför direkt som ett fel.
 3. Redaktionella rubriker ligger bara i `assets/editorial.js` och påverkar aldrig själva lagtexten. Fler författningar läggs till i `data/catalog.json`.
 

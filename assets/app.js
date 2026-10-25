@@ -475,7 +475,7 @@
   function aboutPage(){
     return '<div class="page"><h1 class="page-title">Om lagboken</h1><p>En fristående, mobilanpassad lagbok med läsvy i mjukvitt, grönt och diskreta vinröda detaljer.</p>' +
       '<div class="section-title">Rättskällor</div><p class="small muted">Författningstexterna hämtas från Sveriges riksdags öppna data. Polisens FAP visas i en intern PDF-läsare med direktlänkar till Polismyndighetens författningssamling.</p>' +
-      '<div class="section-title">Uppdateringsstatus</div><p class="small">Senast genomförd datainhämtning: '+html(window.LAGBOK_GENERATED||'Se respektive författning')+'. Lagtexten kontrolleras automatiskt varje vardag mot Riksdagens öppna data och ändringar granskas innan de publiceras.</p>' +
+      '<div class="section-title">Uppdateringsstatus</div><p class="small">Senast genomförd datainhämtning: '+html(window.LAGBOK_GENERATED||'Se respektive författning')+'. Lagtexten kontrolleras automatiskt den 1 varje månad mot Riksdagens öppna data och ändringar granskas innan de publiceras.</p>' +
       '<div class="section-title">Lydelser</div><p class="small muted">När en paragraf har flera lydelser visar appen den som gäller i dag enligt Riksdagens markeringar om ikraftträdande. Kommande lydelser visas hopfällda under paragrafen. Rubriker märkta som redaktionella är tillagda för navigering och är inte en del av lagtexten.</p>' +
       '<div class="notice">Det här är inte en officiell lagtexttjänst. En importerad lydelse kan innehålla övergångsbestämmelser och framtida ikraftträdanden. Kontrollera den tillämpliga versionen i originalkällan.</div>' +
       '<p><a href="https://github.com/Deashi03/Lagbok" target="_blank" rel="noopener noreferrer">Öppna projektet på GitHub ↗</a></p></div>';

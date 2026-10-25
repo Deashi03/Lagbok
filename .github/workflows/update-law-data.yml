@@ -7,7 +7,7 @@ on:
       - 'scripts/import_laws.py'
       - 'data/catalog.json'
   schedule:
-    - cron: '35 4 * * 1-5'
+    - cron: '35 4 1 * *'
   workflow_dispatch:
 permissions:
   contents: write
