@@ -1,7 +1,7 @@
 /* Lagboken: snabb offlinevänlig juridisk läsapp utan externa JavaScript-beroenden. */
 (function () {
   'use strict';
-  const APP_VERSION='1.0';
+  const APP_VERSION='0.9';
   const $ = (sel, root=document) => root.querySelector(sel);
   const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
   const view = $('#view');

@@ -77,8 +77,8 @@ Läsaren har en enda innehållsknapp, utan föregående/nästa länkar eller ver
 - **Sök i författningen:** knappen *⌕ Sök* i läsvyn öppnar ett sökfält som fungerar som ”Sök på sidan”: antal träffar, pilar för föregående/nästa (även över kapitelgränser) och markerade sökord.
 - **Rättad menyanimation:** menyerna glider nu upp jämnt. Tidigare skrev animationen över centreringen så att menyn låg fel en kort stund och sedan hoppade på plats.
 
-## Version 1.0
-- **306 författningar** (tidigare 154), med tyngdpunkt på polis, domstol, process och rättigheter, och i övrigt i samma ordning som Sveriges Rikes Lag. Bland annat ingår den nya **vapenlagen och vapenförordningen (2026)**. Lagar som redan är upphävda tas bort automatiskt, och ett kommande upphävande visas överst i lagen. Långa bilagor, till exempel barnkonventionens text, ligger i en egen del som öppnas vid behov.
+## Version 0.9 – färdigställd
+- **306 författningar** (154 i första utgåvan av 0.9), med tyngdpunkt på polis, domstol, process och rättigheter, och i övrigt i samma ordning som Sveriges Rikes Lag. Bland annat ingår den nya **vapenlagen och vapenförordningen (2026)**. Lagar som redan är upphävda tas bort automatiskt, och ett kommande upphävande visas överst i lagen. Långa bilagor, till exempel barnkonventionens text, ligger i en egen del som öppnas vid behov.
 - **Balkarna och deras anslutande författningar:** alla balkar visas som vanliga rader i katalogen. De anslutande lagarna hänger under sin balk som grenar i ett träd, utan att man behöver trycka fram dem.
 - **Lag och förordning hänger ihop på paragrafnivå.** Uttryckliga hänvisningar kopplas som tidigare. Nu kopplas också förordningsparagrafer under samma rubrik som ett avsnitt i lagen, till exempel *Vanlig delgivning* i delgivningsförordningen och delgivningslagen. Förordningar med samma namnstam som en lag kopplas också, som brottsskadeförordningen och brottsskadelagen.
 - **Startar direkt:** appen och katalogen visas från sparade kopior, och nya versioner hämtas i bakgrunden. Är något nytt visas *Ny version – tryck för att uppdatera*. Appen startar även utan nät.

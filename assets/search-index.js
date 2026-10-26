@@ -1,4 +1,4 @@
-/* Lagboken 1.0 – fritextsökning i ett färdigbyggt index (scripts/build_indexes.js).
+/* Lagboken 0.9 – fritextsökning i ett färdigbyggt index (scripts/build_indexes.js).
    Bara de indexdelar som behövs för sökorden hämtas; lagtexten laddas först när träffar visas.
    Varje sökord måste finnas i paragrafen. Ordet matchas också som början av längre ord,
    så att "husrannsak" hittar både husrannsakan och husrannsakningar. */
