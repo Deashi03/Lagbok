@@ -10,7 +10,8 @@ const B=process.env.LAGBOK_URL||'http://localhost:8765/';
  const wait=ms=>page.waitForTimeout(ms);
  // Katalog i lagbokens ordning, balkarna med anslutande författningar synliga
  await page.goto(B+'#/catalog');await page.waitForSelector('.law-tree');
- assert.equal(await page.locator('#catalog-directory > .section-title').first().textContent(),'Grundlagar');
+ assert.equal(await page.locator('.cat-section .cat-name').first().textContent(),'Grundlagar');
+ assert.equal(await page.locator('.cat-section[open]').count(),2,'grundlagar och balkar är öppna från början');
  assert.ok(await page.locator('.law-tree .tree-row').first().isVisible());
  // Kopplingar lag ↔ förordning
  await page.goto(B+'#/law/1942%3A740/23/1');await wait(900);

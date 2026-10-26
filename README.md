@@ -87,3 +87,14 @@ Läsaren har en enda innehållsknapp, utan föregående/nästa länkar eller ver
 - **Animationer:** jämna övergångar, menyer som glider upp och kan dras ned, och tryckrespons på rader och knappar.
 - **Sparat** visar markeringar och anteckningar först, sedan favoriter, samlingar och bevakning.
 - **Annat:** kapitelöversikt för stora lagar, sökfilter på typ (lag, förordning) och balk, hantering av offlineutrymme, och ett webbläsartest i CI som kör de viktigaste flödena i iPhone-storlek.
+
+## Version 1.0
+- **Hela svensk lag i appen: 1 853 författningar.** Det är 1 766 av 1 770 gällande lagar i SFS, alltså 99,8 %, och därmed all lagtext i den stora blå lagboken. Riksdagens förteckning över hela SFS har gåtts igenom, och varje gällande lag har lagts in med sin lagtext. Fyra lagar saknar text hos Riksdagen.
+- **Placerade som i Sveriges Rikes Lag:** först grundlagarna, sedan balkarna i lagbokens ordning med sina anslutande författningar, nu även Byggningabalken och Handelsbalken med avtalslagen, köplagen, skuldebrevslagen m.fl. Därefter kommer 14 rättsområden. Placeringarna föreslogs automatiskt utifrån titel och departement och granskades sedan; 342 rättades för hand (`data/placement.json`).
+- **Förkortningar** för alla författningar som har en vedertagen förkortning: SkolL, DelgF, IL, ML, ÅRL, HB med flera, totalt 327 unika. De syns i katalogen och i lagens rubrik och fungerar som snabbkoder, till exempel *SkolL 7:2*. Ett test stoppar dubbletter.
+- **Katalogen:** avdelningar som kan fällas ihop och bara ritas när de öppnas, så att starten är lika snabb med 1 853 författningar. Överst finns snabbval för avdelningarna och ett **register A–Ö**.
+- **Täckningsmätare** under Inställningar: hur stor del av gällande lagar och författningar som finns i appen, räknat mot Riksdagens förteckning.
+- **Lagar utan paragrafer**, till exempel skatteavtal som gäller som lag, visas som lagtext med avtalet som bilaga.
+- **Hänvisningar:** långa uppräkningar som avslutas med lagens namn ("… 12 kap. 64 §, allt jordabalken") och "balken" i promulgationslagar länkas rätt.
+- **Månatlig kontroll** hittar även nya lagar i SFS och föreslår dem för granskning. Offlinenedladdningen hämtar sex filer åt gången.
+- Genvägsrutorna har samma bredd oavsett namnets längd.
