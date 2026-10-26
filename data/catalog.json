@@ -1,5 +1,5 @@
 {
-  "version": "0.8",
+  "version": "0.9",
   "generated": "2026-10-26T00:21:18+00:00",
   "source": "Sveriges riksdag, Riksdagens öppna data",
   "laws": [
@@ -382,6 +382,55 @@
       "parent": "1962:700"
     },
     {
+      "sfs": "1964:163",
+      "name": "Lagen om införande av brottsbalken",
+      "type": "lag",
+      "aliases": [
+        "BrP",
+        "promulgationslagen"
+      ],
+      "chaptered": false,
+      "check": "införande av brottsbalken",
+      "section": "balkar",
+      "parent": "1962:700"
+    },
+    {
+      "sfs": "1974:202",
+      "name": "Lagen om beräkning av strafftid m.m.",
+      "type": "lag",
+      "aliases": [
+        "strafftid"
+      ],
+      "chaptered": false,
+      "check": "beräkning av strafftid",
+      "section": "balkar",
+      "parent": "1962:700"
+    },
+    {
+      "sfs": "1974:1065",
+      "name": "Lagen om visst stöldgods m.m.",
+      "type": "lag",
+      "aliases": [
+        "stöldgods"
+      ],
+      "chaptered": false,
+      "check": "stöldgods",
+      "section": "balkar",
+      "parent": "1962:700"
+    },
+    {
+      "sfs": "2014:836",
+      "name": "Lagen om näringsförbud",
+      "type": "lag",
+      "aliases": [
+        "näringsförbud"
+      ],
+      "chaptered": false,
+      "check": "näringsförbud",
+      "section": "balkar",
+      "parent": "1962:700"
+    },
+    {
       "sfs": "1942:740",
       "name": "Rättegångsbalken",
       "type": "lag",
@@ -673,6 +722,43 @@
       "parent": "1942:740"
     },
     {
+      "sfs": "1946:804",
+      "name": "Lagen om införande av nya rättegångsbalken",
+      "type": "lag",
+      "aliases": [
+        "RP",
+        "promulgationslagen RB"
+      ],
+      "chaptered": false,
+      "check": "införande av nya rättegångsbalken",
+      "section": "balkar",
+      "parent": "1942:740"
+    },
+    {
+      "sfs": "2002:445",
+      "name": "Lagen om medling med anledning av brott",
+      "type": "lag",
+      "aliases": [
+        "medling"
+      ],
+      "chaptered": false,
+      "check": "medling",
+      "section": "balkar",
+      "parent": "1942:740"
+    },
+    {
+      "sfs": "1995:1506",
+      "name": "Lagen om hantering av beslagtagen egendom m.m.",
+      "type": "lag",
+      "aliases": [
+        "beslagtagen egendom"
+      ],
+      "chaptered": false,
+      "check": "beslagtagen egendom",
+      "section": "balkar",
+      "parent": "1942:740"
+    },
+    {
       "sfs": "1981:774",
       "name": "Utsökningsbalken",
       "type": "lag",
@@ -707,6 +793,19 @@
       ],
       "chaptered": false,
       "check": "skuldsaneringslag",
+      "section": "balkar",
+      "parent": "1981:774"
+    },
+    {
+      "sfs": "1990:746",
+      "name": "Lagen om betalningsföreläggande och handräckning",
+      "type": "lag",
+      "aliases": [
+        "LBH",
+        "betalningsföreläggande"
+      ],
+      "chaptered": false,
+      "check": "betalningsföreläggande",
       "section": "balkar",
       "parent": "1981:774"
     },
@@ -875,6 +974,137 @@
       ],
       "chaptered": true,
       "check": "diskrimineringslag",
+      "section": "civil"
+    },
+    {
+      "sfs": "1936:83",
+      "name": "Skuldebrevslagen",
+      "type": "lag",
+      "aliases": [
+        "SkbrL",
+        "skuldebrev"
+      ],
+      "chaptered": false,
+      "check": "skuldebrev",
+      "section": "civil"
+    },
+    {
+      "sfs": "1985:716",
+      "name": "Konsumenttjänstlagen",
+      "type": "lag",
+      "aliases": [
+        "KtjL",
+        "konsumenttjänst"
+      ],
+      "chaptered": false,
+      "check": "konsumenttjänstlag",
+      "section": "civil"
+    },
+    {
+      "sfs": "1992:18",
+      "name": "Produktansvarslagen",
+      "type": "lag",
+      "aliases": [
+        "PAL",
+        "produktansvar"
+      ],
+      "chaptered": false,
+      "check": "produktansvarslag",
+      "section": "civil"
+    },
+    {
+      "sfs": "2005:104",
+      "name": "Försäkringsavtalslagen",
+      "type": "lag",
+      "aliases": [
+        "FAL",
+        "försäkringsavtal"
+      ],
+      "chaptered": false,
+      "check": "försäkringsavtalslag",
+      "section": "civil"
+    },
+    {
+      "sfs": "2008:486",
+      "name": "Marknadsföringslagen",
+      "type": "lag",
+      "aliases": [
+        "MFL",
+        "marknadsföring"
+      ],
+      "chaptered": false,
+      "check": "marknadsföringslag",
+      "section": "civil"
+    },
+    {
+      "sfs": "2012:978",
+      "name": "Lagen om uthyrning av egen bostad",
+      "type": "lag",
+      "aliases": [
+        "privatuthyrningslagen"
+      ],
+      "chaptered": false,
+      "check": "uthyrning av egen bostad",
+      "section": "civil"
+    },
+    {
+      "sfs": "1976:580",
+      "name": "Lagen om medbestämmande i arbetslivet",
+      "type": "lag",
+      "aliases": [
+        "MBL",
+        "medbestämmande"
+      ],
+      "chaptered": false,
+      "check": "medbestämmande",
+      "section": "civil"
+    },
+    {
+      "sfs": "1977:480",
+      "name": "Semesterlagen",
+      "type": "lag",
+      "aliases": [
+        "SemL",
+        "semester"
+      ],
+      "chaptered": false,
+      "check": "semesterlag",
+      "section": "civil"
+    },
+    {
+      "sfs": "1982:673",
+      "name": "Arbetstidslagen",
+      "type": "lag",
+      "aliases": [
+        "ATL",
+        "arbetstid"
+      ],
+      "chaptered": false,
+      "check": "arbetstidslag",
+      "section": "civil"
+    },
+    {
+      "sfs": "1995:584",
+      "name": "Föräldraledighetslagen",
+      "type": "lag",
+      "aliases": [
+        "FLL",
+        "föräldraledighet"
+      ],
+      "chaptered": false,
+      "check": "föräldraledighetslag",
+      "section": "civil"
+    },
+    {
+      "sfs": "1974:371",
+      "name": "Lagen om rättegången i arbetstvister",
+      "type": "lag",
+      "aliases": [
+        "arbetstvistlagen",
+        "LRA"
+      ],
+      "chaptered": false,
+      "check": "rättegången i arbetstvister",
       "section": "civil"
     },
     {
@@ -1132,6 +1362,28 @@
       ],
       "chaptered": false,
       "check": "tillsyn över hundar",
+      "section": "polis"
+    },
+    {
+      "sfs": "2017:496",
+      "name": "Lagen om internationell polisiär samverkan",
+      "type": "lag",
+      "aliases": [
+        "polisiär samverkan"
+      ],
+      "chaptered": false,
+      "check": "polisiär samverkan",
+      "section": "polis"
+    },
+    {
+      "sfs": "2000:343",
+      "name": "Lagen om internationellt polisiärt samarbete",
+      "type": "lag",
+      "aliases": [
+        "polisiärt samarbete"
+      ],
+      "chaptered": false,
+      "check": "polisiärt samarbete",
       "section": "polis"
     },
     {
@@ -1505,6 +1757,18 @@
       "section": "forvaltning"
     },
     {
+      "sfs": "2016:1145",
+      "name": "Lagen om offentlig upphandling",
+      "type": "lag",
+      "aliases": [
+        "LOU",
+        "upphandling"
+      ],
+      "chaptered": false,
+      "check": "offentlig upphandling",
+      "section": "forvaltning"
+    },
+    {
       "sfs": "1990:52",
       "name": "Lagen med särskilda bestämmelser om vård av unga",
       "type": "lag",
@@ -1574,6 +1838,53 @@
       ],
       "chaptered": true,
       "check": "hälso- och sjukvårdslag",
+      "section": "vard"
+    },
+    {
+      "sfs": "1993:387",
+      "name": "Lagen om stöd och service till vissa funktionshindrade",
+      "type": "lag",
+      "aliases": [
+        "LSS"
+      ],
+      "chaptered": false,
+      "check": "stöd och service",
+      "section": "vard"
+    },
+    {
+      "sfs": "2014:821",
+      "name": "Patientlagen",
+      "type": "lag",
+      "aliases": [
+        "PL patient",
+        "patientlag"
+      ],
+      "chaptered": false,
+      "check": "patientlag",
+      "section": "vard"
+    },
+    {
+      "sfs": "2010:659",
+      "name": "Patientsäkerhetslagen",
+      "type": "lag",
+      "aliases": [
+        "PSL",
+        "patientsäkerhet"
+      ],
+      "chaptered": false,
+      "check": "patientsäkerhetslag",
+      "section": "vard"
+    },
+    {
+      "sfs": "2004:168",
+      "name": "Smittskyddslagen",
+      "type": "lag",
+      "aliases": [
+        "SmL",
+        "smittskydd"
+      ],
+      "chaptered": false,
+      "check": "smittskyddslag",
       "section": "vard"
     }
   ],
