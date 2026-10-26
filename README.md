@@ -141,3 +141,7 @@ Läsaren har en enda innehållsknapp, utan föregående/nästa länkar eller ver
 - **Tydligare mörkt läge:** mörkare bakgrund, ljusare text och rubriker.
 - Versionen står i ⋯-menyn när du läser en lag.
 
+## Version 1.5.1
+- **I hela lagboken stannar i lagen:** växeln i sökraden visar träffarna från hela lagboken i en lista direkt under sökfältet, utan att lämna lagen du läser. Tryck på *I Polislagen* för att gå tillbaka till sökningen i lagen.
+- **Lugnare lagtext:** "Kompletteras av" och "Kompletterar" har samma gröna färg som övriga knappar i stället för vinrött, och "hänvisningar hit" har ingen ikon längre.
+

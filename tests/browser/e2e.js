@@ -40,10 +40,14 @@ const B=process.env.LAGBOK_URL||'http://localhost:8765/';
  assert.equal(await page.locator('#find-button.on').count(),1,'⌕ i rubrikraden visar att sökningen är öppen');
  const at1=await page.textContent('#find-count');await page.click('[data-action="find-next"]');await wait(600);
  assert.notEqual(await page.textContent('#find-count'),at1,'↓ hoppar till nästa träff');
- await page.click('[data-action="find-all"]');await wait(900);
- assert.equal(await page.evaluate(()=>location.hash),'#/catalog');
- assert.equal(await page.inputValue('#query'),'gripa','sökordet följer med till hela lagboken');
- await page.goBack();await wait(900);
+ const here=await page.evaluate(()=>location.hash);
+ await page.click('[data-scope="all"]');await wait(1500);
+ assert.equal(await page.evaluate(()=>location.hash),here,'I hela lagboken stannar i lagen');
+ assert.equal(await page.inputValue('#find-input'),'gripa','sökordet följer med');
+ assert.ok(await page.locator('#find-all-results #text-results .list-row').count()>0,'träffar från hela lagboken visas under sökraden');
+ await page.click('[data-scope="law"]');await wait(500);
+ assert.ok(await page.locator('mark.find-hit').count()>0,'tillbaka till sökning i lagen');
+ await page.click('#find-button');await wait(500);
  assert.equal(await page.locator('.reader-context').count(),0,'ingen extra rad när sökningen är stängd');
  // Penna, markering och ångra
  await page.goto(B+'#/law/1942%3A740/24/7');await wait(900);

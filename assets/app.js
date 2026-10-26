@@ -1,7 +1,7 @@
 /* Lagboken: snabb offlinevänlig juridisk läsapp utan externa JavaScript-beroenden. */
 (function () {
   'use strict';
-  const APP_VERSION='1.5';
+  const APP_VERSION='1.5.1';
   const $ = (sel, root=document) => root.querySelector(sel);
   const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
   const view = $('#view');
@@ -515,8 +515,8 @@
     const reg=back.filter(e=>e[3]==='föreskrift'),comp=back.filter(e=>e[3]==='kompletterar'),refs=back.filter(e=>!e[3]||e[3]==='ref');
     return '<div class="links-row">'+
       (reg.length?'<button type="button" class="link-chip regulation" data-action="backlinks" data-key="'+attr(key)+'">§ Kompletteras av '+html(linkLabel(reg))+'</button>':'')+
-      (comp.length?'<button type="button" class="link-chip complements" data-action="backlinks" data-key="'+attr(key)+'">↗ Kompletterar '+html(linkLabel(comp))+'</button>':'')+
-      (refs.length?'<button type="button" class="link-chip" data-action="backlinks" data-key="'+attr(key)+'">↩ '+refs.length+(refs.length===1?' hänvisning':' hänvisningar')+' hit</button>':'')+
+      (comp.length?'<button type="button" class="link-chip complements" data-action="backlinks" data-key="'+attr(key)+'">↗\uFE0E Kompletterar '+html(linkLabel(comp))+'</button>':'')+
+      (refs.length?'<button type="button" class="link-chip" data-action="backlinks" data-key="'+attr(key)+'">'+refs.length+(refs.length===1?' hänvisning':' hänvisningar')+' hit</button>':'')+
       '</div>';
   }
   function noteHtml(key){
@@ -534,13 +534,16 @@
   function findBar(meta){
     const f=state.find;if(!f||f.sfs!==meta.sfs)return '';
     // Sökraden under rubrikraden: ord markeras i lagen och ↑ ↓ hoppar mellan träffarna; växeln byter till hela lagboken.
+    // I hela lagboken visas träfflistan här under, utan att lämna lagen.
+    const all=f.scope==='all';
     return '<form class="find-bar" id="find-form" role="search"><div class="find-field"><input id="find-input" type="search" enterkeyhint="search" autocomplete="off" spellcheck="false" '+
-      'placeholder="Sök i '+attr(abbrOf(meta)||meta.name)+' eller skriv 2:1" value="'+attr(f.q)+'" aria-label="Sök i författningen">'+
-      '<span class="find-count" id="find-count" aria-live="polite">'+findCount()+'</span></div>'+
-      '<button type="button" class="find-step" data-action="find-prev" aria-label="Föregående träff">↑</button>'+
-      '<button type="button" class="find-step" data-action="find-next" aria-label="Nästa träff">↓</button></form>'+
-      '<div class="find-scope" role="group" aria-label="Var du söker"><button type="button" class="on" aria-pressed="true">I '+html(meta.name)+'</button>'+
-      '<button type="button" data-action="find-all" aria-pressed="false">I hela lagboken</button></div>';
+      'placeholder="'+(all?'Sök i hela lagboken':'Sök i '+attr(abbrOf(meta)||meta.name)+' eller skriv 2:1')+'" value="'+attr(f.q)+'" aria-label="'+(all?'Sök i hela lagboken':'Sök i författningen')+'">'+
+      '<span class="find-count" id="find-count" aria-live="polite">'+(all?'':findCount())+'</span></div>'+
+      (all?'':'<button type="button" class="find-step" data-action="find-prev" aria-label="Föregående träff">↑</button>'+
+      '<button type="button" class="find-step" data-action="find-next" aria-label="Nästa träff">↓</button>')+'</form>'+
+      '<div class="find-scope" role="group" aria-label="Var du söker"><button type="button" data-action="find-scope" data-scope="law" class="'+(all?'':'on')+'" aria-pressed="'+!all+'">I '+html(meta.name)+'</button>'+
+      '<button type="button" data-action="find-scope" data-scope="all" class="'+(all?'on':'')+'" aria-pressed="'+all+'">I hela lagboken</button></div>'+
+      (all?'<div class="find-all-results" id="find-all-results"></div>':'');
   }
   function findCount(){
     const f=state.find;if(!f||!f.q.trim())return '';
@@ -611,9 +614,18 @@
     const where=ch&&ch.number!=='0'?ch.number+' kap. '+(ch.title||''):'SFS '+meta.sfs;
     set('#top-title',e=>{e.innerHTML='<span class="tt-name">'+html(meta.name)+'</span><span class="tt-sub">'+html((abbrOf(meta)?abbrOf(meta)+' · ':'')+where)+'</span>';});
   }
+  // Sökning i hela lagboken inifrån en lag: samma träffar som på startsidan, i en lista under sökraden.
+  function runAll(q){
+    const box=$('#find-all-results');if(!box)return;
+    if(!q.trim()){box.innerHTML='<p class="small muted">Skriv ett ord, ett lagnamn eller ett lagrum som BrB 24:1.</p>';state.searchEpoch++;return;}
+    box.innerHTML=resultsHtml(q);
+    const epoch=++state.searchEpoch;
+    if(findDirect(q)){const t=$('#text-results');if(t)t.innerHTML='<p class="small muted">Tryck Enter för att öppna lagrummet direkt.</p>';return;}
+    setTimeout(()=>{if(state.searchEpoch===epoch)populateTextResults(q,epoch);},220);
+  }
   function openFind(){
     const r=route();if(r.page!=='law'||!state.laws.get(r.sfs))return;
-    if(!state.find||state.find.sfs!==r.sfs)state.find={sfs:r.sfs,q:'',tokens:[],hits:[],i:-1};
+    if(!state.find||state.find.sfs!==r.sfs)state.find={sfs:r.sfs,q:'',tokens:[],hits:[],i:-1,scope:'law'};
     renderKeep().then(()=>{const i=$('#find-input');if(i)i.focus();});
   }
   function chapterReader(meta,data,capid){
@@ -938,7 +950,7 @@
     const markup=suggestionsHtml(state.query);el.innerHTML=markup;el.hidden=!markup;input.setAttribute('aria-expanded',String(!!markup));
   }
   // Filter för fritextsökningen: lagbokens avdelningar, de stora balkarna och egna samlingar.
-  function searchFilters(){
+  function searchFiltersHtml(){
     const opts=[['','Alla'],['typ:lag','Bara lagar'],['typ:förordning','Bara förordningar'],['balk:1962:700','BrB m.fl.'],['balk:1942:740','RB m.fl.'],...state.sections.filter(s=>s.id!=='balkar').map(s=>[s.id,s.name.split(/,| och /)[0]])];
     if(pref.collections.length)opts.push(['samlingar','Mina samlingar']);
     return '<div class="chips search-filters">'+opts.map(([id,label])=>'<button type="button" class="chip'+(state.searchFilter===id?' active':'')+'" data-action="search-filter" data-id="'+attr(id)+'">'+html(label)+'</button>').join('')+'</div>';
@@ -959,8 +971,10 @@
     catch(_){if(box())box().innerHTML='<div class="empty">Sökindexet kunde inte läsas. Försök igen med internetanslutning.</div>';return;}
     if(!box())return;
     if(!result.tokens.length){box().innerHTML='<p class="muted small">Skriv minst två tecken för fritextsökning.</p>';return;}
-    if(!result.total){box().innerHTML=searchFilters()+'<div class="empty">Inga paragrafer innehåller alla sökorden.</div>';return;}
-    const all=result.hits.filter(passesFilter),hits=all.slice(0,30);
+    if(!result.total){box().innerHTML=(state.find&&state.find.scope==='all'?'':searchFiltersHtml())+'<div class="empty">Inga paragrafer innehåller alla sökorden.</div>';return;}
+    // Inifrån en lag visas träffarna utan filterknappar, för att hålla listan kort och lugn.
+    const inLaw=!!(state.find&&state.find.scope==='all'),searchFilters=inLaw?()=>'':searchFiltersHtml;
+    const all=result.hits.filter(h=>inLaw||passesFilter(h)),hits=all.slice(0,30);
     if(!hits.length){box().innerHTML=searchFilters()+'<div class="empty">Inga träffar med det här filtret.</div>';return;}
     const rows=hits.map((h,i)=>{
       const meta=lawById(h.sfs);if(!meta)return '';
@@ -1072,6 +1086,7 @@
     animateView(keep?'':state.navDir);state.navDir='';
     const tb=$('.topbar');if(tb&&tb.classList&&!keep)tb.classList.toggle('titled',!(typeof view.querySelector==='function'&&view.querySelector('.page-title,.law-head h1,.reader-heading h1')));
     applyHighlights();applySearchMarks();applyFindMarks();clearNewHighlight();
+    if(state.find&&state.find.scope==='all'&&r.page==='law')runAll(state.find.q);
     if(r.page==='law'&&meta)addRecent(meta.sfs+(r.chapter==null?'':'|'+r.chapter)+(r.paragraph?'|'+r.paragraph:''));
     if(keep){/* Omritning på plats: renderKeep återställer scrollposition. */}
     else if(r.page==='law'&&r.paragraph) {
@@ -1179,7 +1194,7 @@
       menuRow('fav',key,pref.favourites.includes(key)?'Ta bort från favoriter':'Spara som favorit','☆')+
       menuRow('collect',key,'Lägg till i samling','▤')+
       menuRow('note',key,pref.notes[key]?'Redigera anteckning':'Skriv anteckning','✎')+
-      menuRow('backlinks',key,'Visa vad som hänvisar hit','↩')+
+      menuRow('backlinks',key,'Visa vad som hänvisar hit','↩\uFE0E')+
       menuRow('history',key,'Visa lydelse vid ett datum','◷')+
       menuRow('report',key,'Rapportera fel i texten','⚑')+'</div>'+
       '<p class="small muted sheet-hint">Tips: markera text i paragrafen för att stryka under den.</p>');
@@ -1722,7 +1737,9 @@
     if(dt<600&&Math.abs(dx)>90&&Math.abs(dy)<45&&(!sel||sel.isCollapsed))chapterStep(dx<0?1:-1);
   },{passive:true});
   view.addEventListener('input',e=>{
-    if(e.target.id==='find-input'){clearTimeout(runFind.t);const v=e.target.value;runFind.t=setTimeout(()=>runFind(v),180);return;}
+    if(e.target.id==='find-input'){clearTimeout(runFind.t);const v=e.target.value;
+      if(state.find&&state.find.scope==='all'){state.find.q=v;runFind.t=setTimeout(()=>runAll(v),180);return;}
+      runFind.t=setTimeout(()=>runFind(v),180);return;}
     if(e.target.classList&&e.target.classList.contains('note-input')){
       const k=e.target.dataset.noteKey,v=e.target.value;clearTimeout(saveNote.t);saveNote.t=setTimeout(()=>saveNote(k,v,true),400);return;
     }
@@ -1735,6 +1752,7 @@
       // Ett lagrum ("2:1", "3 §", "rb 23 8b") öppnas direkt; annars hoppar Enter till nästa träff.
       if(/\d/.test(q)){const meta=lawById(state.find.sfs),bare=q.replace(/kap\.?|§/g,' ').trim();
         if(await goQuick(q)||(meta&&abbrOf(meta)&&/^\d/.test(bare)&&await goQuick(abbrOf(meta)+' '+bare))){state.find=null;return;}}
+      if(state.find.scope==='all'){state.find.q=q;const i=$('#find-input');if(i)i.blur();return;}
       if(q!==state.find.q)runFind(q);
       stepFind(1);return;
     }
@@ -1817,7 +1835,10 @@
     }
     if(a==='toc')toc();
     if(a==='find-open'){if(state.find&&state.find.sfs===route().sfs){state.find=null;clearFindMarks();renderKeep();}else openFind();return;}
-    if(a==='find-all'){const q=state.find?state.find.q:'';state.find=null;state.query=q;navigate('#/catalog');return;}
+    if(a==='find-scope'){const f=state.find;if(!f)return;const input=$('#find-input');if(input)f.q=input.value;
+      f.scope=btn.dataset.scope==='all'?'all':'law';clearFindMarks();
+      if(f.scope==='law')runFind(f.q);
+      renderKeep().then(()=>{const i=$('#find-input');if(i&&!f.q)i.focus();});return;}
     if(a==='find-next'){stepFind(1);return;}
     if(a==='find-prev'){stepFind(-1);return;}
     if(a==='find-close'){state.find=null;renderKeep();return;}
@@ -1833,7 +1854,7 @@
     if(a==='hl-pop-save'){const f=$('.hl-pop-note textarea');updateHighlight(k,btn.dataset.id,{note:f?f.value.trim():''});return;}
     if(a==='hl-pop-remove'){removeHighlight(k,btn.dataset.id);return;}
     if(a==='marks-filter'){state.marksFilter=state.marksFilter===btn.dataset.id?'':btn.dataset.id;renderKeep();return;}
-    if(a==='search-filter'){state.searchFilter=btn.dataset.id;onSearch(state.query);return;}
+    if(a==='search-filter'){state.searchFilter=btn.dataset.id;if(state.find&&state.find.scope==='all')runAll(state.find.q);else onSearch(state.query);return;}
     if(a==='jump'){quickJump();return;}
     if(a==='jump-all'){e.preventDefault();closeSheet();state.query=btn.dataset.q;navigate('#/catalog');return;}
     if(a==='collection-text'){collectionText(btn.dataset.id);return;}
