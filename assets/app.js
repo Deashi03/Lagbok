@@ -303,6 +303,11 @@
     return '<div class="relations">'+chips('Anslutande förordningar',r.kompletteras||[])+chips('Kompletterar',r.kompletterar||[])+
       (parent&&!(r.kompletterar||[]).length?chips('Ansluter till',[parent.sfs]):'')+'</div>';
   }
+  // Bilagor (t.ex. konventionstext) visas först när de fälls ut, eftersom de kan vara mycket långa.
+  function appendixHtml(data){
+    if(!data.appendix)return '';
+    return '<details class="transitions appendix" data-appendix="1"><summary>Bilaga <span>'+Math.round(data.appendix.length/1000)+' 000 tecken</span></summary><div class="appendix-body"></div></details>';
+  }
   function transitionsHtml(meta,data){
     const list=data.transitions||[];if(!list.length)return '';
     const ch={number:'0'};
@@ -503,7 +508,7 @@
       '<div class="statute-body">'+content+'</div>'+
       '<footer class="reader-end"><span class="small muted">Slut på '+html(short)+'.</span>'+
       (next?'<a class="reader-next" data-link="1" href="'+attr(urlFor(meta.sfs,next.number))+'"><span class="small muted">Nästa kapitel</span>'+
-        '<span>'+html(next.number+' kap. '+(next.title||''))+' ›</span></a>':transitionsHtml(meta,data))+'</footer></main>';
+        '<span>'+html(next.number+' kap. '+(next.title||''))+' ›</span></a>':appendixHtml(data)+transitionsHtml(meta,data))+'</footer></main>';
   }
   function tocHtml(meta,data,needle){
     const here=route(),q=needle||'';
@@ -1384,6 +1389,12 @@
       }
     });
   },{passive:true});
+  document.addEventListener('toggle',e=>{
+    const d=e.target;if(!d||!d.dataset||!d.dataset.appendix||!d.open)return;
+    const body=d.querySelector('.appendix-body');if(!body||body.dataset.filled)return;
+    const r=route(),meta=lawById(r.sfs),data=state.laws.get(r.sfs);if(!meta||!data)return;
+    body.dataset.filled='1';body.innerHTML='<div class="paragraph-content">'+textHtml(data.appendix,meta,{number:'0'})+'</div>';
+  },true);
   document.addEventListener('selectionchange',()=>{clearTimeout(onSelection.t);onSelection.t=setTimeout(onSelection,120);});
   // Svep från vänsterkanten för att gå tillbaka, som i iPhones egna appar.
   let edge=null;

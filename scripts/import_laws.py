@@ -29,6 +29,7 @@ DATE=re.compile(r'\d{4}-\d{2}-\d{2}')
 # Övergångsbestämmelser hamnar i Riksdagens text efter sista paragrafen och flyttas till en egen del.
 TRANSITIONS=re.compile(r'\n\s*(?:Ikraftträdande- och )?[ÖO]vergångsbestämmelser\s*\n')
 TRANSITION_SFS=re.compile(r'^(\d{4}:\d+(?: \d)?)\s*$',re.M)
+LONG_PARAGRAPH=15000
 def slug(sfs):return sfs.replace(":","-").replace(" ","-")
 def clear(s):
     s=re.sub(r"<br\s*/?>","\n",s,flags=re.I)
@@ -50,6 +51,10 @@ def version(raw):
     cut=TRANSITIONS.search("\n"+text)
     if cut:
         out["_transitions"]=text[cut.end()-1:].strip();text=text[:max(0,cut.start()-1)].rstrip()
+    # Långa bilagor (t.ex. barnkonventionens text) läggs i en egen del i stället för i paragrafen.
+    annex=re.search(r"\n\s*Bilaga\s*\n",text)
+    if annex and len(text)>LONG_PARAGRAPH:
+        out["_appendix"]=text[annex.end():].strip();text=text[:annex.start()].rstrip()
     while True:
         m=MARK.match(text)
         if not m:break
@@ -64,6 +69,7 @@ def version(raw):
 def build_para(number,raws):
     versions=[version(r) for r in raws if r and r.strip()]
     transitions=[v.pop("_transitions") for v in versions if "_transitions" in v]
+    appendix=[v.pop("_appendix") for v in versions if "_appendix" in v]
     first=versions[0]
     item={"type":"para","number":number,"text":first["text"]}
     if len(versions)>1 or "inForce" in first or "expires" in first:
@@ -72,6 +78,7 @@ def build_para(number,raws):
         item["amendedBy"]=first["amendedBy"]
     if all(REPEALED.match(v["text"]) for v in versions):item["repealed"]=True
     if transitions:item["_transitions"]=transitions[0]
+    if appendix:item["_appendix"]=appendix[0]
     return item
 def split_transitions(block):
     """Delar övergångsbestämmelser per ändringsförfattning: [{"sfs":"2023:372","text":"…"}]."""
@@ -213,11 +220,12 @@ def check_title(meta,official):
         raise ValueError("titelkontroll: väntade '"+expected+"' i '"+str(official)+"'")
 def document(id,name,method,chs,official=None):
     transitions=take_transitions(chs)
+    appendix=[p.pop("_appendix") for c in chs for p in c["items"] if "_appendix" in p]
     out={"sfs":id,"title":name,"officialTitle":official,"sourceUrl":"https://data.riksdagen.se/dokument/sfs-"+slug(id)+".html","parser":method,
             "fetchedAt":dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds"),"latestAmendment":latest_amendment(chs),"chapters":chs}
     if transitions:out["transitions"]=transitions
+    if appendix:out["appendix"]=appendix[0]
     return out
-LONG_PARAGRAPH=15000
 def quality_warnings(old,new):
     """Tecken på tolkningsfel: kraftigt minskat antal paragrafer, tappade kapitel eller sammanklistrad text."""
     warn=[];a,b=paragraphs(old),paragraphs(new)
