@@ -48,7 +48,7 @@ def when(label):
     label=re.sub(r"\s+genom\s+(?:lag|förordning)\s*\(\d{4}:\d+\)\.?$","",label.strip(),flags=re.I).rstrip(".")
     m=DATE.search(label)
     return {"date":m[0] if m else None,"label":label}
-ANNEX=re.compile(r"\n\s*(?:Bilaga\b[^\n]{0,80}|(?:AVTAL|Avtal|KONVENTION|Konvention|PROTOKOLL|Protokoll)\b[^\n]{0,200}|(?:Art\.|Artikel|ARTIKEL)\s*\d+\.?)\s*\n")
+ANNEX=re.compile(r"\n\s*(?:Bilaga\b[^\n]{0,80}|(?:AVTAL|Avtal|KONVENTION|Konvention|PROTOKOLL|Protokoll|AGREEMENT|CONVENTION)\b[^\n]{0,200}|(?:Art\.|Artikel|ARTIKEL)\s*\d+\.?)\s*\n")
 def annex_start(text):
     """Var en lång bilaga (t.ex. barnkonventionen eller ett skatteavtal som gäller som lag) börjar, eller None."""
     if len(text)<=LONG_PARAGRAPH:return None
@@ -329,9 +329,11 @@ def run():
     if only=="new":metas=[m for m in metas if not (OUT/(slug(m["sfs"])+".json")).exists()]
     elif only:metas=[m for m in metas if m["sfs"] in set(x.strip() for x in only.split(","))]
     # Hämtningen sker parallellt; tolkningen sker i katalogens ordning.
-    with ThreadPoolExecutor(max_workers=int(os.environ.get("WORKERS","6"))) as pool:
-        futures={m["sfs"]:pool.submit(fetch,m["sfs"]) for m in metas}
-    for meta in metas:
+    # I omgångar om 150, så att minnet räcker även när tusentals författningar hämtas.
+    pool=ThreadPoolExecutor(max_workers=int(os.environ.get("WORKERS","6")));futures={}
+    for n,meta in enumerate(metas):
+        if n%150==0:
+            futures={m["sfs"]:pool.submit(fetch,m["sfs"]) for m in metas[n:n+150]}
         id=meta["sfs"]
         try:
             doc=futures[id].result().get("dokumentstatus",{}).get("dokument",{})

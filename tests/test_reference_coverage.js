@@ -25,7 +25,7 @@ const external=/^[^.;]{0,160}?(?:lagen|förordningen|balken|kungörelsen|ordning
 for(const [sfs,doc] of laws)for(const ch of doc.chapters)for(const item of ch.items){
  if(item.type!=='para'||item.repealed)continue;
  for(const v of item.versions||[item]){
-  const anchor=(catalog.laws.find(l=>l.sfs===sfs)||{}).parent,text=v.text,refs=links.parseRefs(text,{sfs,chapter:ch.number,exists,anchor});
+  const meta=catalog.laws.find(l=>l.sfs===sfs)||{},anchor=meta.parent||meta.anchor,text=v.text,refs=links.parseRefs(text,{sfs,chapter:ch.number,exists,anchor});
   for(const m of text.matchAll(/§/g)){
    if(text[m.index-1]==='§')continue;
    const after=text.slice(m.index+1,m.index+200).replace(/^§/,'');

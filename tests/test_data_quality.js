@@ -17,7 +17,9 @@ for(const law of catalog.laws){
   const k=ch.number+'|'+p.number;assert.ok(!keys.has(k),law.sfs+' dubblerad paragraf '+k);keys.add(k);
   for(const v of p.versions||[p]){
    assert.ok(!/\n\s*(?:Ikraftträdande- och )?Övergångsbestämmelser\s*\n/.test(v.text),law.sfs+' '+k+': övergångsbestämmelser i paragraftext');
-   assert.ok(v.text.length<15000,law.sfs+' '+k+': ovanligt lång paragraf ('+v.text.length+' tecken)');
+   // Lång text är tecken på sammanslagna paragrafer bara om den innehåller nya paragrafnummer
+   // (vissa äldre kungörelser och avtalsförordningar består av en enda lång text).
+   assert.ok(v.text.length<15000||!/\n\s*\d+\s*[a-z]?\s*§\s+[A-ZÅÄÖ]/.test(v.text),law.sfs+' '+k+': ovanligt lång paragraf ('+v.text.length+' tecken) med inbäddade paragrafer');
    assert.ok(!/\r/.test(v.text),law.sfs+' '+k+': vagnretur i text');
   }
  }

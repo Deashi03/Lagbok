@@ -88,7 +88,7 @@
       let target=targetLaw(after,context,last);
       // Uppräkningar som avslutas med "…, allt jordabalken" avser den namngivna lagen.
       if(target&&!target.explicit){
-        const tail=s.slice(start+body.length,start+body.length+1500);
+        const tail=s.slice(start+body.length,start+body.length+4000);
         const all=/^[^;]*?,\s*allt\s+(?=\S)/.exec(tail);
         if(all&&!/\n\s*\d+\s*[a-z]?\.\s/.test(all[0])){const t=targetLaw(tail.slice(all[0].length),context,last);if(t&&t.explicit)target=t;}
         // Lång uppräkning där paragrafen inte finns i den egna lagen ("… 5 kap. 1 §, 7 kap. 1 § … lagen (2018:1200)"):
@@ -99,6 +99,8 @@
           const span=stop<0?tail:tail.slice(0,stop);
           const nm=/(?<![\p{L}])(?:[\p{L}-]*(?:lagen|balken|förordningen|kungörelsen|ordningen)|lagen|förordningen)(?![\p{L}])/u.exec(span);
           if(nm){const t=targetLaw(span.slice(nm.index)+tail.slice(span.length,span.length+40),context,last);if(t&&t.explicit)target=t;}
+          // Annars: en förordning som hänvisar till "2 kap. 1 §" utan lagnamn avser lagen den kompletterar.
+          else if(context.anchor&&exists(context,context.anchor,m[1]||'0',key(firstNum)))target={id:context.anchor,explicit:true};
         }
       }
       // Följer hänvisningen direkt på en annan i en uppräkning ärver den dess kapitel.

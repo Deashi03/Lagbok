@@ -6,6 +6,7 @@
    data/index/backlinks/<sfs>.json – "kapitel|paragraf" -> kopplingar [lag, kapitel, paragraf, typ] där typ är
                                     "ref" (hänvisar hit), "föreskrift" (förordning som kompletterar) eller
                                     "kompletterar" (lagparagraf som förordningsparagrafen kompletterar)
+   data/index/catalog.json        – kompakt katalog som appen läser vid start
    data/index/relations.json      – förordningar och de lagar de ansluter till
    data/index/status.json         – per lag: senaste ändring och kontrollsumma (för ändringsbevakning)
    data/index/upcoming.json       – alla kommande lydelser med datum
@@ -63,7 +64,7 @@ laws.forEach((law,li)=>{
       const terms=new Set(words([...texts,title,heading,ch.title].join(' ')));
       for(const t of terms){if(!postings.has(t))postings.set(t,[]);postings.get(t).push(ordinal);}
       for(const text of texts){
-        for(const ref of links.parseRefs(text,{sfs:law.sfs,chapter:ch.number,exists,anchor:law.parent})){
+        for(const ref of links.parseRefs(text,{sfs:law.sfs,chapter:ch.number,exists,anchor:law.parent||law.anchor})){
           if(ref.id===law.sfs&&ref.chapter===ch.number&&ref.numbers.includes(key(item.number)))continue;
           const target=typeOf.get(ref.id);
           const complements=law.type==='förordning'&&target==='lag'&&ref.id!==law.sfs;
@@ -153,6 +154,12 @@ for(const [f,rel] of Object.entries(relations)){
     }
   }
 }
+// Kompakt katalog för appen: bara de fält appen använder, utan indrag (data/catalog.json är källan).
+const slim=Object.assign({},catalog,{laws:catalog.laws.map(l=>{
+  const o={};for(const [k,v] of Object.entries(l)){if(k==='check'||v===false||v===''||v==null||(Array.isArray(v)&&!v.length))continue;o[k]=v;}
+  return o;
+})});
+fs.writeFileSync(path.join(out,'catalog.json'),JSON.stringify(slim));
 fs.writeFileSync(path.join(out,'relations.json'),JSON.stringify(relations));
 // Paragrafregistret delas i block om CHUNK paragrafer som hämtas när en sökträff finns i blocket.
 // Orddelar som blir större än SPLIT byte delas vidare ett tecken i taget ("fo" -> "for", "fos", "fo_"),

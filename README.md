@@ -98,3 +98,12 @@ Läsaren har en enda innehållsknapp, utan föregående/nästa länkar eller ver
 - **Hänvisningar:** långa uppräkningar som avslutas med lagens namn ("… 12 kap. 64 §, allt jordabalken") och "balken" i promulgationslagar länkas rätt.
 - **Månatlig kontroll** hittar även nya lagar i SFS och föreslår dem för granskning. Offlinenedladdningen hämtar sex filer åt gången.
 - Genvägsrutorna har samma bredd oavsett namnets längd.
+
+## Version 1.1
+- **Förordningarna är med:** 3 252 av 3 423 gällande förordningar (95 %). Totalt finns nu 5 018 författningar i appen, alltså 91 % av alla gällande författningar i SFS och 99,9 % av lagarna. Resten är tillkännagivanden, myndighetsföreskrifter i SFS och förordningar som saknar text hos Riksdagen eller i praktiken är upphävda (`data/excluded.json`).
+- **Förordningen hänger under sin lag:** 1 863 förordningar är kopplade till den lag de kompletterar, till exempel delgivningsförordningen under delgivningslagen och förordningar till anslutande lagar under sin balk. Kopplingen utgår från förordningens första paragrafer ("kompletterar lagen …", "med stöd av …"), namnstammen och hänvisningarna. Allmänna lagar som förvaltningslagen och offentlighets- och sekretesslagen räknas bara när förordningen uttryckligen kompletterar dem. Svaga kopplingar och förordningar utan lag har granskats för hand; 492 placeringar rättades (`data/placement.json`). Myndigheternas instruktioner har en egen avdelning.
+- Långa förordningslistor, som årliga beloppsförordningar, visar de första åtta och resten under *Visa fler*.
+- **Versionsnumret** syns uppe till höger.
+- **Sökfältet följer med** när man scrollar i katalogen och lägger sig under toppfältet.
+- Appen läser en kompakt katalog (`data/index/catalog.json`, cirka 110 kB över nätet), så starten förblir snabb med 5 000 författningar.
+- Hänvisningar utan lagnamn i en förordning ("enligt 2 kap. 1 §") länkas till lagen förordningen kompletterar, om paragrafen inte finns i förordningen själv.

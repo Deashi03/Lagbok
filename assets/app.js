@@ -1,7 +1,7 @@
 /* Lagboken: snabb offlinevänlig juridisk läsapp utan externa JavaScript-beroenden. */
 (function () {
   'use strict';
-  const APP_VERSION='1.0';
+  const APP_VERSION='1.1';
   const $ = (sel, root=document) => root.querySelector(sel);
   const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
   const view = $('#view');
@@ -168,8 +168,8 @@
   }
   // Katalogen följer Sveriges Rikes Lag: grundlagar, balkarna med anslutande författningar, övriga områden.
   // Anslutande författningar hänger under sin balk som grenar i ett träd; balken själv är en vanlig rad.
-  function childRow(law,last){
-    return '<a class="tree-row'+(last?' last':'')+'" href="'+attr(urlFor(law.sfs))+'" data-link="1"><span class="tree-branch" aria-hidden="true"></span>'+
+  function childRow(law,last,deep){
+    return '<a class="tree-row'+(last?' last':'')+(deep?' deep':'')+'" href="'+attr(urlFor(law.sfs))+'" data-link="1"><span class="tree-branch" aria-hidden="true"></span>'+
       '<span class="grow"><span class="tree-title">'+html(law.name)+'</span><span class="tree-sub">'+(law.type==='förordning'?'Förordning':'Lag')+(abbrOf(law)?' · '+html(abbrOf(law)):'')+' · '+html(law.sfs)+'</span></span><span class="chevron">›</span></a>';
   }
   function readTarget(sfs){
@@ -192,13 +192,35 @@
   }
   // Katalogen följer Sveriges Rikes Lag. Avdelningarna fälls ihop och fylls först när de öppnas,
   // så att nästan 2 000 författningar inte behöver ritas vid start.
+  // Träd i katalogen: balk → anslutande lagar → deras förordningar, och lag → förordningar.
+  // Byggs en gång per katalog i stället för att söka igenom alla författningar för varje rad.
+  let treeCache=null;
+  function tree(){
+    if(treeCache&&treeCache.catalog===state.catalog)return treeCache;
+    const kids=new Map(),regs=new Map(),bySfs=new Map(state.catalog.map(l=>[l.sfs,l]));
+    for(const l of state.catalog){
+      if(l.parent&&bySfs.has(l.parent)){if(!kids.has(l.parent))kids.set(l.parent,[]);kids.get(l.parent).push(l);}
+      const a=l.anchor&&bySfs.get(l.anchor);
+      if(a&&!l.parent&&a.section===l.section){if(!regs.has(l.anchor))regs.set(l.anchor,[]);regs.get(l.anchor).push(l);}
+    }
+    return treeCache={catalog:state.catalog,kids,regs,bySfs};
+  }
+  function isNested(l){const t=tree();return (l.parent&&t.bySfs.has(l.parent))||t.regs.has(l.anchor)&&t.regs.get(l.anchor).includes(l);}
   function sectionRows(sec){
-    const laws=state.catalog.filter(l=>!sec.id||l.section===sec.id);
-    return laws.filter(l=>!l.parent||!lawById(l.parent)).map(law=>{
-      const kids=state.catalog.filter(k=>k.parent===law.sfs);
-      if(!kids.length)return lawRow(law);
-      return listRow(law.name,lawSub(law)+' · '+kids.length+' anslutande',urlFor(law.sfs),law.sfs).replace('class="list-row"','class="list-row has-tree"')+
-        '<div class="law-tree" role="group" aria-label="Anslutande författningar till '+attr(law.name)+'">'+kids.map((k,i)=>childRow(k,i===kids.length-1)).join('')+'</div>';
+    const t=tree();
+    return state.catalog.filter(l=>(!sec.id||l.section===sec.id)&&!isNested(l)).map(law=>{
+      const kids=t.kids.get(law.sfs)||[],regs=t.regs.get(law.sfs)||[];
+      if(!kids.length&&!regs.length)return lawRow(law);
+      const rows=[];
+      for(const k of kids){rows.push([k,false]);for(const r of t.regs.get(k.sfs)||[])rows.push([r,true]);}
+      for(const r of regs)rows.push([r,false]);
+      const counts=[kids.length?kids.length+' anslutande':'',regs.length?regs.length+(regs.length===1?' förordning':' förordningar'):''].filter(Boolean).join(' · ');
+      // Långa förordningslistor (t.ex. årliga beloppsförordningar) visar de första och resten på begäran.
+      const LIMIT=8,shown=rows.length>LIMIT+2?rows.slice(0,LIMIT):rows,hidden=rows.slice(shown.length);
+      const more=hidden.length?'<details class="tree-more"><summary class="tree-row last"><span class="tree-branch" aria-hidden="true"></span><span class="grow"><span class="tree-title">Visa '+hidden.length+' till</span></span></summary>'+
+        hidden.map(([l,deep],i)=>childRow(l,i===hidden.length-1,deep)).join('')+'</details>':'';
+      return listRow(law.name,lawSub(law)+' · '+counts,urlFor(law.sfs),law.sfs).replace('class="list-row"','class="list-row has-tree"')+
+        '<div class="law-tree" role="group" aria-label="Anslutande författningar till '+attr(law.name)+'">'+shown.map(([l,deep],i)=>childRow(l,!hidden.length&&i===shown.length-1,deep)).join('')+more+'</div>';
     }).join('');
   }
   function catalogSections(){
@@ -378,7 +400,7 @@
   }
   function linkify(input,sfs,chapter){
     return legalLinks.linkify(input,{
-      sfs,chapter,anchor:(lawById(sfs)||{}).parent,
+      sfs,chapter,anchor:(lawById(sfs)||{}).parent||(lawById(sfs)||{}).anchor,
       exists:refExists,
       href:urlFor
     });
@@ -605,14 +627,16 @@
   // Hur stor del av svensk lag som finns i appen (räknas vid varje import mot Riksdagens förteckning).
   function coverageHtml(){
     const c=state.coverage;if(!c||!c.laws)return '';
-    const lagar=state.catalog.filter(l=>l.type==='lag').length,all=state.catalog.length;
+    const lagar=state.catalog.filter(l=>l.type==='lag').length,regs=state.catalog.filter(l=>l.type==='förordning').length,all=state.catalog.length;
     const pct=(a,b)=>(Math.min(100,a*100/b)).toLocaleString('sv-SE',{maximumFractionDigits:1})+' %';
     return '<div class="section-title">Innehåll</div><div class="coverage">'+
       '<div class="coverage-row"><span>Gällande lagar</span><b>'+lagar+' av '+c.laws+'</b><em>'+pct(lagar,c.laws)+'</em></div>'+
       '<div class="meter"><span style="width:'+Math.min(100,lagar*100/c.laws)+'%"></span></div>'+
+      (c.regs?'<div class="coverage-row"><span>Gällande förordningar</span><b>'+regs+' av '+c.regs+'</b><em>'+pct(regs,c.regs)+'</em></div>'+
+      '<div class="meter"><span style="width:'+Math.min(100,regs*100/c.regs)+'%"></span></div>':'')+
       '<div class="coverage-row"><span>Alla gällande författningar</span><b>'+all+' av '+c.all+'</b><em>'+pct(all,c.all)+'</em></div>'+
       '<div class="meter"><span style="width:'+Math.min(100,all*100/c.all)+'%"></span></div>'+
-      '<p class="small muted">Räknat mot Riksdagens förteckning över SFS '+html(String(c.date||'').slice(0,10))+'. Förordningar läggs till i kommande versioner.</p></div>';
+      '<p class="small muted">Räknat mot Riksdagens förteckning över SFS '+html(String(c.date||'').slice(0,10))+'.</p></div>';
   }
   function settingsPage(){
     return '<div class="page"><h1 class="page-title">Inställningar</h1>'+
@@ -696,7 +720,7 @@
       }
     }
     await Promise.all(Array.from({length:6},worker));
-    try{await cache.add('data/catalog.json');}catch(_){}
+    try{await cache.addAll(['data/catalog.json','data/index/catalog.json']);}catch(_){}
     toast(failed?failed+' författningar kunde inte hämtas':'Alla lagar finns nu offline');
     offlineStatus();
   }
@@ -1664,13 +1688,20 @@
     document.body.appendChild(b);
   }
   async function loadCatalog(){
-    const resp=await fetch('data/catalog.json');
+    let resp=await fetch('data/index/catalog.json').catch(()=>null);
+    if(!resp||!resp.ok)resp=await fetch('data/catalog.json');
     if(!resp.ok)throw Error('Katalog saknas');
     const data=await resp.json();
     state.catalog=(data.laws||[]).filter(l=>l.available!==false);state.fap=data.fap||[];state.version=data.version||'';state.sections=data.sections||[];state.coverage=data.coverage||null;window.LAGBOK_GENERATED=data.generated;
     legalLinks.configure&&legalLinks.configure(state.catalog);
   }
+  // Sökfältet i katalogen stannar under toppfältet när man scrollar; skugga när det ligger över listan.
+  view.addEventListener('scroll',()=>{
+    const bar=view.querySelector('.searchbar-wrap');
+    if(bar&&bar.classList)bar.classList.toggle('stuck',bar.getBoundingClientRect().top<=view.getBoundingClientRect().top+1&&view.scrollTop>0);
+  },{passive:true});
   async function boot(){
+    const v=$('#top-version');if(v)v.textContent='v'+APP_VERSION;
     try {
       await loadCatalog();
     } catch(_) {
