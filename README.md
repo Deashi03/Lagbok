@@ -117,7 +117,7 @@ Läsaren har en enda innehållsknapp, utan föregående/nästa länkar eller ver
   - Inga upphävda författningar, tomma eller sammanslagna paragrafer, felaktiga balk- eller lagkopplingar eller titelfel.
 - **Favoriter:** en ☆ vid lagens rubrik och vid varje kapitel. Favoriterna ersätter avdelningsknapparna överst i katalogen (till exempel BrB, RB 24 kap., SkolL). De mest använda kommer först, och under *Ordna* går de att flytta och ta bort. Avdelningarna finns under *Avdelningar ▾*.
 - **Lydelse vid datum:** i paragrafmenyn kan man välja ett datum och se lagen som den löd då, med markering av vad som skiljer sig från i dag. Från och med nu sparar varje månadsimport de lydelser som ersätts (`data/history/`).
-- **Förarbeten:** varje "Ändrad genom SFS …" länkar till propositionen och betänkandet, hämtade från Riksdagens betänkanden från 1990-talet och framåt (`scripts/forarbeten.py`).
+- **Förarbeten:** "Ändrad genom SFS …" länkar till propositionen och betänkandet, hämtade från Riksdagens betänkanden (`scripts/forarbeten.py`). Riksdagens data kopplar betänkanden till ändringsförfattningar bara för ungefär 2001–2014, så länkar finns i dag för 1 987 ändringar från de åren.
 - **Nytt i lagen:** en sida med det som ändrats vid varje import, där dina favoriter och bevakningar kommer först, och det som träder i kraft det närmaste året. En prick på fliken visar när det finns något nytt.
 - **Källdatum** ("Kontrollerad mot Riksdagen …") i varje lags rubrik, och **Rapportera fel i texten** i paragrafmenyn, som öppnar ett färdigt ärende i projektets GitHub.
 - Stora avdelningar ritas i omgångar och öppnas direkt.
