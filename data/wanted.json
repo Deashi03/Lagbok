@@ -1,215 +1,162 @@
 [
  {
-  "titel": "Vapenlag",
-  "avdelning": "balkar",
-  "alias": [
-   "VL",
-   "vapen"
-  ],
-  "balk": "1962:700"
- },
- {
-  "titel": "Vapenförordning",
-  "avdelning": "balkar",
-  "alias": [
-   "VF"
-  ],
-  "balk": "1962:700"
- },
- {
-  "titel": "Lag om förbud mot könsstympning av kvinnor och oskuldsingrepp på kvinnor",
+  "titel": "Lag om verkställighet av fängelsestraff med elektronisk övervakning",
   "avdelning": "balkar",
   "alias": [],
   "balk": "1962:700"
  },
  {
-  "titel": "Lag om straff för olovlig befattning med klusterammunition",
+  "titel": "Förordning om verkställighet av fängelsestraff med elektronisk övervakning",
   "avdelning": "balkar",
   "alias": [],
   "balk": "1962:700"
  },
  {
-  "titel": "Lag om Skatteverkets brottsbekämpande verksamhet",
+  "titel": "Förordning om verkställighet av säkerhetsförvaring",
   "avdelning": "balkar",
   "alias": [],
   "balk": "1962:700"
  },
  {
-  "titel": "Lag om verkställighet av säkerhetsförvaring",
+  "titel": "Lag om sprängämnesprekursorer",
   "avdelning": "balkar",
   "alias": [],
   "balk": "1962:700"
  },
  {
-  "titel": "Lag om verkställighet av ungdomsövervakning",
-  "avdelning": "balkar",
-  "alias": [],
-  "balk": "1962:700"
- },
- {
-  "titel": "Förordning om verkställighet av frivårdspåföljder",
-  "avdelning": "balkar",
-  "alias": [],
-  "balk": "1962:700"
- },
- {
-  "titel": "Lag om strafftid",
-  "avdelning": "balkar",
-  "alias": [],
-  "balk": "1962:700"
- },
- {
-  "titel": "Förordning om strafftid",
-  "avdelning": "balkar",
-  "alias": [],
-  "balk": "1962:700"
- },
- {
-  "titel": "Förordning om ersättning av allmänna medel till vittnen, m.m.",
+  "titel": "Lag om utnämning av ordinarie domare",
   "avdelning": "balkar",
   "alias": [],
   "balk": "1942:740"
  },
  {
-  "titel": "Lag om en europeisk utredningsorder",
+  "titel": "Förordning med instruktion för Domarnämnden",
   "avdelning": "balkar",
   "alias": [],
   "balk": "1942:740"
  },
  {
-  "titel": "Förordning om erkännande och verkställighet av frihetsberövande påföljder inom Europeiska unionen",
+  "titel": "Förordning med instruktion för Rättsmedicinalverket",
   "avdelning": "balkar",
   "alias": [],
   "balk": "1942:740"
  },
  {
-  "titel": "Lag om bevisupptagning åt utländsk domstol",
+  "titel": "Förordning med instruktion för Statens institutionsstyrelse",
   "avdelning": "balkar",
   "alias": [],
   "balk": "1942:740"
  },
  {
-  "titel": "Förordning om domstolarnas behandling av personuppgifter inom brottsdatalagens område",
+  "titel": "Fastighetsbildningslag",
   "avdelning": "balkar",
   "alias": [],
-  "balk": "1942:740"
+  "balk": "1970:994"
  },
  {
-  "titel": "Lag om elektronisk övervakning",
+  "titel": "Expropriationslag",
   "avdelning": "balkar",
   "alias": [],
-  "balk": "1942:740"
+  "balk": "1970:994"
  },
  {
-  "titel": "Förordning om elektronisk övervakning",
+  "titel": "Ledningsrättslag",
   "avdelning": "balkar",
   "alias": [],
-  "balk": "1942:740"
+  "balk": "1970:994"
  },
  {
-  "titel": "Förordning med särskilda bestämmelser om unga lagöverträdare",
+  "titel": "Lag om hyresförhandling",
   "avdelning": "balkar",
   "alias": [],
-  "balk": "1942:740"
+  "balk": "1970:994"
  },
  {
-  "titel": "Lag om verkställighet av vissa utländska beslut om rättegångskostnader",
+  "titel": "Fastighetsmäklarlag",
+  "avdelning": "balkar",
+  "alias": [],
+  "balk": "1970:994"
+ },
+ {
+  "titel": "Inkassolag",
   "avdelning": "balkar",
   "alias": [],
   "balk": "1981:774"
  },
  {
-  "titel": "Förordning med instruktion för Polismyndigheten",
-  "avdelning": "polis",
-  "alias": [
-   "polisinstruktion"
-  ]
+  "titel": "Kreditupplysningslag",
+  "avdelning": "balkar",
+  "alias": [],
+  "balk": "1981:774"
  },
  {
-  "titel": "Lag om polisiära befogenheter i gränsnära områden",
-  "avdelning": "polis",
-  "alias": []
- },
- {
-  "titel": "Lag om preventiva vistelseförbud",
+  "titel": "Förordning med instruktion för Kustbevakningen",
   "avdelning": "polis",
   "alias": []
  },
  {
-  "titel": "Lag om internationella sanktioner",
+  "titel": "Förordning med instruktion för Skatteverket",
   "avdelning": "polis",
   "alias": []
  },
  {
-  "titel": "Lag om kontroll av produkter med dubbla användningsområden och av tekniskt bistånd",
+  "titel": "Lag om bevakningsföretag",
   "avdelning": "polis",
   "alias": []
  },
  {
-  "titel": "Förordning om föreskrifter rörande alkoholutandningsprov",
+  "titel": "Förordning om bevakningsföretag",
   "avdelning": "polis",
   "alias": []
  },
  {
-  "titel": "Kamerabevakningsförordning",
+  "titel": "Pantbankslag",
   "avdelning": "polis",
   "alias": []
  },
  {
-  "titel": "Lag om fordons registrering och användning",
+  "titel": "Lag om identitetskontroll vid allvarlig fara för den allmänna ordningen eller den inre säkerheten i landet",
+  "avdelning": "polis",
+  "alias": []
+ },
+ {
+  "titel": "Förordning med instruktion för Migrationsverket",
+  "avdelning": "polis",
+  "alias": []
+ },
+ {
+  "titel": "Vägtrafikskattelag",
   "avdelning": "trafik",
   "alias": []
  },
  {
-  "titel": "Förordning om fordons registrering och användning",
+  "titel": "Trafikförsäkringsförordning",
   "avdelning": "trafik",
   "alias": []
  },
  {
-  "titel": "Förordning om kör- och vilotider samt färdskrivare, m.m.",
+  "titel": "Terrängtrafiklag",
   "avdelning": "trafik",
   "alias": []
  },
  {
-  "titel": "Lag om elektroniska vägtullssystem",
+  "titel": "Terrängtrafikförordning",
   "avdelning": "trafik",
   "alias": []
  },
  {
-  "titel": "Lag med instruktion för Riksdagens ombudsmän (JO)",
-  "avdelning": "forvaltning",
-  "alias": [
-   "JO"
-  ]
- },
- {
-  "titel": "Lag om vissa kommunala befogenheter",
+  "titel": "Lag om hälso- och sjukvård åt asylsökande m.fl.",
   "avdelning": "forvaltning",
   "alias": []
  },
  {
-  "titel": "Lag om aviseringsregister",
+  "titel": "Lag om redovisningsmedel",
   "avdelning": "forvaltning",
   "alias": []
  },
  {
-  "titel": "Lag om statlig ersättning vid ideell skada m.m.",
+  "titel": "Lag om finansiell rådgivning till konsumenter",
   "avdelning": "forvaltning",
-  "alias": []
- },
- {
-  "titel": "Lag om mottagande av asylsökande och vissa andra utlänningar",
-  "avdelning": "forvaltning",
-  "alias": []
- },
- {
-  "titel": "Lag om uthyrning av bostadslägenheter",
-  "avdelning": "forvaltning",
-  "alias": []
- },
- {
-  "titel": "Lag om privat arbetsförmedling och uthyrning av arbetskraft",
-  "avdelning": "civil",
   "alias": []
  }
 ]
