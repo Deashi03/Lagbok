@@ -1,7 +1,7 @@
 import sys,unittest
 from pathlib import Path
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/"scripts"))
-from import_laws import document,quality_warnings,check_title,parse_html,parse_text,validate,editorial,build_para,describe_changes,latest_amendment
+from import_laws import check_in_force,document,quality_warnings,check_title,parse_html,parse_text,validate,editorial,build_para,describe_changes,latest_amendment
 class ParserTests(unittest.TestCase):
  def test_chapters(self):
   source='<hr><a name="K28">28 kap. Om husrannsakan</a><h4>Husrannsakan</h4><a class="paragraf" name="K28P1"><b>1 §</b></a>Text<br>ny rad<a class="paragraf" name="K28P2"><b>2 §</b></a>Andra'
@@ -79,4 +79,8 @@ class ParserTests(unittest.TestCase):
   new={"chapters":[{"number":"1","items":[{"type":"para","number":"1","text":"x"*16000}]}]}
   w=" ".join(quality_warnings(old,new))
   self.assertIn("minskade",w);self.assertIn("kapitel saknas: 2",w);self.assertIn("ovanligt långa",w)
+ def test_repealed_documents_are_refused(self):
+  check_in_force({"html":"<b>Utfärdad</b>: 1984-05-24<br><b>Ändrad</b>: t.o.m. SFS 2026:1<hr><a class=\"paragraf\">1 §</a>"})
+  with self.assertRaises(ValueError):
+   check_in_force({"html":"<b>Utfärdad</b>: 2000-05-11<br><b>Upphävd</b>: 2017-07-01<hr>text"})
 if __name__=="__main__":unittest.main()

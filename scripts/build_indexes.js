@@ -150,6 +150,9 @@ for(const law of laws){
   }
   status[law.sfs]={amended:doc.latestAmendment||null,hash:lawModel.snapshot(doc).hash};
 }
+// En paragraf kan ha flera kommande lydelser med samma datum; varje paragraf visas en gång per datum.
+const uniqueUpcoming=[...new Map(upcoming.map(u=>[u.join('|'),u])).values()];
+upcoming.length=0;upcoming.push(...uniqueUpcoming);
 upcoming.sort((a,b)=>(a[0]||'9999').localeCompare(b[0]||'9999')||a[1].localeCompare(b[1]));
 fs.writeFileSync(path.join(out,'status.json'),JSON.stringify(status));
 fs.writeFileSync(path.join(out,'upcoming.json'),JSON.stringify(upcoming));

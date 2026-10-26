@@ -192,10 +192,19 @@ def editorial(chs,sfs):
     if idx is None:return
     if idx and c["items"][idx-1]["type"]=="heading" and "husrannsakan" in c["items"][idx-1]["text"].lower():return
     c["items"].insert(idx,{"type":"heading","text":"Husrannsakan","editorial":True,"nextPara":"1"})
+REPEALED_HEADER=re.compile(r'Upph(?:ä|&auml;)vd\s*(?:</?\w+[^>]*>\s*)*:?\s*(?:</?\w+[^>]*>\s*)*(\d{4}-\d{2}-\d{2})',re.I)
+def check_in_force(doc):
+    """Upphävda författningar finns kvar i Riksdagens databas men ska inte in i lagboken."""
+    head=(doc.get("html") or "")
+    hr=re.search(r"<hr\b",head,re.I)
+    head=head[:hr.start()] if hr else head[:3000]
+    m=REPEALED_HEADER.search(head) or REPEALED_HEADER.search((doc.get("text") or "")[:1500])
+    if m:raise ValueError("upphävd författning ("+m[1]+")")
 def check_title(meta,official):
     """Skydd mot fel SFS-nummer i katalogen: Riksdagens titel måste innehålla kontrollordet."""
     expected=meta.get("check")
-    if expected and expected.lower() not in (official or "").lower():
+    flat=lambda t:re.sub(r"\s+"," ",re.sub(r"[^\wåäö\- ]"," ",re.sub(r"\(\d{4}:\d+(?: \d)?\)","",str(t or "")).lower())).strip()
+    if expected and flat(expected) not in flat(official):
         raise ValueError("titelkontroll: väntade '"+expected+"' i '"+str(official)+"'")
 def document(id,name,method,chs,official=None):
     transitions=take_transitions(chs)
@@ -255,6 +264,7 @@ def run():
             doc=fetch(id).get("dokumentstatus",{}).get("dokument",{})
             official=doc.get("titel")
             check_title(meta,official)
+            check_in_force(doc)
             chs=parse_html(doc.get("html") or "")
             method="HTML"
             if count(chs)<MIN.get(id,5):

@@ -152,7 +152,7 @@
   // Katalogen följer Sveriges Rikes Lag: grundlagar, balkarna med anslutande författningar, övriga områden.
   function childRow(law){
     return '<a class="list-row child-row" href="'+attr(urlFor(law.sfs))+'" data-link="1"><div class="grow"><div class="row-title">'+html(law.name)+'</div>'+
-      '<div class="row-sub">'+(law.type==='förordning'?'Förordning':'Lag')+' · SFS '+html(law.sfs)+'</div></div><span class="chevron">›</span></a>';
+      '<div class="row-sub">'+(law.type==='förordning'?'<span class="type-tag">Förordning</span> ':'')+'SFS '+html(law.sfs)+'</div></div><span class="chevron">›</span></a>';
   }
   function readTarget(sfs){
     const pos=pref.readPos[sfs];if(!pos)return null;
@@ -180,8 +180,10 @@
       if(!top.length)return '';
       return '<div class="section-title">'+html(sec.name)+'</div><div class="card-list">'+top.map(law=>{
         const kids=state.catalog.filter(k=>k.parent===law.sfs);
-        return lawRow(law)+(kids.length?'<details class="children"><summary class="children-toggle">Anslutande författningar <span>'+kids.length+'</span></summary>'+
-          '<div class="children-list">'+kids.map(childRow).join('')+'</div></details>':'');
+        if(!kids.length)return lawRow(law);
+        // Balken och dess anslutande författningar i ett gemensamt kort, sammanbundna av en ”rygg”.
+        return '<div class="balk-group">'+lawRow(law)+'<div class="children-list" aria-label="Anslutande författningar till '+attr(law.name)+'">'+
+          '<div class="children-label">Anslutande författningar · '+kids.length+'</div>'+kids.map(childRow).join('')+'</div></div>';
       }).join('')+'</div>';
     }).join('');
   }
@@ -198,20 +200,20 @@
   function savedPage(){
     const favs = pref.favourites.filter(x=>lawById(x.split('|')[0]));
     const marks=Object.entries(pref.highlights).flatMap(([k,list])=>list.map(h=>({k,h}))).filter(x=>lawById(x.k.split('|')[0]));
-    return '<div class="page"><h1 class="page-title">Sparat</h1><p class="intro">Dina favoriter, samlingar, markeringar och anteckningar sparas på den här enheten.</p>' +
-      '<div class="section-title">Bevakning <a href="#/upcoming" data-link="1">Alla kommande ändringar</a></div><div id="watch-box">'+watchSummary()+'</div>'+
-      '<div class="section-title">Samlingar ('+pref.collections.length+')</div><div class="card-list">'+
-      (pref.collections.length?pref.collections.map(c=>listRow(c.name,c.items.length+' paragrafer','#/collection/'+encodeURIComponent(c.id),'▤')).join(''):
-        '<div class="empty">Samla paragrafer, t.ex. ”LOB-ingripande”, via paragrafens meny ⋯.</div>')+'</div>'+
+    // Ordning: egna markeringar och anteckningar först, bevakning sist.
+    return '<div class="page"><h1 class="page-title">Sparat</h1><p class="intro">Dina markeringar, anteckningar, favoriter och samlingar sparas på den här enheten.</p>' +
       '<div class="section-title">Markeringar och anteckningar ('+(marks.length+Object.keys(pref.notes).filter(x=>pref.notes[x]).length)+')</div>'+
       '<div class="marks-tools"><div class="searchbox small-search">'+iconSearch()+'<input id="marks-query" type="search" placeholder="Sök i markeringar och anteckningar" value="'+attr(state.marksQuery)+'"></div>'+
       '<div class="chips">'+[['','Alla'],['yellow','Gul'],['green','Grön'],['rose','Rosa'],['note','Anteckningar']].map(([id,label])=>
         '<button type="button" class="chip'+(state.marksFilter===id?' active':'')+'" data-action="marks-filter" data-id="'+id+'">'+(id&&id!=='note'?'<span class="hl-dot hl-'+id+'"></span>':'')+label+'</button>').join('')+'</div></div>'+
       '<div id="marks-list">'+marksHtml()+'</div>'+
       '<div class="section-title">Favoriter ('+favs.length+')</div><div class="card-list">' +
-      (favs.length?favs.map(id=>listRow(favTitle(id),'',favRoute(id),'★')).join(''):'<div class="empty">Inga sparade lagrum ännu.</div>') +
-      '</div><div>' +
-      '</div></div>';
+      (favs.length?favs.map(id=>listRow(favTitle(id),'',favRoute(id),'★')).join(''):'<div class="empty">Inga sparade lagrum ännu.</div>') +'</div>'+
+      '<div class="section-title">Samlingar ('+pref.collections.length+')</div><div class="card-list">'+
+      (pref.collections.length?pref.collections.map(c=>listRow(c.name,c.items.length+' paragrafer','#/collection/'+encodeURIComponent(c.id),'▤')).join(''):
+        '<div class="empty">Samla paragrafer, t.ex. ”LOB-ingripande”, via paragrafens meny ⋯.</div>')+'</div>'+
+      '<div class="section-title">Bevakning <a href="#/upcoming" data-link="1">Alla kommande ändringar</a></div><div id="watch-box">'+watchSummary()+'</div>'+
+      '</div>';
   }
   // Markeringar och anteckningar grupperade per författning, med filter på färg och fritext.
   function marksHtml(){
@@ -1114,20 +1116,22 @@
       '<div class="chips">'+rows.map(r=>'<a class="chip" data-link="1" href="'+attr(urlFor(r.sfs))+'">'+html(shortRef(r.sfs,'0',null).trim())+'</a>').join('')+'</div>';
     const up=await upcomingFor(laws);
     const target=$('#watch-upcoming');
-    if(target)target.innerHTML=up.length?'<div class="watch-news-title">Kommande ändringar i det du bevakar</div>'+timeline(up.slice(0,40))+(up.length>40?'<p class="small muted"><a href="#/upcoming" data-link="1">Visa alla '+up.length+'</a></p>':''):'';
+    if(target)target.innerHTML=up.length?'<div class="watch-news-title">Kommande ändringar i det du bevakar</div>'+timeline(up,8)+(up.length>8?'<p class="small muted"><a href="#/upcoming" data-link="1">Visa alla '+up.length+'</a></p>':''):'';
     updateNavBadge();
   }
   async function upcomingFor(laws){
     if(!state.upcoming){try{state.upcoming=await fetchJson('data/index/upcoming.json');}catch(_){state.upcoming=[];}}
-    const today=lawModel.today(),future=state.upcoming.filter(u=>!u[0]||u[0]>today);
+    const today=lawModel.today(),seen=new Set();
+    const future=state.upcoming.filter(u=>{const k=u.join('|');if(seen.has(k)||(u[0]&&u[0]<=today))return false;seen.add(k);return true;});
     return laws?future.filter(u=>laws.includes(u[1])):future;
   }
-  function timeline(list){
+  function timeline(list,limit){
     const groups=new Map();
     for(const u of list){const k=u[0]||'';if(!groups.has(k))groups.set(k,[]);groups.get(k).push(u);}
     return '<div class="timeline">'+[...groups].map(([date,items])=>'<div class="timeline-group"><div class="timeline-date">'+
       html(date?lawModel.formatDate(date):'Datum ej bestämt')+'<span>'+items.length+(items.length===1?' paragraf':' paragrafer')+'</span></div><div class="chips">'+
-      items.map(([,s,c,n])=>'<a class="chip" data-link="1" href="'+attr(urlFor(s,c,searchCore.paraKey(n)))+'">'+html(shortRef(s,c,n))+'</a>').join('')+'</div></div>').join('')+'</div>';
+      items.slice(0,limit||items.length).map(([,s,c,n])=>'<a class="chip" data-link="1" href="'+attr(urlFor(s,c,searchCore.paraKey(n)))+'">'+html(shortRef(s,c,n))+'</a>').join('')+
+      (limit&&items.length>limit?'<a class="chip more" data-link="1" href="#/upcoming">+'+(items.length-limit)+' till</a>':'')+'</div></div>').join('')+'</div>';
   }
   async function upcomingPage(){
     const future=await upcomingFor(null);

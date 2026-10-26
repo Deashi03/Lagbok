@@ -408,3 +408,13 @@ html[data-theme="dark"] mark.find-hit{background:#7A6527}
 .find-bar .find-close{flex:0 0 auto;padding:6px 4px!important}
 .find-bar .find-count{flex:0 0 auto;min-width:0}
 .find-bar input{flex:1 1 auto;width:0}
+/* 1.0 – balkarna med anslutande författningar alltid synliga */
+.balk-group{margin:10px 0 14px;border:1px solid var(--border);border-radius:14px;overflow:hidden;background:var(--panel)}
+.balk-group>.list-row{padding-left:12px;padding-right:12px;background:var(--soft);border-bottom:1px solid var(--border)}
+.balk-group>.list-row .row-title{font:600 16px Georgia,"Iowan Old Style",serif}
+.balk-group .children-list{margin:0 0 0 20px;border-left:3px solid var(--soft-green);padding:0 0 4px}
+.children-label{font-size:10px;font-weight:750;letter-spacing:.07em;text-transform:uppercase;color:var(--secondary);padding:10px 12px 2px}
+.balk-group .child-row{padding:9px 12px;border-bottom:1px solid var(--border)}
+.balk-group .child-row:last-child{border-bottom:0}
+.type-tag{display:inline-block;font-size:9.5px;font-weight:750;letter-spacing:.05em;text-transform:uppercase;color:var(--wine);border:1px solid var(--wine);border-radius:4px;padding:0 4px;margin-right:2px;vertical-align:1px}
+.chip.more{color:var(--secondary)}
