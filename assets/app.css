@@ -494,3 +494,21 @@ html[data-pen="on"] .toast{bottom:calc(150px + env(safe-area-inset-bottom))}
 .tree-more>summary{list-style:none;cursor:pointer;color:var(--accent)}.tree-more>summary::-webkit-details-marker{display:none}
 .tree-more>summary .tree-title{font-weight:650;color:var(--accent)}
 .tree-more[open]>summary{display:none}
+/* 1.2: favoriter som genvägar i katalogen och stjärna vid kapitlet */
+.fav-row{display:flex;flex-wrap:wrap;gap:6px;margin:18px 0 6px}
+.fav-chip{font-weight:650;text-decoration:none;display:inline-flex;align-items:center;gap:4px;background:var(--soft-green);border-color:transparent}
+.fav-row.editing .fav-chip{background:var(--soft)}
+.fav-move,.fav-remove{border:0;background:none;color:var(--secondary);font-size:16px;padding:0 3px;line-height:1}.fav-move:disabled{opacity:.25}
+.chip-quiet{background:none;color:var(--secondary)}
+.fav-hint{margin:16px 0 0}
+.fav-star{border:0;background:none;color:var(--accent);font-size:.8em;margin-left:8px;vertical-align:middle;padding:2px 4px;cursor:pointer}
+.fav-star.on{color:#B8892E}
+.date-banner{margin:10px 0 0;padding:9px 12px;border-radius:10px;background:#F4EBD3;color:#5B4618;font-size:13px;font-weight:600}
+html[data-theme="dark"] .date-banner{background:#4A3E1E;color:#F3E6C2}
+.lydelse-status.dated{background:#F4EBD3;color:#5B4618}
+#at-date{font:inherit;padding:9px 10px;border:1px solid var(--border);border-radius:10px;background:var(--panel);color:var(--text)}
+.gap-notice{border-left:3px solid #B8892E;background:#FBF4E2;color:#5B4618;font-size:13px;line-height:1.45;margin-top:10px}
+html[data-theme="dark"] .gap-notice{background:#3F361C;color:#F3E6C2}
+/* Paragrafer som ännu inte trätt i kraft: tydligt avskilda från gällande rätt */
+.pending-para{border-left:3px dashed #B8892E;padding-left:12px}
+.pending-para .paragraph-content{color:var(--secondary)}

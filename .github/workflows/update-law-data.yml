@@ -63,8 +63,18 @@ jobs:
           git add data/catalog.json data/laws
           git commit -m "data: initial validated SFS import"
           git push origin HEAD:main
+      - name: Link amendments to legislative history
+        if: github.event_name != 'push'
+        continue-on-error: true
+        run: python scripts/forarbeten.py
       - name: Build search index and reference register
         run: node scripts/build_indexes.js
+      - name: Audit law text
+        continue-on-error: true
+        run: |
+          if ! python scripts/audit.py > audit.log 2>&1; then
+            printf '\n\n**Granskningen hittade problem:**\n\n```\n%s\n```\n' "$(tail -20 audit.log)" >> data/import-report.md
+          fi
       - name: Save import report
         run: cp data/import-report.md "${{ runner.temp }}/import-report.md"
       - name: Propose changes for legal review
@@ -81,6 +91,10 @@ jobs:
             data/catalog.json
             data/laws/*.json
             data/index/**
+            data/history/**
+            data/changes.json
+            data/forarbeten.json
+            data/audit-report.md
       - name: Fail if some statutes could not be imported
         run: |
           cat "${{ runner.temp }}/import-report.md" >> "$GITHUB_STEP_SUMMARY"

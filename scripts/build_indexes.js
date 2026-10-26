@@ -160,6 +160,18 @@ const slim=Object.assign({},catalog,{laws:catalog.laws.map(l=>{
   return o;
 })});
 fs.writeFileSync(path.join(out,'catalog.json'),JSON.stringify(slim));
+// Förarbeten per ändringsförfattning (scripts/forarbeten.py), uppdelat på år: forarbeten/<år>.json.
+const forarbetenFile=path.join(root,'data/forarbeten.json');
+if(fs.existsSync(forarbetenFile)){
+  const all=JSON.parse(fs.readFileSync(forarbetenFile,'utf8')).sfs||{};
+  const used=new Set();
+  for(const doc of docs.values())for(const ch of doc.chapters)for(const item of ch.items)if(item.type==='para')for(const v of item.versions||[item])if(v.amendedBy)used.add(v.amendedBy);
+  for(const doc of docs.values())if(doc.latestAmendment)used.add(doc.latestAmendment);
+  const byYear={};
+  for(const s of used){const f=all[s];if(!f)continue;(byYear[s.slice(0,4)]=byYear[s.slice(0,4)]||{})[s]=[f.prop||'',f.propId||'',f.bet||'',f.betId||''];}
+  fs.mkdirSync(path.join(out,'forarbeten'),{recursive:true});
+  for(const [y,d] of Object.entries(byYear))fs.writeFileSync(path.join(out,'forarbeten',y+'.json'),JSON.stringify(d));
+}
 fs.writeFileSync(path.join(out,'relations.json'),JSON.stringify(relations));
 // Paragrafregistret delas i block om CHUNK paragrafer som hämtas när en sökträff finns i blocket.
 // Orddelar som blir större än SPLIT byte delas vidare ett tecken i taget ("fo" -> "for", "fos", "fo_"),

@@ -58,7 +58,8 @@
     rest=rest.replace(chained,'');
     const numbered=bySfs.exec(rest);
     if(numbered)return known.has(numbered[1])?{id:numbered[1],explicit:true}:null;
-    const lower=rest.replace(/^\s*(?:i\s+|av\s+|enligt\s+)?/iu,'').toLowerCase();
+    // Avstavning över radbrytning i källan: "regerings- formen".
+    const lower=rest.replace(/^\s*(?:i\s+|av\s+|enligt\s+)?/iu,'').toLowerCase().replace(/^([\p{L}]+)-\s+(?!och\b|eller\b|samt\b)([\p{L}]+)/u,'$1$2');
     if(/^denna\s+(?:lag|balk|förordning|kungörelse)/.test(lower))return {id:context.sfs,explicit:true};
     // "samma balk", "den lagen": senast namngivna författning i samma text.
     if(/^(?:samma|den)\s+(?:lag|balk|förordning|kungörelse)(?:en)?\b/.test(lower))return last?{id:last,explicit:true}:null;
@@ -101,6 +102,15 @@
           if(nm){const t=targetLaw(span.slice(nm.index)+tail.slice(span.length,span.length+40),context,last);if(t&&t.explicit)target=t;}
           // Annars: en förordning som hänvisar till "2 kap. 1 §" utan lagnamn avser lagen den kompletterar.
           else if(context.anchor&&exists(context,context.anchor,m[1]||'0',key(firstNum)))target={id:context.anchor,explicit:true};
+          // Annars: punktlista efter en namngiven lag ("Följande bestämmelser i förvaltningslagen (2017:900) gäller inte: - 32 § om …").
+          else{
+            const before=s.slice(Math.max(0,start-700),start);
+            const names=[...before.matchAll(/(?<![\p{L}])(?:[\p{L}-]*(?:lagen|balken|förordningen|kungörelsen|ordningen)|lagen|förordningen)(?![\p{L}])/gu)];
+            for(let i=names.length-1;i>=0;i--){
+              const t=targetLaw(before.slice(names[i].index)+' ',context,last);
+              if(t&&t.explicit&&t.id!==context.sfs&&exists(context,t.id,m[1]||'0',key(firstNum))&&/(?:^|\n)\s*-\s*$|:\s*$|,\s*-?\s*$|\n\s*-\s/.test(before.slice(names[i].index))){target=t;break;}
+            }
+          }
         }
       }
       // Följer hänvisningen direkt på en annan i en uppräkning ärver den dess kapitel.
