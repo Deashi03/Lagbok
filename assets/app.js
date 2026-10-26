@@ -1,7 +1,7 @@
 /* Lagboken: snabb offlinevänlig juridisk läsapp utan externa JavaScript-beroenden. */
 (function () {
   'use strict';
-  const APP_VERSION='1.3';
+  const APP_VERSION='1.4';
   const $ = (sel, root=document) => root.querySelector(sel);
   const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
   const view = $('#view');
@@ -118,7 +118,7 @@
     return listRow(law.name, lawSub(law), urlFor(law.sfs),law.sfs);
   }
   function footer() {
-    return '<div class="footer-meta">Källa: Sveriges riksdag (Riksdagens öppna data). Lagboken är en fristående tjänst och ersätter inte kontroll av officiella författningar. Uppgifter om gällande lydelse och ikraftträdande måste alltid kontrolleras mot originalkällan.</div>';
+    return '<div class="footer-meta">Källa: riksdagen.se (öppna data). Lagboken är en fristående tjänst och ersätter inte kontroll av officiella författningar. Uppgifter om gällande lydelse och ikraftträdande måste alltid kontrolleras mot originalkällan.</div>';
   }
   function badgeMark(id) {return pref.favourites.includes(id) ? '★' : '☆';}
   function addRecent(target) {
@@ -164,7 +164,7 @@
         '<div class="empty">Tryck på stjärnan vid ett lagrum för att spara det.</div>') +
       '</div><div class="section-title">Lagbok</div><div class="card-list">' +
       state.catalog.slice(0,5).map(lawRow).join('') +
-      '</div><p class="small muted" style="margin-top:17px"><a href="#/catalog" data-link="1">Alla författningar</a> · <a href="#/fap" data-link="1">Polisens FAP</a></p>' + footer() + '</div>';
+      '</div><p class="small muted" style="margin-top:17px"><a href="#/catalog" data-link="1">Alla författningar</a></p>' + footer() + '</div>';
   }
   // Katalogen följer Sveriges Rikes Lag: grundlagar, balkarna med anslutande författningar, övriga områden.
   // Anslutande författningar hänger under sin balk som grenar i ett träd; balken själv är en vanlig rad.
@@ -230,10 +230,10 @@
     const sections=state.sections.length?state.sections:[{id:'',name:'Författningar'}];
     const count=id=>state.catalog.filter(l=>!id||l.section===id).length;
     const open=new Set(pref.openSections||[]);
-    const favs=favChips();
-    if(favs&&!state.showSections)return favs+sections.map(sec=>sectionBlock(sec,count,open)).join('');
-    return (favs?favs:'<p class="fav-hint small muted">Tryck ☆ vid en lag eller ett kapitel så hamnar den här som genväg.</p>')+'<nav class="section-index" aria-label="Avdelningar">'+sections.map(sec=>'<button type="button" class="chip" data-action="open-section" data-id="'+attr(sec.id)+'">'+html(sec.name.split(/,| och /)[0])+'</button>').join('')+
-      '<a class="chip" href="#/register" data-link="1">Register A–Ö</a><a class="chip" href="#/nytt" data-link="1">Nytt i lagen'+(unseenNews()?' ●':'')+'</a></nav>'+
+    // Överst: dina favoriter, registret och Nytt i lagen. Avdelningarna finns i listan nedanför.
+    const news=(state.changes||[]).length?'<a class="chip" href="#/nytt" data-link="1">Nytt i lagen'+(unseenNews()?' <span class="dot" aria-label="nytt"></span>':'')+'</a>':'';
+    return favChips()+'<nav class="section-index" aria-label="Genvägar"><a class="chip" href="#/register" data-link="1">Register A–Ö</a>'+news+'</nav>'+
+      (pref.favourites.length?'':'<p class="fav-hint small muted">Tryck ☆ vid en lag eller ett kapitel så hamnar den här överst.</p>')+
       sections.map(sec=>sectionBlock(sec,count,open)).join('');
   }
   function sectionBlock(sec,count,open){
@@ -258,9 +258,7 @@
         '<span class="chip fav-chip"><button type="button" class="fav-move" data-action="fav-move" data-key="'+attr(t)+'" aria-label="Flytta fram"'+(i?'':' disabled')+'>‹</button>'+
         '<span>'+html(favLabel(t))+'</span><button type="button" class="fav-remove" data-action="fav" data-key="'+attr(t)+'" aria-label="Ta bort '+attr(favLabel(t))+'">×</button></span>':
         '<a class="chip fav-chip" href="'+attr(favRoute(t))+'" data-link="1" title="'+attr(favTitle(t))+'">'+html(favLabel(t))+'</a>').join('')+
-      '<button type="button" class="chip chip-quiet" data-action="fav-edit">'+(edit?'Klar':'Ordna')+'</button>'+
-      (edit?'':'<a class="chip chip-quiet" href="#/nytt" data-link="1">Nytt'+(unseenNews()?' ●':'')+'</a>')+
-      (edit?'':'<button type="button" class="chip chip-quiet" data-action="show-sections" aria-expanded="'+(state.showSections?'true':'false')+'">Avdelningar '+(state.showSections?'▴':'▾')+'</button>')+'</nav>';
+      '<button type="button" class="chip chip-quiet" data-action="fav-edit">'+(edit?'Klar':'Ordna')+'</button></nav>';
   }
   function fillSection(details){
     const list=details.querySelector('.card-list'),sec=state.sections.find(x=>x.id===details.dataset.section);
@@ -288,9 +286,7 @@
       '<p class="intro">Sök på författning, juridiskt begrepp eller skriv exempelvis BrB 24:1.</p></div>'+
       searchBox('Sök i lagboken')+
       '<div id="search-results"></div><div id="catalog-directory">'+continueRow()+shortcuts()+catalogSections()+
-      '<div class="section-title">Polisens föreskrifter</div><div class="card-list">'+
-      listRow('Polisens FAP','Separat sidoregister, öppnas i appen','#/fap')+'</div>'+
-      '<p class="catalog-meta">Version '+APP_VERSION+' · Visa källa och rättslig status i respektive författning.</p>'+
+      '<p class="catalog-meta">Lagboken '+APP_VERSION+' (beta) · Text från riksdagen.se · <a href="#/about" data-link="1">Om Lagboken</a></p>'+
       footer()+'</div></div>';
   }
   function savedPage(){
@@ -363,32 +359,47 @@
   }
   // Riksdagen anger en senare ändring än den som finns inarbetad i den publicerade texten.
   function gapNotice(data){
-    return data.unconsolidated?'<div class="notice gap-notice">Riksdagen anger att författningen är ändrad till och med SFS '+html(data.unconsolidated)+
-      ', men den ändringen är ännu inte inarbetad i den text Riksdagen publicerar. Kontrollera ändringen i Svensk författningssamling innan du använder texten.</div>':'';
+    return data.unconsolidated?'<div class="notice gap-notice">Enligt riksdagen.se är författningen ändrad till och med SFS '+html(data.unconsolidated)+
+      ', men den ändringen finns ännu inte med i texten på riksdagen.se. Kontrollera ändringen i Svensk författningssamling innan du använder texten.</div>':'';
   }
   function hasRealChapters(data){return data.chapters.length>1||data.chapters[0].number!=='0';}
   function docIntro(meta,data){
     const n=data.chapters.reduce((total,ch)=>total+(ch.items||[]).filter(i=>i.type==='para').length,0);
     return '<div class="law-head"><span class="source-label">'+html(lawSub(meta))+'</span>'+
-      '<h1>'+html(data.title||meta.name)+'</h1><p>'+data.chapters.length+' kapitel/avsnitt · '+n+' paragrafer · Kontrollerad mot Riksdagen '+html(lawModel.formatDate((data.fetchedAt||'').substring(0,10))||'okänt datum')+
+      '<h1>'+html(data.title||meta.name)+'</h1><p>'+data.chapters.length+' kapitel/avsnitt · '+n+' paragrafer · Kontrollerad mot riksdagen.se '+html(lawModel.formatDate((data.fetchedAt||'').substring(0,10))||'okänt datum')+
       (data.latestAmendment?' · Senast ändrad genom SFS '+html(data.latestAmendment):'')+'</p>'+gapNotice(data)+
       '<div class="actions"><button type="button" class="button" data-action="fav" data-key="'+attr(meta.sfs)+'">'+badgeMark(meta.sfs)+' Spara</button>'+
       '<button type="button" class="button'+(pref.watch[meta.sfs]?' active':'')+'" data-action="watch" data-key="'+attr(meta.sfs)+'">'+(pref.watch[meta.sfs]?'◉ Bevakas':'○ Bevaka ändringar')+'</button>'+
       '<a class="button" href="'+attr(sourceUrl(meta.sfs))+'" target="_blank" rel="noopener noreferrer">Officiell källa ↗</a></div>'+
       (readTarget(meta.sfs)&&readTarget(meta.sfs).label?'<a class="continue-row compact" data-link="1" href="'+attr(readTarget(meta.sfs).url)+'"><span class="continue-icon" aria-hidden="true">↻</span><div class="grow"><div class="row-title">Fortsätt där du var</div><div class="row-sub">'+html(readTarget(meta.sfs).label)+'</div></div><span class="chevron">›</span></a>':'')+
       repealNotice(data)+lawRelations(meta)+
-      '<p class="small muted">Appen visar den lydelse som gäller i dag enligt källans markeringar. Kommande lydelser visas under respektive paragraf. Kontrollera alltid mot Riksdagen vid rättslig användning.</p></div>';
+      '<p class="small muted">Appen visar den lydelse som gäller i dag enligt källans markeringar. Kommande lydelser visas under respektive paragraf. Kontrollera alltid mot Svensk författningssamling vid rättslig användning.</p></div>';
   }
   function repealNotice(data){
-    return data&&data.repealAt?'<div class="notice repeal-notice">Författningen upphör att gälla '+html(lawModel.formatDate(data.repealAt))+' enligt Riksdagen.</div>':'';
+    return data&&data.repealAt?'<div class="notice repeal-notice">Författningen upphör att gälla '+html(lawModel.formatDate(data.repealAt))+' enligt riksdagen.se.</div>':'';
   }
   // Förordningar som ansluter till lagen, eller lagen som förordningen ansluter till.
+  // Kopplingar på lagnivå visas som en diskret rad; listan öppnas i en meny.
+  function relatedRegs(meta){
+    const r=state.relations[meta.sfs]||{},seen=new Set();
+    return state.catalog.filter(l=>l.anchor===meta.sfs).concat((r.kompletteras||[]).map(lawById).filter(Boolean))
+      .filter(l=>l.sfs!==meta.sfs&&!seen.has(l.sfs)&&seen.add(l.sfs));
+  }
   function lawRelations(meta){
-    const r=state.relations[meta.sfs]||{},parent=meta.parent&&lawById(meta.parent);
-    const chips=(label,list)=>list.length?'<div class="relation-line"><span>'+label+'</span>'+list.map(s=>lawById(s)).filter(Boolean)
-      .map(l=>'<a class="chip" data-link="1" href="'+attr(urlFor(l.sfs))+'">'+html(l.name)+'</a>').join('')+'</div>':'';
-    return '<div class="relations">'+chips('Anslutande förordningar',r.kompletteras||[])+chips('Kompletterar',r.kompletterar||[])+
-      (parent&&!(r.kompletterar||[]).length?chips('Ansluter till',[parent.sfs]):'')+'</div>';
+    const r=state.relations[meta.sfs]||{},regs=relatedRegs(meta);
+    const up=meta.anchor&&lawById(meta.anchor)||(r.kompletterar||[]).map(lawById).filter(Boolean)[0]||(meta.parent&&lawById(meta.parent));
+    const rows=[];
+    if(regs.length)rows.push('<button type="button" class="relation-row" data-action="show-regs" data-key="'+attr(meta.sfs)+'">'+regs.length+(regs.length===1?' anslutande förordning':' anslutande förordningar')+' <span aria-hidden="true">›</span></button>');
+    if(up)rows.push('<a class="relation-row" data-link="1" href="'+attr(urlFor(up.sfs))+'">'+(meta.type==='förordning'?'Kompletterar ':'Ansluter till ')+html(up.name)+' <span aria-hidden="true">›</span></a>');
+    return rows.length?'<div class="relations">'+rows.join('')+'</div>':'';
+  }
+  function showRegs(sfs){
+    const meta=lawById(sfs);if(!meta)return;
+    const regs=relatedRegs(meta),instr=regs.filter(l=>l.section==='instruktioner'||/instruktion/i.test(l.name)),other=regs.filter(l=>!instr.includes(l));
+    const list=ls=>'<div class="card-list">'+ls.map(l=>'<a class="list-row" data-link="1" href="'+attr(urlFor(l.sfs))+'"><div class="grow"><div class="row-title">'+html(l.name)+'</div><div class="row-sub">'+html(lawSub(l))+'</div></div><span class="chevron">›</span></a>').join('')+'</div>';
+    showSheet('<div class="sheet-title">Anslutande förordningar <button class="icon-button" data-action="close" aria-label="Stäng">×</button></div>'+
+      '<p class="small muted">Förordningar som kompletterar '+html(meta.name)+'.</p>'+
+      (other.length?list(other):'')+(instr.length?'<div class="section-title">Myndigheternas instruktioner</div>'+list(instr):''));
   }
   // Bilagor (t.ex. konventionstext) visas först när de fälls ut, eftersom de kan vara mycket långa.
   function appendixHtml(data){
@@ -457,7 +468,7 @@
     const year=v.amendedBy.slice(0,4),shard=state.forarbeten.get(year);
     if(shard===undefined)loadForarbeten(year);
     const f=shard&&shard[v.amendedBy],doc=id=>'https://data.riksdagen.se/dokument/'+encodeURIComponent(id)+'.html';
-    const links=f?(f[0]?' · <a href="'+attr(doc(f[1]))+'" target="_blank" rel="noopener">Prop. '+html(f[0])+'</a>':'')+(f[2]?' · <a href="'+attr(doc(f[3]))+'" target="_blank" rel="noopener">Bet. '+html(f[2])+'</a>':''):'';
+    const links=f?(f[0]?' · <a class="prep" href="'+attr(doc(f[1]))+'" target="_blank" rel="noopener" title="Proposition '+attr(f[0])+'">prop.</a>':'')+(f[2]?' · <a class="prep" href="'+attr(doc(f[3]))+'" target="_blank" rel="noopener" title="Betänkande '+attr(f[2])+'">bet.</a>':''):'';
     return '<p class="amended">Ändrad genom SFS '+html(v.amendedBy)+links+'</p>';
   }
   function loadForarbeten(year){
@@ -474,7 +485,10 @@
     const todayText=state.atDate?lawModel.resolve(item).current.text:null;
     const dateNote=state.atDate&&todayText!==current.text?'<div class="lydelse-status dated">Lydelsen '+html(lawModel.formatDate(state.atDate))+' skiljer sig från i dag</div>'+
       '<details class="lydelse"><summary>Visa ändringen fram till i dag</summary><div class="paragraph-content diff">'+diffHtml(current.text,todayText)+'</div></details>':'';
-    const title=tocModel.curatedTitle(meta.sfs,ch.number,item.number);
+    // Paragrafrubriken visas inte när den är samma som avsnittsrubriken direkt ovanför.
+    const idx=(ch.items||[]).indexOf(item),prevItem=idx>0?ch.items[idx-1]:null;
+    const rawTitle=tocModel.curatedTitle(meta.sfs,ch.number,item.number);
+    const title=rawTitle&&prevItem&&prevItem.type==='heading'&&prevItem.text.trim().toLowerCase()===rawTitle.trim().toLowerCase()?'':rawTitle;
     const status=resolved.pending?'<div class="lydelse-status upcoming">'+html(lawModel.describe(current))+'</div>':
       current.expires?'<div class="lydelse-status">'+html(lawModel.describe(current))+'</div>':'';
     const others=resolved.others.map(v=>'<details class="lydelse"><summary>'+html(lawModel.describe(v))+'</summary>'+
@@ -600,7 +614,7 @@
     }).join('');
     const index=data.chapters.indexOf(ch),next=data.chapters[index+1];
     return '<div class="reader-context">'+
-      '<div class="reader-crumbs"><strong>'+html(short)+'</strong><span class="reader-current">'+html(ch.title||meta.name)+'</span></div>'+
+      '<div class="reader-crumbs">'+(ch.number==='0'?'<strong>'+html(abbrOf(meta)||meta.name)+'</strong>'+(abbrOf(meta)?'<span class="reader-current">'+html(meta.name)+'</span>':''):'<strong>'+html(short)+'</strong><span class="reader-current">'+html(ch.title||meta.name)+'</span>')+'</div>'+
       '<button type="button" data-action="find-open" class="find-toggle'+(state.find&&state.find.sfs===meta.sfs?' on':'')+'" aria-label="Sök i författningen">⌕ Sök</button>'+
       '<button type="button" data-action="pen" class="pen-toggle'+(state.pen?' on':'')+'" aria-pressed="'+state.pen+'" aria-label="Penna för markeringar">✎ Penna</button>'+
       '<button type="button" data-action="toc" class="reader-toc-button" aria-label="Öppna innehållsförteckning">Innehåll <span aria-hidden="true">☷</span></button>'+
@@ -611,7 +625,7 @@
       '<header class="reader-heading"><h1>'+html(ch.title||(ch.number==='0'?meta.name:'Kapitel '+ch.number))+
         (ch.number!=='0'?'<button type="button" class="fav-star'+(pref.favourites.includes(meta.sfs+'|'+ch.number)?' on':'')+'" data-action="fav" data-key="'+attr(meta.sfs+'|'+ch.number)+'" aria-label="'+(pref.favourites.includes(meta.sfs+'|'+ch.number)?'Ta bort kapitlet från favoriter':'Spara kapitlet som favorit')+'">'+(pref.favourites.includes(meta.sfs+'|'+ch.number)?'★':'☆')+'</button>':'')+'</h1>'+(hasRealChapters(data)?'':repealNotice(data)+gapNotice(data)+lawRelations(meta))+'</header>'+
       '<div class="statute-body">'+content+'</div>'+
-      '<footer class="reader-end"><span class="small muted">Slut på '+html(short)+'.</span>'+
+      '<footer class="reader-end"><span class="small muted">Slut på '+html(ch.number==='0'?meta.name:short).replace(/\.$/,'')+'.</span>'+
       (next?'<a class="reader-next" data-link="1" href="'+attr(urlFor(meta.sfs,next.number))+'"><span class="small muted">Nästa kapitel</span>'+
         '<span>'+html(next.number+' kap. '+(next.title||''))+' ›</span></a>':appendixHtml(data)+transitionsHtml(meta,data))+'</footer></main>';
   }
@@ -666,8 +680,7 @@
       (law?'<button class="list-row sheet-menu-row" type="button" data-action="source-info">'+
         '<span class="grow"><span class="row-title">Källa och versionsinformation</span><span class="row-sub">'+html(law.name)+'</span></span>›</button>':'')+
       listRow('Inställningar','Läsning, offline och säkerhetskopia','#/settings')+
-      listRow('Polisens FAP','Separat sidoregister','#/fap')+
-      listRow('Om lagboken','Information om tjänsten','#/about')+'</div>');
+      listRow('Om Lagboken','Källa, ansvar och kontakt','#/about')+'</div>');
   }
   function sourceInfo(){
     const r=route(),meta=lawById(r.sfs),data=state.laws.get(r.sfs);
@@ -677,9 +690,9 @@
       '<p>'+html(meta.name)+' (SFS '+html(meta.sfs)+')</p>'+
       '<p class="small muted">'+number+' importerade paragrafer. Hämtad: '+html((data.fetchedAt||'okänt').slice(0,10))+'.</p>'+
       '<div class="notice">Den importerade texten kan innehålla olika lydelser och övergångsregler. Kontrollera alltid tillämplig version mot den officiella källan.</div>'+
-      '<a class="button primary" href="'+attr(sourceUrl(meta.sfs))+'" rel="noopener noreferrer" target="_blank">Öppna hos Riksdagen ↗</a>');
+      '<a class="button primary" href="'+attr(sourceUrl(meta.sfs))+'" rel="noopener noreferrer" target="_blank">Öppna på riksdagen.se ↗</a>');
   }
-  // Hur stor del av svensk lag som finns i appen (räknas vid varje import mot Riksdagens förteckning).
+  // Hur stor del av svensk lag som finns i appen (räknas vid varje import mot förteckningen på riksdagen.se).
   function coverageHtml(){
     const c=state.coverage;if(!c||!c.laws)return '';
     const lagar=state.catalog.filter(l=>l.type==='lag').length,regs=state.catalog.filter(l=>l.type==='förordning').length,all=state.catalog.length;
@@ -691,7 +704,7 @@
       '<div class="meter"><span style="width:'+Math.min(100,regs*100/c.regs)+'%"></span></div>':'')+
       '<div class="coverage-row"><span>Alla gällande författningar</span><b>'+all+' av '+c.all+'</b><em>'+pct(all,c.all)+'</em></div>'+
       '<div class="meter"><span style="width:'+Math.min(100,all*100/c.all)+'%"></span></div>'+
-      '<p class="small muted">Räknat mot Riksdagens förteckning över SFS '+html(String(c.date||'').slice(0,10))+'.</p></div>';
+      '<p class="small muted">Räknat mot förteckningen över SFS på riksdagen.se '+html(String(c.date||'').slice(0,10))+'.</p></div>';
   }
   function settingsPage(){
     return '<div class="page"><h1 class="page-title">Inställningar</h1>'+
@@ -714,6 +727,8 @@
       '<div class="actions"><button type="button" class="button primary" data-action="offline">Ladda ner hela lagboken</button></div>'+
       '<div class="actions offline-areas">'+state.sections.map(a=>'<button type="button" class="button" data-action="offline" data-area="'+attr(a.id)+'">'+html(a.name)+'</button>').join('')+'</div>'+
       '<p class="small muted" id="offline-status">Kontrollerar sparade lagar …</p>'+
+      '<div class="section-title">Om appen</div><div class="card-list">'+listRow('Om Lagboken','Källa, ansvar och kontakt','#/about')+
+      listRow('Polisens FAP','Polismyndighetens författningssamling, separat register','#/fap')+'</div>'+
       '<div class="section-title">Introduktion</div><p class="small muted">Genomgången av appens funktioner som visades första gången.</p>'+
       '<div class="actions"><button type="button" class="button" data-action="tutorial">Visa introduktionen igen</button></div>'+
       '<div class="section-title">Säkerhetskopia</div>'+backupNotice()+
@@ -721,7 +736,7 @@
       '<div class="actions"><button type="button" class="button" data-action="export">Exportera</button>'+
       '<button type="button" class="button" data-action="import">Importera</button>'+
       '<input type="file" id="import-file" accept="application/json,.json" hidden></div>'+
-      '<div class="section-title">Om appen</div><p class="small muted">Lagboken version '+APP_VERSION+' · Lagtext hämtad från Riksdagen '+html(String(window.LAGBOK_GENERATED||'').slice(0,10)||'okänt datum')+' · '+state.catalog.length+' författningar.</p>'+
+      '<div class="section-title">Om appen</div><p class="small muted">Lagboken version '+APP_VERSION+' · Lagtext hämtad från riksdagen.se '+html(String(window.LAGBOK_GENERATED||'').slice(0,10)||'okänt datum')+' · '+state.catalog.length+' författningar.</p>'+
       '<div class="actions"><button type="button" class="button" data-action="check-update">Leta efter ny version</button></div></div>';
   }
   // Påminnelse om säkerhetskopia när det finns egna markeringar eller anteckningar.
@@ -816,13 +831,19 @@
       savePrefs();applyPrefs();toast('Säkerhetskopian är inläst');render(false);
     }catch(_){toast('Filen kunde inte läsas som en säkerhetskopia från Lagboken.');}
   }
+  const CONTACT='jonathanlindblom@rocketmail.com';
   function aboutPage(){
-    return '<div class="page"><h1 class="page-title">Om lagboken</h1><p>En fristående, mobilanpassad lagbok med läsvy i mjukvitt, grönt och diskreta vinröda detaljer.</p>' +
-      '<div class="section-title">Rättskällor</div><p class="small muted">Författningstexterna hämtas från Sveriges riksdags öppna data. Polisens FAP visas i en intern PDF-läsare med direktlänkar till Polismyndighetens författningssamling.</p>' +
-      '<div class="section-title">Uppdateringsstatus</div><p class="small">Senast genomförd datainhämtning: '+html(window.LAGBOK_GENERATED||'Se respektive författning')+'. Lagtexten kontrolleras automatiskt den 1 varje månad mot Riksdagens öppna data och ändringar granskas innan de publiceras.</p>' +
-      '<div class="section-title">Lydelser och rubriker</div><p class="small muted">När en paragraf har flera lydelser visar appen den som gäller i dag enligt Riksdagens markeringar om ikraftträdande. Kommande lydelser visas hopfällda under paragrafen med ändringarna markerade. Vissa kapitel- och paragrafrubriker samt kopplingar mellan lag och förordning är tillagda för navigering och är inte en del av lagtexten.</p>' +
-      '<div class="notice">Det här är inte en officiell lagtexttjänst. En importerad lydelse kan innehålla övergångsbestämmelser och framtida ikraftträdanden. Kontrollera den tillämpliga versionen i originalkällan.</div>' +
-      '<p><a href="https://github.com/Deashi03/Lagbok" target="_blank" rel="noopener noreferrer">Öppna projektet på GitHub ↗</a></p></div>';
+    const checked=window.LAGBOK_GENERATED?lawModel.formatDate(String(window.LAGBOK_GENERATED).slice(0,10)):'';
+    return '<div class="page"><h1 class="page-title">Om Lagboken</h1>'+
+      '<p class="intro">Svensk lag samlad i telefonen, gjord för att vara snabb att slå i och lätt att läsa.</p>'+
+      '<div class="notice">Lagboken är ett privat projekt och har ingen koppling till riksdagen.se, Regeringskansliet eller någon myndighet. '+
+      'Texten kan ligga efter eller innehålla fel. Kontrollera alltid mot <b>Svensk författningssamling</b> innan du använder den rättsligt.</div>'+
+      '<div class="section-title">Var texten kommer ifrån</div><p class="small">Lagtexten hämtas från riksdagen.se via deras öppna data och kontrolleras automatiskt den 1 varje månad.'+
+      (checked?' Senaste kontroll: '+html(checked)+'.':'')+' När riksdagen.se anger en ändring som ännu inte finns med i texten visas en varning i lagen.</p>'+
+      '<div class="section-title">Rubriker och kopplingar</div><p class="small muted">En del rubriker, förkortningar och kopplingar mellan lagar och förordningar är tillagda för att göra det lättare att hitta. De är inte en del av lagtexten.</p>'+
+      '<div class="section-title">Det du sparar</div><p class="small muted">Favoriter, understrykningar och anteckningar sparas bara i din telefon. Appen har inga konton och ingen spårning.</p>'+
+      '<div class="section-title">Kontakt</div><p class="small">Hittar du ett fel eller har en idé? Skriv till <a href="mailto:'+CONTACT+'">'+CONTACT+'</a>, eller välj <b>Rapportera fel i texten</b> i menyn vid en paragraf.</p>'+
+      '<p class="small muted">Lagboken '+html(APP_VERSION)+' (beta) · Jonathan</p></div>';
   }
   function findDirect(q){return searchCore.parseQuick(q,state.catalog,state.fap);}
   function quickUrl(d){
@@ -864,7 +885,25 @@
       {term:'Nödvärn',code:'BrB 24:1'},
       {term:'Offentlig försvarare',code:'RB 21:3a'},
       {term:'Kroppsvisitation',code:'RB 28:11'},
-      {term:'Gripande',code:'RB 24:7'}
+      {term:'Gripande',code:'RB 24:7'},
+      {term:'Anhållande',code:'RB 24:6'},
+      {term:'Beslag',code:'RB 27:1'},
+      {term:'Förundersökning',code:'RB 23:1'},
+      {term:'Misshandel',code:'BrB 3:5'},
+      {term:'Olaga hot',code:'BrB 4:5'},
+      {term:'Hemfridsbrott',code:'BrB 4:6'},
+      {term:'Ofredande',code:'BrB 4:7'},
+      {term:'Våldtäkt',code:'BrB 6:1'},
+      {term:'Snatteri',code:'BrB 8:2'},
+      {term:'Rån',code:'BrB 8:5'},
+      {term:'Bedrägeri',code:'BrB 9:1'},
+      {term:'Skadegörelse',code:'BrB 12:1'},
+      {term:'Våld mot tjänsteman',code:'BrB 17:1'},
+      {term:'Rattfylleri',code:'TBL 4'},
+      {term:'Olovlig körning',code:'TBL 3'},
+      {term:'Narkotikabrott',code:'NSL 1'},
+      {term:'Uppsägning',code:'LAS 7'},
+      {term:'Bodelning',code:'ÄktB 9:1'}
     ];
     const recent=pref.recents.filter(x=>lawById(x.split('|')[0])).slice(0,5).map(x=>({title:favTitle(x),url:favRoute(x)}));
     const matches=searchCore.rankSuggestions(query,state.catalog,state.fap,topics,recent);
@@ -952,7 +991,7 @@
   function showDatePicker(key){
     const today=lawModel.today();
     showSheet('<div class="sheet-title">Lydelse vid datum <button class="icon-button" data-action="close" aria-label="Stäng">×</button></div>'+
-      '<p class="small muted">Visar lagtexten som den löd ett visst datum, till exempel när en gärning begicks. Bygger på Riksdagens datummarkeringar och de lydelser appen sparat sedan oktober 2026. Äldre ändringar kan saknas – kontrollera alltid mot källan.</p>'+
+      '<p class="small muted">Visar lagtexten som den löd ett visst datum, till exempel när en gärning begicks. Bygger på datummarkeringarna på riksdagen.se och de lydelser appen sparat sedan oktober 2026. Äldre ändringar kan saknas – kontrollera alltid mot källan.</p>'+
       '<form id="date-form" class="actions"><input type="date" id="at-date" max="2100-12-31" value="'+attr(state.atDate||today)+'" required> '+
       '<button type="submit" class="button primary">Visa</button>'+(state.atDate?' <button type="button" class="button" data-action="date-clear">I dag</button>':'')+'</form>');
     const f=$('#date-form');if(f)f.addEventListener('submit',async e=>{e.preventDefault();const v=$('#at-date').value;await setAtDate(v&&v!==today?v:null,key);});
@@ -1008,7 +1047,7 @@
         catch(e) {
           markup='<div class="page"><h1 class="page-title">'+html(meta?meta.name:'Lagtext')+'</h1>'+
             '<div class="notice">Fullständig lagtext är ännu inte tillgänglig i appens datakatalog. Inga ofullständiga utdrag visas som om de vore kompletta.</div>'+
-            '<a class="button primary" href="'+attr(sourceUrl(r.sfs))+'" target="_blank" rel="noopener noreferrer">Läs aktuell text hos Riksdagen ↗</a>'+
+            '<a class="button primary" href="'+attr(sourceUrl(r.sfs))+'" target="_blank" rel="noopener noreferrer">Läs aktuell text på riksdagen.se ↗</a>'+
             '<p class="small muted">Importprocessen publicerar författningarna som separata versionshanterade filer.</p></div>';
         }
         break;
@@ -1132,15 +1171,16 @@
       '<p class="small muted sheet-hint">Tips: markera text i paragrafen för att stryka under den.</p>');
   }
   // Felrapport: öppnar ett färdigt ärende i projektets GitHub med lagrum, text och källa.
+  // Felrapport: öppnar ett färdigt mejl med lagrum, text och länk.
   async function reportError(key){
     const [id,cap,num]=key.split('|'),meta=lawById(id);
     let text='';
     try{const doc=await loadLaw(id),ch=doc.chapters.find(c=>c.number===cap),item=ch&&ch.items.find(i=>i.type==='para'&&searchCore.paraKey(i.number)===searchCore.paraKey(num));
       if(item)text=lawModel.resolve(item).current.text;}catch(_){}
-    const title='Fel i '+shortRef(id,cap,num);
-    const body='**Lagrum:** '+shortRef(id,cap,num)+' ('+(meta?meta.name:id)+', SFS '+id+')\n**Länk:** '+location.origin+location.pathname+urlFor(id,cap,num)+
-      '\n**Källa:** '+sourceUrl(id)+'\n**Version:** '+APP_VERSION+'\n\n**Vad är fel?**\n\n\n**Texten i appen:**\n> '+text.slice(0,1500).replace(/\n/g,'\n> ');
-    window.open('https://github.com/Deashi03/Lagbok/issues/new?labels=lagtext&title='+encodeURIComponent(title)+'&body='+encodeURIComponent(body),'_blank','noopener');
+    const subject='Lagboken: fel i '+shortRef(id,cap,num);
+    const body='Vad är fel?\n\n\n\n---\nLagrum: '+shortRef(id,cap,num)+' ('+(meta?meta.name:id)+', SFS '+id+')\nLänk: '+location.origin+location.pathname+urlFor(id,cap,num)+
+      '\nKälla: '+sourceUrl(id)+'\nVersion: '+APP_VERSION+'\n\nTexten i appen:\n'+text.slice(0,1200);
+    location.href='mailto:'+CONTACT+'?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body);
     closeSheet();
   }
   function shortRef(sfs,chapter,para){
@@ -1363,7 +1403,7 @@
     const byDate=new Map();for(const c of rest.slice(0,300)){if(!byDate.has(c.date))byDate.set(c.date,[]);byDate.get(c.date).push(c);}
     const soon=(await upcomingFor(null)).filter(u=>u[0]&&u[0]<=lawModel.today().replace(/^(\d{4})/,y=>String(Number(y)+1)));
     pref.newsSeen=lawModel.today();savePrefs();updateNavBadge();
-    return '<div class="page"><h1 class="page-title">Nytt i lagen</h1><p class="intro">Ändringar som lagboken har hämtat från Riksdagen, senaste först, och lydelser som träder i kraft det närmaste året.</p>'+
+    return '<div class="page"><h1 class="page-title">Nytt i lagen</h1><p class="intro">Ändringar som Lagboken har hämtat från riksdagen.se, senaste först, och lydelser som träder i kraft det närmaste året.</p>'+
       (mine.length?'<div class="section-title">Dina favoriter och bevakningar</div><div class="card-list">'+mine.slice(0,40).map(row).join('')+'</div>':'')+
       (soon.length?'<div class="section-title">Träder i kraft snart</div>'+timeline(soon,8):'')+
       [...byDate].map(([d,cs])=>'<div class="section-title">'+html(lawModel.formatDate(d))+' · '+cs.length+' författningar</div><div class="card-list">'+cs.slice(0,60).map(row).join('')+
@@ -1372,7 +1412,7 @@
   }
   async function upcomingPage(){
     const future=await upcomingFor(null);
-    return '<div class="page"><h1 class="page-title">Kommande ändringar</h1><p class="intro">Paragrafer i lagboken med en ny lydelse som ännu inte har trätt i kraft, enligt Riksdagens markeringar.</p>'+
+    return '<div class="page"><h1 class="page-title">Kommande ändringar</h1><p class="intro">Paragrafer i lagboken med en ny lydelse som ännu inte har trätt i kraft, enligt markeringarna på riksdagen.se.</p>'+
       (future.length?timeline(future):'<div class="empty">Inga kommande ändringar är kända.</div>')+footer()+'</div>';
   }
   // ---------- 0.6: överstrykningar ----------
@@ -1757,6 +1797,7 @@
     if(a==='open-section'){const d=$('#sec-'+CSS.escape(btn.dataset.id));if(d){d.open=true;fillSection(d);d.scrollIntoView({block:'start',behavior:'smooth'});}return;}
     if(a==='letter'){const t=$('#letter-'+CSS.escape(btn.dataset.id));if(t)t.scrollIntoView({block:'start',behavior:'smooth'});return;}
     if(a==='report'){reportError(k);return;}
+    if(a==='show-regs'){showRegs(k);return;}
     if(a==='tutorial'){if(window.LagbokTutorial)window.LagbokTutorial.show();return;}
     if(a==='date-clear'){setAtDate(null);return;}
     if(a==='date-change'){showDatePicker(route().sfs);return;}
@@ -1843,11 +1884,13 @@
     if(bar&&bar.classList)bar.classList.toggle('stuck',bar.getBoundingClientRect().top<=view.getBoundingClientRect().top+1&&view.scrollTop>0);
   },{passive:true});
   async function boot(){
-    const v=$('#top-version');if(v)v.textContent='v'+APP_VERSION;
+    const v=$('#top-version');if(v)v.textContent='Beta '+APP_VERSION;
     try {
       await loadCatalog();
     } catch(_) {
-      view.innerHTML='<div class="page"><div class="empty">Författningskatalogen kunde inte laddas. Försök igen med internetanslutning.</div></div>';
+      view.innerHTML='<div class="page offline-first"><div class="tut-mark small" aria-hidden="true">⇣</div><h1 class="page-title">Ingen anslutning</h1>'+
+        '<p class="intro">Första gången behöver Lagboken internet för att hämta lagarna. Efter det fungerar det du har läst även utan nät.</p>'+
+        '<button type="button" class="button primary" onclick="location.reload()">Försök igen</button></div>';
       return;
     }
     if(!location.hash||location.hash==='#/home'||location.hash==='#/search')history.replaceState(null,'','#/catalog');

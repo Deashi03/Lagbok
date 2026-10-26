@@ -199,7 +199,9 @@ function place(prefix,data){
 }
 for(const [p,data] of byPrefix)place(p,data);
 for(const [name,data] of shards)fs.writeFileSync(path.join(out,'terms',name+'.json'),JSON.stringify(data));
-fs.writeFileSync(path.join(out,'meta.json'),JSON.stringify({laws:laws.map(l=>l.sfs),count:paras.length,chunk:CHUNK,shards:[...shards.keys()].sort()}));
+// Vikt per författning vid sökning: balkar och grundlagar först, sedan lagar, sist förordningar.
+const weight=l=>l.type!=='lag'?0.25:l.section==='balkar'&&!l.parent?1:l.section==='grundlagar'?0.8:l.parent?0.75:0.5;
+fs.writeFileSync(path.join(out,'meta.json'),JSON.stringify({laws:laws.map(l=>l.sfs),names:laws.map(l=>fold(l.name)),weights:laws.map(weight),count:paras.length,chunk:CHUNK,shards:[...shards.keys()].sort()}));
 const bySfs=new Map();
 for(const [k,sources] of backlinks){
   const [sfs,target]=k.split('#');

@@ -20,7 +20,8 @@
     kniv:['kniv'],vapen:['vapen'],misshandla:['misshandel'],
     nodvarn:['nodvarn'],tvang:['tvang'],
     sekretess:['sekretess'],hemfrid:['hemfrid'],
-    lvu:['vard','unga'],lvm:['missbrukare'],lpt:['psykiatrisk','tvangsvard']
+    lvu:['vard','unga'],lvm:['missbrukare'],lpt:['psykiatrisk','tvangsvard'],
+    anhallande:['anhall'],haktning:['hakt'],gripande:['grip'],omhandertagande:['omhandertag'],beslagtagande:['beslag']
   };
   function expand(tokens){
     const out=[];
@@ -75,7 +76,10 @@
           score+=m.exact.has(n)?2:1;
           if(title&&title.includes(m.token))score+=5;
         }
-        score+=(lawCount-p[0])/lawCount; // tidigare i katalogen = mer central författning
+        // Central författning (balk, grundlag, lag före förordning) och sökord i lagens namn väger tyngre.
+        const w=idx.weights?idx.weights[p[0]]:(lawCount-p[0])/lawCount;
+        score+=w*4;
+        if(idx.names)for(const m of matches)if(new RegExp('(?:^|[^a-z])'+m.token+'|'+m.token+'(?:slag|sforordning|sbalk)').test(idx.names[p[0]]))score+=4*w;
         return {n,score};
       }).sort((a,b)=>b.score-a.score||a.n-b.n);
       return {total:scored.length,tokens,hits:scored.slice(0,limit).map(({n,score})=>{
