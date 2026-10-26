@@ -295,12 +295,10 @@ details.area[open]>.area-title:after{content:"⌃"}
 .links-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
 .link-chip{border:1px solid var(--border);background:var(--panel);color:var(--accent);border-radius:999px;padding:6px 10px;font-size:12px;font-weight:650;text-align:left;line-height:1.3;cursor:pointer}
 .link-chip:active{background:var(--soft)}
-.link-chip.regulation{border-color:var(--wine);color:var(--wine);background:transparent}
-.link-chip.complements{border-color:var(--wine);color:var(--wine);background:var(--soft)}
-.regulation-title{color:var(--wine)}
+.regulation-title{color:var(--accent)}
 .relations{margin:10px 0 4px}.relation-line{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:6px 0}
-.relation-line>span{font-size:11px;font-weight:700;color:var(--wine);text-transform:uppercase;letter-spacing:.05em;margin-right:2px}
-.relation-line .chip{border-color:var(--wine);color:var(--wine)}
+.relation-line>span{font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.05em;margin-right:2px}
+.relation-line .chip{border-color:var(--border);color:var(--accent)}
 .pen-toggle{white-space:nowrap}.pen-toggle.on{background:var(--wine)!important;color:#FFFDF9!important;border-radius:999px;padding:6px 10px!important}
 html[data-pen="on"] .paragraph-content{cursor:text;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;touch-action:pan-y}
 html[data-pen="on"] .paragraph-content .law-ref{pointer-events:none}
@@ -573,3 +571,8 @@ html[data-theme="dark"] .button.primary{color:#0F1813}
 .topbar .law-tool svg{display:block}
 html[data-theme="dark"] .topbar .law-tool.on{color:#0F1813}
 .sheet-menu-row .grow{display:flex;flex-direction:column;align-items:flex-start;text-align:left}
+.find-all-results{flex-basis:100%;max-height:min(62dvh,560px);overflow-y:auto;-webkit-overflow-scrolling:touch;padding:2px 0 8px;font-size:15px;color:var(--text)}
+.find-all-results .section-title{margin-top:12px}
+.reader-context .find-all-results a{font-weight:inherit;color:var(--text)}
+.find-all-results .row-title{font-weight:650}
+.find-all-results .row-sub{color:var(--secondary)}
