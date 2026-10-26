@@ -32,7 +32,7 @@
   function applyPrefs() {
     const dark = pref.theme === 'dark' || (pref.theme === 'system' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
     document.documentElement.dataset.theme = dark ? 'dark' : 'light';
-    const themeMeta=document.querySelector('meta[name="theme-color"]');if(themeMeta)themeMeta.content=dark?'#17251D':'#FFFDF9';
+    const themeMeta=document.querySelector('meta[name="theme-color"]');if(themeMeta)themeMeta.content=dark?'#131D17':'#FFFDF9';
     document.documentElement.style.setProperty('--fontscale',String(pref.fontSize));
     document.documentElement.dataset.readerFont=pref.fontFamily==='serif'?'serif':'sans';
     document.documentElement.style.setProperty('--lineheight',String(pref.lineHeight));

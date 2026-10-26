@@ -102,7 +102,7 @@ html[data-focus="true"] .reader-heading .source-disclosure,html[data-focus="true
 @media(min-width:821px){.app-shell{border:1px solid var(--border)}}
 @media(max-width:550px){.app-shell:has(#query:focus) .bottom-nav{display:none}.page,.law-reader,.law-head{padding-left:18px;padding-right:18px}.reader-context{padding-left:18px;padding-right:18px}.fap-frame{height:62dvh;min-height:280px}}
 @media(max-width:355px){.chapter-navigation{gap:4px}.chapter-menu{padding:8px 5px}}
-html[data-theme="dark"]{color-scheme:dark;--bg:#132019;--panel:#17251D;--text:#F3F1E9;--secondary:#BBC8BB;--accent:#B6D9BE;--accent-strong:#264D39;--wine:#D7A2AF;--border:#374A3B;--soft:#22372A;--soft-green:#304737}
+html[data-theme="dark"]{color-scheme:dark;--bg:#0F1813;--panel:#131D17;--text:#F8F6F0;--secondary:#D0DAD0;--accent:#C6E6CD;--accent-strong:#264D39;--wine:#D7A2AF;--border:#3A4E40;--soft:#1E2C24;--soft-green:#2A3D31}
 html[data-theme="dark"] .paragraph:target{background:linear-gradient(90deg,#304737,transparent)}
 html[data-theme="dark"] .search-excerpt mark{background:#6B472B;color:#FFFDF9}
 
@@ -551,4 +551,4 @@ html[data-theme="dark"] .tut-date{background:#4A3E1E;color:#F3E6C2}
 .catalog-meta a{color:inherit}
 /* Mörkt läge: appikonen behåller sin mörkgröna färg och primärknappar får mörk text på ljusgrönt. */
 html[data-theme="dark"] .tut-mark:not(.small){background:#264D39}
-html[data-theme="dark"] .button.primary{color:#132019}
+html[data-theme="dark"] .button.primary{color:#0F1813}
