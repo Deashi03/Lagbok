@@ -37,3 +37,20 @@ jobs:
         run: |
           node scripts/build_indexes.js
           git diff --exit-code --stat data/index
+
+  browser:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Installera Playwright
+        run: |
+          npm install --no-save playwright@1.49.1
+          npx playwright install --with-deps chromium
+      - name: Webbläsartest i iPhone-storlek
+        run: |
+          python3 -m http.server 8765 &
+          sleep 2
+          node tests/browser/e2e.js

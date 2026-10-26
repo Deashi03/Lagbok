@@ -418,3 +418,48 @@ html[data-theme="dark"] mark.find-hit{background:#7A6527}
 .balk-group .child-row:last-child{border-bottom:0}
 .type-tag{display:inline-block;font-size:9.5px;font-weight:750;letter-spacing:.05em;text-transform:uppercase;color:var(--wine);border:1px solid var(--wine);border-radius:4px;padding:0 4px;margin-right:2px;vertical-align:1px}
 .chip.more{color:var(--secondary)}
+
+/* 1.0 – professionella animationer */
+:root{--spring:cubic-bezier(.34,1.36,.64,1);--ease-out:cubic-bezier(.22,1,.36,1)}
+.top-title{transition:opacity .2s var(--ease-out),translate .2s var(--ease-out)}
+.topbar:not(.titled) .top-title{opacity:0;translate:0 6px}
+.topbar.titled .top-title{opacity:1;translate:0 0}
+::view-transition-old(law-title),::view-transition-new(law-title){animation-duration:.32s;animation-timing-function:var(--ease-out)}
+::view-transition-old(root),::view-transition-new(root){animation-duration:.24s}
+/* Tryckkänsla: rader och knappar ger efter lätt under fingret */
+.list-row,.chip,.button,.link-chip,.shortcut,.para-menu-button,.continue-row,.child-row,.chapter-section,.toc-paragraph,.suggestion{transition:scale .14s var(--ease-out),background-color .14s ease}
+.list-row:active,.chip:active,.link-chip:active,.shortcut:active,.continue-row:active,.child-row:active,.chapter-section:active,.toc-paragraph:active,.suggestion:active{scale:.985}
+.button:active,.para-menu-button:active,.find-step:active,.hl-swatch:active{scale:.94}
+/* Menyer fjädrar lätt när de landar */
+@keyframes sheet-up{0%{translate:0 100%}70%{translate:0 -1.2%}100%{translate:0 0}}
+.sheet:not([hidden]){animation:sheet-up .38s var(--ease-out) both}
+/* Favorit: stjärnan pulserar med en ring */
+.pop{position:relative;animation:pop .32s var(--spring)}
+.pop::after{content:"";position:absolute;inset:-4px;border-radius:inherit;border:2px solid var(--wine);opacity:0;animation:ring .45s var(--ease-out)}
+@keyframes pop{0%{scale:1}40%{scale:1.12}100%{scale:1}}
+@keyframes ring{0%{opacity:.7;scale:.9}100%{opacity:0;scale:1.25}}
+/* Ångra: nedräkningslinje */
+.toast{overflow:hidden}
+.toast:has(.toast-undo)::after{content:"";position:absolute;left:0;bottom:0;height:3px;width:100%;background:#F6E58D;transform-origin:left;animation:countdown 5s linear forwards}
+@keyframes countdown{to{scale:0 1}}
+.toast{position:fixed}
+/* Sökräknaren rullar till nytt värde */
+.bump{animation:bump .22s var(--ease-out)}
+@keyframes bump{from{translate:0 6px;opacity:.2}to{translate:0 0;opacity:1}}
+/* Aktuell sökträff pulserar mjukt */
+.paragraph.find-current mark.find-hit{animation:hit-pulse .6s var(--ease-out)}
+@keyframes hit-pulse{0%{box-shadow:0 0 0 0 #E9A23B99}100%{box-shadow:0 0 0 6px #E9A23B00}}
+/* Märkpennedrag med mjukare kurva */
+mark.hl.hl-new{animation:marker .32s var(--ease-out) forwards}
+@media (prefers-reduced-motion: reduce){.topbar:not(.titled) .top-title{opacity:1;translate:none}}
+.balk-group .child-row{min-height:46px;padding:8px 12px}
+.balk-group .child-row .row-title{font-size:14px;font-weight:600;line-height:1.3}
+.balk-group .child-row .row-sub{margin-top:2px;font-size:11px}
+.balk-group .child-row .chevron{font-size:18px;opacity:.7}
+.balk-group .children-list{margin-left:14px;border-left-width:2px}
+
+.chapter-jump{display:grid;grid-template-columns:repeat(auto-fill,minmax(44px,1fr));gap:6px;margin-bottom:6px}
+.chapter-jump a{display:grid;place-items:center;height:40px;border-radius:9px;background:var(--soft);color:var(--accent);font-weight:700;font-size:13px;text-decoration:none;transition:scale .14s var(--ease-out)}
+.chapter-jump a:active{scale:.94;background:var(--soft-green)}
+/* Pennans verktygsrad och ångra-rutan får inte överlappa */
+html[data-pen="on"] .toast{bottom:calc(150px + env(safe-area-inset-bottom))}

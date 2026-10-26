@@ -65,7 +65,8 @@
         const p=idx.p[n];return {sfs:idx.laws[p[0]],chapter:p[1],number:p[2],title:p[3],score};
       })};
     }
-    return {query};
+    function warm(){paras().catch(()=>{});['ha','br','po','gr','an','fo'].forEach(n=>shard(n));}
+    return {query,warm};
   }
   // Kort utdrag kring första träffen, med sökorden markerade.
   function snippet(text,tokens,escape,size){

@@ -58,8 +58,22 @@
     if(!state.navDir)state.navDir='forward';
     if (replace) history.replaceState(null,'',dest);
     else history.pushState(null,'',dest);
+    // Lagens namn glider från raden i listan upp till rubrikraden (iOS 18 och senare).
+    const shared=state.sharedTitle;state.sharedTitle=null;
+    if(shared&&document.startViewTransition&&!reducedMotion()){
+      state.navDir='none';
+      shared.style.viewTransitionName='law-title';
+      const vt=document.startViewTransition(async()=>{
+        shared.style.viewTransitionName='';
+        await render(true);
+        $('#top-title').style.viewTransitionName='law-title';
+      });
+      vt.finished.finally(()=>{$('#top-title').style.viewTransitionName='';});
+      return;
+    }
     render(true);
   }
+  function reducedMotion(){return !!(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches);}
   function back() {
     closeSheet();
     if (history.state || state.previous.length) history.back();
@@ -295,8 +309,11 @@
         '<div class="paragraph-content">'+textHtml(t.text,meta,ch)+'</div></div>').join('')+'</details>';
   }
   function chapterList(meta,data){
+    // Stora lagar (t.ex. socialförsäkringsbalken) får ett rutnät med kapitelnummer för snabba hopp.
+    const grid=data.chapters.length>=20?'<div class="chapter-jump" aria-label="Hoppa till kapitel">'+data.chapters.map(ch=>
+      '<a data-link="1" href="'+attr(urlFor(meta.sfs,ch.number))+'" title="'+attr(ch.title||'')+'">'+html(ch.number)+'</a>').join('')+'</div>':'';
     return docIntro(meta,data)+
-      '<div class="chapter-list"><div class="section-title">Välj kapitel</div><div class="card-list chapters-grid">'+
+      '<div class="chapter-list">'+(grid?'<div class="section-title">Hoppa till kapitel</div>'+grid:'')+'<div class="section-title">Välj kapitel</div><div class="card-list chapters-grid">'+
       data.chapters.map(ch=>{
         const paras=(ch.items||[]).filter(i=>i.type==='para');
         const label=(ch.number==='0'?'Bestämmelser':ch.number+' kap.')+(ch.title?' · '+ch.title:'');
@@ -417,14 +434,15 @@
         if(res.every(r=>r.test(text)))f.hits.push({c:ch.number,p:String(item.number)});
       }
     }
-    const count=$('#find-count');if(count)count.textContent=findCount();
+    const count=$('#find-count');if(count){count.textContent=findCount();bump(count);}
     clearFindMarks();applyFindMarks();
   }
+  function bump(el){if(!el.classList||!el.classList.remove)return;el.classList.remove('bump');void el.offsetWidth;el.classList.add('bump');}
   function stepFind(dir){
     const f=state.find;if(!f||!f.hits.length)return;
     f.i=(f.i+dir+f.hits.length)%f.hits.length;
     const h=f.hits[f.i],r=route();
-    const count=$('#find-count');if(count)count.textContent=findCount();
+    const count=$('#find-count');if(count){count.textContent=findCount();bump(count);}
     const input=$('#find-input');if(input)input.blur();
     if(String(r.chapter)===String(h.c)){
       const el=$('#p-'+CSS.escape(searchCore.paraKey(h.p)));
@@ -592,8 +610,14 @@
     try{
       const cache=await caches.open(DATA_CACHE);
       let saved=0;
-      for(const law of state.catalog)if(await cache.match(lawUrl(law.sfs)))saved++;
-      box.textContent=saved+' av '+state.catalog.length+' författningar sparade för offline.';
+      let bytes=0;
+      for(const req of await cache.keys()){
+        const res=await cache.match(req);
+        const len=Number(res&&res.headers.get('content-length'))||((res&&await res.clone().blob()).size||0);
+        bytes+=len;if(req.url.includes('/data/laws/'))saved++;
+      }
+      box.innerHTML=html(saved+' av '+state.catalog.length+' författningar sparade för offline · '+(bytes/1048576).toFixed(1).replace('.',',')+' MB.')+
+        (saved?' <button type="button" class="link-button" data-action="offline-clear">Rensa offlinedata</button>':'');
     }catch(_){box.textContent='Status för offlinelagring kunde inte läsas.';}
   }
   async function downloadAll(area){
@@ -726,13 +750,14 @@
   }
   // Filter för fritextsökningen: lagbokens avdelningar, de stora balkarna och egna samlingar.
   function searchFilters(){
-    const opts=[['','Alla'],['balk:1962:700','BrB m.fl.'],['balk:1942:740','RB m.fl.'],...state.sections.filter(s=>s.id!=='balkar').map(s=>[s.id,s.name.split(/,| och /)[0]])];
+    const opts=[['','Alla'],['typ:lag','Bara lagar'],['typ:förordning','Bara förordningar'],['balk:1962:700','BrB m.fl.'],['balk:1942:740','RB m.fl.'],...state.sections.filter(s=>s.id!=='balkar').map(s=>[s.id,s.name.split(/,| och /)[0]])];
     if(pref.collections.length)opts.push(['samlingar','Mina samlingar']);
     return '<div class="chips search-filters">'+opts.map(([id,label])=>'<button type="button" class="chip'+(state.searchFilter===id?' active':'')+'" data-action="search-filter" data-id="'+attr(id)+'">'+html(label)+'</button>').join('')+'</div>';
   }
   function passesFilter(h){
     const f=state.searchFilter;if(!f)return true;
     const law=lawById(h.sfs);if(!law)return false;
+    if(f.startsWith('typ:'))return law.type===f.slice(4);
     if(f.startsWith('balk:')){const b=f.slice(5);return law.sfs===b||law.parent===b;}
     if(f==='samlingar'){const k=searchCore.paraKey(h.number);return pref.collections.some(c=>c.items.some(x=>{const [s,ch,n]=x.split('|');return s===h.sfs&&ch===h.chapter&&searchCore.paraKey(n)===k;}));}
     return law.section===f;
@@ -828,6 +853,7 @@
     if(state.current!==r)return;
     view.innerHTML=markup+(r.page==='law'?returnChip():'');
     animateView(keep?'':state.navDir);state.navDir='';
+    const tb=$('.topbar');if(tb&&tb.classList&&!keep)tb.classList.toggle('titled',!(typeof view.querySelector==='function'&&view.querySelector('.page-title,.law-head h1,.reader-heading h1')));
     applyHighlights();applySearchMarks();applyFindMarks();clearNewHighlight();
     if(r.page==='law'&&meta)addRecent(meta.sfs+(r.chapter==null?'':'|'+r.chapter)+(r.paragraph?'|'+r.paragraph:''));
     if(keep){/* Omritning på plats: renderKeep återställer scrollposition. */}
@@ -1325,6 +1351,18 @@
       pref.lastRead=r.sfs;savePrefs();
     },700);
   }
+  // Sidans stora rubrik krymper in i rubrikraden när man scrollar, som i iPhones egna appar.
+  let titlePending=false;
+  view.addEventListener('scroll',()=>{
+    if(titlePending||typeof view.querySelector!=='function')return;titlePending=true;
+    requestAnimationFrame(()=>{
+      titlePending=false;
+      const big=view.querySelector('.page-title,.law-head h1,.reader-heading h1');
+      const top=$('.topbar');if(!top||!top.classList)return;
+      const hidden=!big||big.getBoundingClientRect().bottom<view.getBoundingClientRect().top+8;
+      top.classList.toggle('titled',hidden);
+    });
+  },{passive:true});
   let readerScrollPending=false;
   view.addEventListener('scroll',()=>{
     if(route().page!=='law'||readerScrollPending||typeof view.querySelectorAll!=='function')return;
@@ -1450,7 +1488,10 @@
     const mark=e.target.closest('mark.hl');if(mark&&!e.target.closest('a')){highlightSheet(mark.dataset.key,mark.dataset.hl);return;}
     const anchor=e.target.closest('a[data-link]');
     if(anchor){e.preventDefault();const dest=anchor.getAttribute('href');if(dest==='#/fap')state.query='';
-      const terms=anchor.dataset&&anchor.dataset.terms;state.markTerms=terms?{hash:dest,tokens:terms.split(' ')}:null;navigate(dest);return;}
+      const terms=anchor.dataset&&anchor.dataset.terms;state.markTerms=terms?{hash:dest,tokens:terms.split(' ')}:null;
+      const title=anchor.querySelector&&/^#\/law\/[^/]+$/.test(dest)?anchor.querySelector('.row-title'):null;
+      state.sharedTitle=title||null;
+      navigate(dest);return;}
     const btn=e.target.closest('[data-action]');
     if(!btn)return;
     const a=btn.dataset.action,k=btn.dataset.key;
@@ -1471,6 +1512,7 @@
     if(a==='find-next'){stepFind(1);return;}
     if(a==='find-prev'){stepFind(-1);return;}
     if(a==='find-close'){state.find=null;renderKeep();return;}
+    if(a==='offline-clear'){if(window.caches&&window.confirm('Ta bort nedladdad lagtext från telefonen? Dina markeringar och anteckningar påverkas inte.'))caches.delete(DATA_CACHE).then(()=>{toast('Offlinedata är borttagen');offlineStatus();});return;}
     if(a==='check-update'){if(navigator.serviceWorker&&navigator.serviceWorker.getRegistration)navigator.serviceWorker.getRegistration().then(r=>r&&r.update()).then(()=>toast('Du har den senaste versionen om inget meddelande visas')).catch(()=>{});else location.reload();return;}
     if(a==='toast-undo'){const fn=toast.undo;$('#toast').hidden=true;toast.undo=null;if(fn)fn();return;}
     if(a==='note-done'){const f=$('textarea.note-input');if(f)saveNote(k,f.value);state.editingNote=null;renderKeep();return;}
@@ -1557,6 +1599,9 @@
     if(!location.hash||location.hash==='#/home'||location.hash==='#/search')history.replaceState(null,'','#/catalog');
     render(true);
     fetchJson('data/index/status.json').then(st=>{state.status=st;updateNavBadge();}).catch(()=>{});
+    // Sökindexets bas läses in i bakgrunden så att första sökningen svarar direkt.
+    const idle=window.requestIdleCallback||(fn=>setTimeout(fn,1200));
+    idle(()=>{if(searchIndex&&searchIndex.warm)searchIndex.warm();});
     fetchJson('data/index/relations.json').then(r=>{state.relations=r;if(route().page==='law')renderKeep();}).catch(()=>{});
     registerWorker();
   }
