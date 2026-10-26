@@ -26,7 +26,7 @@ const node=id=>({
  setAttribute(){},getAttribute(){return ''},blur(){},focus(){},scrollIntoView(){}
 });
 const el=Object.fromEntries([
- 'view','sheet','scrim','top-title','back','toc-button','in-law-search','menu-button','toast',
+ 'view','sheet','scrim','top-title','back','toc-button','find-button','pen-button','in-law-search','menu-button','toast',
  'query','search-results','catalog-directory','search-suggest','text-results','p-1','fap-results'
 ].map(id=>[id,node(id)]));
 const nav=[node('nav-catalog'),node('nav-saved')];
@@ -86,7 +86,7 @@ async function submit(q){
  assert.doesNotMatch(el.view.innerHTML,/chapter-navigation/);
  assert.doesNotMatch(el.view.innerHTML,/Nästa: 2 §/);
  assert.doesNotMatch(el.view.innerHTML,/read-modes/);
- assert.equal((el.view.innerHTML.match(/data-action="toc"/g)||[]).length,1);
+ assert.equal(el['toc-button'].hidden,false,'Innehåll sitter i rubrikraden');
  assert.match(el.view.innerHTML,/paragraph-heading-button/);
  assert.match(el.view.innerHTML,/data-ref-para="2"/);
  // 0.5: redaktionell rubrik, ändrings-SFS, lydelser, upphävd paragraf och nästa kapitel

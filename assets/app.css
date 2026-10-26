@@ -552,3 +552,24 @@ html[data-theme="dark"] .tut-date{background:#4A3E1E;color:#F3E6C2}
 /* Mörkt läge: appikonen behåller sin mörkgröna färg och primärknappar får mörk text på ljusgrönt. */
 html[data-theme="dark"] .tut-mark:not(.small){background:#264D39}
 html[data-theme="dark"] .button.primary{color:#0F1813}
+/* 1.5: rubrikraden i en lag – namn och plats, sedan ⌕ ✎ ☷ ⋯ i lika stora knappar. */
+.topbar.law-mode .top-title{opacity:1;translate:0 0;display:flex;flex-direction:column;min-width:0;line-height:1.2}
+.topbar .tt-name{font-weight:700;font-size:16px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.topbar .tt-sub{font-weight:450;font-size:12px;color:var(--secondary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.topbar .law-tool{width:40px;height:40px;font-size:20px;border-radius:11px;color:var(--accent);flex-shrink:0}
+.topbar .law-tool.on{background:var(--wine);color:#FFFDF9}
+.topbar.law-mode .top-actions{gap:0}
+/* Sökraden: fält med räknare, ↑ ↓ och växeln lagen / hela lagboken. */
+.reader-context .find-bar{padding:2px 0 0;gap:7px}
+.find-field{flex:1;min-width:0;position:relative;display:flex;align-items:center}
+.find-field input{width:100%;height:40px;border:1px solid var(--border);border-radius:11px;padding:0 74px 0 11px;font-size:16px;background:var(--panel);color:var(--text)}
+.find-field input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 20%,transparent)}
+.find-field .find-count{position:absolute;right:10px;font-size:12.5px;color:var(--secondary);min-width:0;pointer-events:none}
+.reader-context .find-bar .find-step{flex:0 0 40px;width:40px!important;height:40px;font-size:18px!important;color:var(--accent);border-radius:11px!important}
+.find-scope{flex-basis:100%;display:flex;gap:3px;padding:3px;margin:2px 0 3px;background:var(--soft);border-radius:10px}
+.reader-context .find-scope button{flex:1;min-width:0;padding:7px 6px;border-radius:8px;font-size:13.5px;font-weight:650;color:var(--accent);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.reader-context .find-scope button.on{background:var(--panel);color:var(--text);box-shadow:0 1px 3px #0002}
+.menu-version{text-align:center;margin:14px 0 0}
+.topbar .law-tool svg{display:block}
+html[data-theme="dark"] .topbar .law-tool.on{color:#0F1813}
+.sheet-menu-row .grow{display:flex;flex-direction:column;align-items:flex-start;text-align:left}
