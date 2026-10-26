@@ -37,6 +37,8 @@ jobs:
           CHANGE_REPORT: data/import-report.md
           WORKERS: '6'
         run: python scripts/import_laws.py
+      - name: Update international conventions from law appendices
+        run: python scripts/conventions.py
       - name: Add new laws to report
         if: github.event_name != 'push'
         continue-on-error: true

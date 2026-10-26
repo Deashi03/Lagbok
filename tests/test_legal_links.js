@@ -31,7 +31,14 @@ assert.doesNotMatch(linkify('3 och 4 §§ lagen (2025:1062) om polisens användn
 assert.match(linkify('24 kap. 7 § första stycket rättegångsbalken',more),/data-ref-sfs="1942:740"/);
 console.log('Juridiska länkar: hänvisningar till andra författningar godkända');
 const range=linkify('enligt 1-4 §§ detta kapitel',more);
-assert.match(range,/data-ref-para="1"[^>]*>1<\/a>-<a[^>]*data-ref-para="4"/);
+assert.match(range,/data-ref-para="1" data-ref-to="4"[^>]*>1-4<\/a>/,'ett intervall länkas som en helhet');
+const withMembers={...more,members:()=>['1','2','3','3a','4'],chapters:()=>['24','25','26','27','28']};
+assert.deepEqual(parseRefs('enligt 1–4 §§',withMembers)[0].numbers,['1','2','3','3a','4'],'alla paragrafer i intervallet räknas');
+assert.match(linkify('Om brott, som i 7--9 §§ sägs',withMembers),/>7--9<\/a> §§/);
+const chap=linkify('ett tvångsmedel enligt 24-28 kap., om inte',{...withMembers,sfs:'1942:740',chapter:'23'});
+assert.match(chap,/data-ref-chapter="24" data-ref-chapter-to="28"[^>]*>24-28<\/a> kap\./,'kapitelintervall länkas');
+assert.deepEqual(parseRefs('enligt 24–28 kap.',{...withMembers,sfs:'1942:740',chapter:'23'})[0].chapters,['24','25','26','27','28']);
+assert.equal((linkify('3 och 4 kap. brottsbalken',{...more,sfs:'1942:740',chapter:'23'}).match(/class="law-ref"/g)||[]).length,2,'kapitel i uppräkning länkas var för sig');
 console.log('Juridiska länkar: intervall godkända');
 
 // 0.6: uppräkningar med ett paragraftecken, listor, kapitel, stycken och "samma balk"

@@ -22,8 +22,14 @@
     if(s.length>88){s=s.slice(0,85).replace(/\s+\S*$/,'')+'…';}
     return s||'Text saknas';
   }
+  // Rubriker som står i själva dokumentet (t.ex. konventionsartiklar: "Artikel 8 – Rätt till skydd för privat- och familjeliv").
+  const docTitles={};
+  function registerDoc(sfs,doc){
+    for(const ch of (doc&&doc.chapters)||[])for(const item of ch.items||[])
+      if(item.type==='para'&&item.title)docTitles[sfs+'|'+ch.number+'|'+key(item.number)]=item.title;
+  }
   function curatedTitle(sfs,chapter,number){
-    return titles[sfs]?.[String(chapter)]?.[key(number)]||null;
+    return titles[sfs]?.[String(chapter)]?.[key(number)]||docTitles[sfs+'|'+chapter+'|'+key(number)]||null;
   }
   function description(sfs,chapter,p){
     if(p.repealed)return {text:'Upphävd paragraf',kind:'upphävd'};
@@ -58,5 +64,5 @@
     const q=n(query);if(!q)return true;
     return n([ch.title,ch.number+' kap.',...chapterGroups.flatMap(g=>[g.title,...g.paragraphs.flatMap(p=>[p.number+' §',p.title,p.excerpt])])].join(' ')).includes(q);
   }
-  return {chapterGroups,chapterMatches,description,curatedTitle,snippet};
+  return {chapterGroups,chapterMatches,description,curatedTitle,snippet,registerDoc};
 });

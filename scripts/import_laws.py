@@ -392,7 +392,8 @@ def run():
     catalog=json.loads(CATALOG.read_text(encoding="utf-8"));changed=False;fail=[];report=[];repealed=[]
     # ONLY=new hämtar bara författningar som ännu saknar lagtext; ONLY=2010:1932,2011:154 bara de angivna.
     only=os.environ.get("ONLY","").strip()
-    metas=catalog["laws"]
+    # Konventionerna (typ "konvention") byggs av scripts/conventions.py ur lagarnas bilagor och hämtas inte här.
+    metas=[m for m in catalog["laws"] if m["type"]!="konvention"]
     if only=="new":metas=[m for m in metas if not (OUT/(slug(m["sfs"])+".json")).exists()]
     elif only:metas=[m for m in metas if m["sfs"] in set(x.strip() for x in only.split(","))]
     # Hämtningen sker parallellt; tolkningen sker i katalogens ordning.

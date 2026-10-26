@@ -93,6 +93,1092 @@
       "anchor": "1949:105"
     },
     {
+      "sfs": "1994:1219-K",
+      "name": "Europakonventionen",
+      "type": "konvention",
+      "aliases": [
+        "EKMR",
+        "Europakonventionen",
+        "Europeiska konventionen om de mänskliga rättigheterna",
+        "Europeiska konventionen angående skydd för de mänskliga rättigheterna"
+      ],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "1994:1219"
+    },
+    {
+      "sfs": "2018:1197-K",
+      "name": "Barnkonventionen",
+      "type": "konvention",
+      "aliases": [
+        "Barnkonventionen",
+        "FN:s barnkonvention",
+        "Konventionen om barnets rättigheter"
+      ],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "2018:1197"
+    },
+    {
+      "sfs": "1987:822-K",
+      "name": "FN:s konvention om internationella köp (CISG)",
+      "type": "konvention",
+      "aliases": [
+        "CISG",
+        "Wienkonventionen",
+        "Köpkonventionen"
+      ],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "1987:822"
+    },
+    {
+      "sfs": "2009:1514-K",
+      "name": "FN:s konvention om immunitet för stater och deras egendom",
+      "type": "konvention",
+      "aliases": [
+        "Immunitetskonventionen"
+      ],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "2009:1514"
+    },
+    {
+      "sfs": "1990:313-K",
+      "name": "Europaråds- och OECD-konventionen om ömsesidig handräckning i skatteärenden",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "1990:313"
+    },
+    {
+      "sfs": "2010:328-K",
+      "name": "Avtal mellan Sverige och Andorra om utbyte av upplysningar i skatteärenden",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "2010:328"
+    },
+    {
+      "sfs": "2010:331-K",
+      "name": "Avtal mellan Sverige och Anguilla om utbyte av upplysningar i skatteärenden",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "2010:331"
+    },
+    {
+      "sfs": "2013:125-K",
+      "name": "Avtal mellan Sverige och Antigua och Barbuda om utbyte av upplysningar i skatteärenden",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "2013:125"
+    },
+    {
+      "sfs": "2010:1333-K",
+      "name": "Avtal mellan Sverige och Bahamas om utbyte av upplysningar i skatteärenden",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "2010:1333"
+    },
+    {
+      "sfs": "2013:1127-K",
+      "name": "Avtal mellan Sverige och Bahrain om utbyte av upplysningar i skatteärenden",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "2013:1127"
+    },
+    {
+      "sfs": "2013:1126-K",
+      "name": "Avtal mellan Sverige och Belize om utbyte av upplysningar i skatteärenden",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "2013:1126"
+    },
+    {
+      "sfs": "2009:1119-K",
+      "name": "Avtal mellan Sverige och Bermuda för undvikande av dubbelbeskattning av fysiska personer",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "2009:1119"
+    },
+    {
+      "sfs": "2009:1118-K",
+      "name": "Avtal mellan Sverige och Bermuda om förfarande för ömsesidig överenskommelse vid justering av inkomst mellan företag i intressegemenskap",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "2009:1118"
+    },
+    {
+      "sfs": "2009:1117-K",
+      "name": "Avtal mellan Sverige och Bermuda om utbyte av upplysningar avseende skatter",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "2009:1117"
+    },
+    {
+      "sfs": "2009:1116-K",
+      "name": "Avtal mellan Sverige och Brittiska Jungfruöarna för undvikande av dubbelbeskattning av fysiska personer",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "2009:1116"
+    },
+    {
+      "sfs": "2009:1115-K",
+      "name": "Avtal mellan Sverige och Brittiska Jungfruöarna om förfarande för ömsesidig överenskommelse vid justering av inkomst mellan företag i intressegemenskap",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "2009:1115"
+    },
+    {
+      "sfs": "2009:1114-K",
+      "name": "Avtal mellan Sverige och Brittiska Jungfruöarna om utbyte av upplysningar avseende skatter",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "2009:1114"
+    },
+    {
+      "sfs": "2015:616-K",
+      "name": "Avtal mellan Sverige och Brunei om utbyte av upplysningar i skatteärenden",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "2015:616"
+    },
+    {
+      "sfs": "2009:1113-K",
+      "name": "Avtal mellan Sverige och Caymanöarna för undvikande av dubbelbeskattning av fysiska personer",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "2009:1113"
+    },
+    {
+      "sfs": "2009:1112-K",
+      "name": "Avtal mellan Sverige och Caymanöarna om förfarande för ömsesidig överenskommelse vid justering av inkomst mellan företag i intressegemenskap",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "2009:1112"
+    },
+    {
+      "sfs": "2009:1111-K",
+      "name": "Avtal mellan Sverige och Caymanöarna om upplysningar i skatteärenden",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "2009:1111"
+    },
+    {
+      "sfs": "2010:330-K",
+      "name": "Avtal mellan Sverige och Cooköarna om utbyte av upplysningar i skatteärenden",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "2010:330"
+    },
+    {
+      "sfs": "2015:220-K",
+      "name": "Avtal mellan Sverige och Costa Rica om utbyte av upplysningar i skatteärenden",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "2015:220"
+    },
+    {
+      "sfs": "2015:135-K",
+      "name": "Avtal mellan Sverige och Dominica om utbyte av upplysningar i skatteärenden",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "2015:135"
+    },
+    {
+      "sfs": "2016:409-K",
+      "name": "Avtal mellan Sverige och Förenade Arabemiraten om utbyte av upplysningar i skatteärenden",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "2016:409"
+    },
+    {
+      "sfs": "2010:332-K",
+      "name": "Avtal mellan Sverige och Gibraltar om utbyte av upplysningar i skatteärenden",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "2010:332"
+    },
+    {
+      "sfs": "2014:1341-K",
+      "name": "Avtal mellan Sverige och Grenada om utbyte av upplysningar i skatteärenden",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "2014:1341"
+    },
+    {
+      "sfs": "2015:926-K",
+      "name": "Avtal mellan Sverige och Guatemala om utbyte av upplysningar i skatteärenden",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "2015:926"
+    },
+    {
+      "sfs": "2009:1126-K",
+      "name": "Avtal mellan Sverige och Guernsey för undvikande av dubbelbeskattning av fysiska personer",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "2009:1126"
+    },
+    {
+      "sfs": "2009:1124-K",
+      "name": "Avtal mellan Sverige och Guernsey om utbyte av upplysningar i skatteärenden",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "2009:1124"
+    },
+    {
+      "sfs": "2014:1408-K",
+      "name": "Avtal mellan Sverige och Hongkong SAR om utbyte av upplysningar i skatteärenden",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "2014:1408"
+    },
+    {
+      "sfs": "2008:1303-K",
+      "name": "Avtal mellan Sverige och Isle of Man för undvikande av dubbelbeskattning av fysiska personer",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "2008:1303"
+    },
+    {
+      "sfs": "2008:1301-K",
+      "name": "Avtal mellan Sverige och Isle of Man om utbyte av upplysningar i skatteärenden",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "2008:1301"
+    },
+    {
+      "sfs": "2009:1122-K",
+      "name": "Avtal mellan Sverige och Jersey för undvikande av dubbelbeskattning av fysiska personer",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "2009:1122"
+    },
+    {
+      "sfs": "2009:1120-K",
+      "name": "Avtal mellan Sverige och Jersey om utbyte av upplysningar i skatteärenden",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "2009:1120"
+    },
+    {
+      "sfs": "2014:339-K",
+      "name": "Avtal mellan Sverige och Liberia om utbyte av upplysningar i skatteärenden",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "2014:339"
+    },
+    {
+      "sfs": "2011:584-K",
+      "name": "Avtal mellan Sverige och Liechtenstein om utbyte av upplysningar i skatteärenden",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "2011:584"
+    },
+    {
+      "sfs": "2014:1335-K",
+      "name": "Avtal mellan Sverige och Macao SAR om utbyte av upplysningar i skatteärenden",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "2014:1335"
+    },
+    {
+      "sfs": "2015:219-K",
+      "name": "Avtal mellan Sverige och Marshallöarna om utbyte av upplysningar i skatteärenden",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "2015:219"
+    },
+    {
+      "sfs": "2010:1445-K",
+      "name": "Avtal mellan Sverige och Monaco om utbyte av upplysningar i skatteärenden",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "2010:1445"
+    },
+    {
+      "sfs": "2014:116-K",
+      "name": "Avtal mellan Sverige och Montserrat om utbyte av upplysningar i skatteärenden",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "2014:116"
+    },
+    {
+      "sfs": "2009:1288-K",
+      "name": "Avtal mellan Sverige och Nederländerna såvitt avser Aruba för att främja ekonomiska förbindelser",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "2009:1288"
+    },
+    {
+      "sfs": "2009:1287-K",
+      "name": "Avtal mellan Sverige och Nederländerna såvitt avser Aruba om utbyte av upplysningar avseende skatter",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "2009:1287"
+    },
+    {
+      "sfs": "2009:1285-K",
+      "name": "Avtal mellan Sverige och Nederländerna såvitt avser Nederländska Antillerna för att främja ekonomiska förbindelser",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "2009:1285"
+    },
+    {
+      "sfs": "2009:1286-K",
+      "name": "Avtal mellan Sverige och Nederländerna såvitt avser Nederländska Antillerna om utbyte av upplysningar avseende skatter",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "2009:1286"
+    },
+    {
+      "sfs": "2015:615-K",
+      "name": "Avtal mellan Sverige och Niue om utbyte av upplysningar i skatteärenden",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "2015:615"
+    },
+    {
+      "sfs": "2013:376-K",
+      "name": "Avtal mellan Sverige och Panama om utbyte av upplysningar i skatteärenden",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "2013:376"
+    },
+    {
+      "sfs": "2014:338-K",
+      "name": "Avtal mellan Sverige och Qatar om utbyte av upplysningar i skatteärenden",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "2014:338"
+    },
+    {
+      "sfs": "2010:1446-K",
+      "name": "Avtal mellan Sverige och Saint Christopher (Saint Kitts) och Nevis om utbyte av upplysningar i skatteärenden",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "2010:1446"
+    },
+    {
+      "sfs": "2013:126-K",
+      "name": "Avtal mellan Sverige och Saint Lucia om utbyte av upplysningar i skatteärenden",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "2013:126"
+    },
+    {
+      "sfs": "2010:329-K",
+      "name": "Avtal mellan Sverige och Samoa om utbyte av upplysningar i skatteärenden",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "2010:329"
+    },
+    {
+      "sfs": "2010:327-K",
+      "name": "Avtal mellan Sverige och San Marino om utbyte av upplysningar i skatteärenden",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "2010:327"
+    },
+    {
+      "sfs": "2013:375-K",
+      "name": "Avtal mellan Sverige och Seychellerna om utbyte av upplysningar i skatteärenden",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "2013:375"
+    },
+    {
+      "sfs": "2010:1447-K",
+      "name": "Avtal mellan Sverige och St Vincent och Grenadinerna om utbyte av upplysningar i skatteärenden",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "2010:1447"
+    },
+    {
+      "sfs": "2010:333-K",
+      "name": "Avtal mellan Sverige och Turks- och Caicosöarna om utbyte av upplysningar i skatteärenden",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "2010:333"
+    },
+    {
+      "sfs": "2015:136-K",
+      "name": "Avtal mellan Sverige och Uruguay om utbyte av upplysningar i skatteärenden",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "2015:136"
+    },
+    {
+      "sfs": "2015:927-K",
+      "name": "Avtal mellan Sverige och Vanuatu om utbyte av upplysningar i skatteärenden",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "2015:927"
+    },
+    {
+      "sfs": "2019:205-K",
+      "name": "Avtal om social trygghet mellan Sverige och Filippinerna",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "2019:205"
+    },
+    {
+      "sfs": "2021:989-K",
+      "name": "Avtal om social trygghet mellan Sverige och Japan",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "2021:989"
+    },
+    {
+      "sfs": "1972:698-K",
+      "name": "Avtalet mellan Sverige och Europeiska ekonomiska gemenskapen",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "1972:698"
+    },
+    {
+      "sfs": "2019:598-K",
+      "name": "Avtalet om social trygghet mellan Sverige och Filippinerna",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "2019:598"
+    },
+    {
+      "sfs": "2022:301-K",
+      "name": "Avtalet om social trygghet mellan Sverige och Japan",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "2022:301"
+    },
+    {
+      "sfs": "1998:1652-K",
+      "name": "Dubbelbeskattningsavtal mellan Sverige och Albanien",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "1998:1652"
+    },
+    {
+      "sfs": "1994:1617-K",
+      "name": "Dubbelbeskattningsavtal mellan Sverige och Amerikas Förenta Stater",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "1994:1617"
+    },
+    {
+      "sfs": "1995:1338-K",
+      "name": "Dubbelbeskattningsavtal mellan Sverige och Argentina",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "1995:1338"
+    },
+    {
+      "sfs": "1994:282-K",
+      "name": "Dubbelbeskattningsavtal mellan Sverige och Bolivia",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "1994:282"
+    },
+    {
+      "sfs": "1996:1511-K",
+      "name": "Dubbelbeskattningsavtal mellan Sverige och Canada",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "1996:1511"
+    },
+    {
+      "sfs": "1999:638-K",
+      "name": "Dubbelbeskattningsavtal mellan Sverige och Filippinerna",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "1999:638"
+    },
+    {
+      "sfs": "1994:281-K",
+      "name": "Dubbelbeskattningsavtal mellan Sverige och Gambia",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "1994:281"
+    },
+    {
+      "sfs": "1997:918-K",
+      "name": "Dubbelbeskattningsavtal mellan Sverige och Indien",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "1997:918"
+    },
+    {
+      "sfs": "1983:203-K",
+      "name": "Dubbelbeskattningsavtal mellan Sverige och Japan",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "1983:203"
+    },
+    {
+      "sfs": "1997:919-K",
+      "name": "Dubbelbeskattningsavtal mellan Sverige och Kazakstan",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "1997:919"
+    },
+    {
+      "sfs": "1996:1510-K",
+      "name": "Dubbelbeskattningsavtal mellan Sverige och Luxemburg",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "1996:1510"
+    },
+    {
+      "sfs": "1998:258-K",
+      "name": "Dubbelbeskattningsavtal mellan Sverige och Makedonien",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "1998:258"
+    },
+    {
+      "sfs": "1995:1504-K",
+      "name": "Dubbelbeskattningsavtal mellan Sverige och Malta",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "1995:1504"
+    },
+    {
+      "sfs": "1987:1182-K",
+      "name": "Dubbelbeskattningsavtal mellan Sverige och Schweiz",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "1987:1182"
+    },
+    {
+      "sfs": "1995:1468-K",
+      "name": "Dubbelbeskattningsavtal mellan Sverige och Sydafrika",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "1995:1468"
+    },
+    {
+      "sfs": "1977:580-K",
+      "name": "Dubbelbeskattningsavtal mellan Sverige och Tanzania",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "1977:580"
+    },
+    {
+      "sfs": "1995:1339-K",
+      "name": "Dubbelbeskattningsavtal mellan Sverige och Ukraina",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "1995:1339"
+    },
+    {
+      "sfs": "1982:709-K",
+      "name": "Dubbelbeskattningsavtal mellan Sverige och Ungern",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "1982:709"
+    },
+    {
+      "sfs": "1994:789-K",
+      "name": "Dubbelbeskattningsavtal mellan Sverige och Vietnam",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "1994:789"
+    },
+    {
+      "sfs": "1994:790-K",
+      "name": "Dubbelbeskattningsavtal mellan Sverige och Vitryssland",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "1994:790"
+    },
+    {
+      "sfs": "1992:858-K",
+      "name": "Dubbelbeskattningsavtal mellan Sverige och Österrike",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "1992:858"
+    },
+    {
+      "sfs": "1990:226-K",
+      "name": "Handräckning i skatteärenden mellan de nordiska länderna",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "1990:226"
+    },
+    {
+      "sfs": "1997:1157-K",
+      "name": "Handräckning i skatteärenden mellan de nordiska länderna",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "1997:1157"
+    },
+    {
+      "sfs": "1983:22-K",
+      "name": "Konvention den 2 juli 1982 mellan Sverige och Nederländerna om social trygghet",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "1983:22"
+    },
+    {
+      "sfs": "1982:887-K",
+      "name": "Konvention den 25 september 1979 mellan Sverige och Italien om social trygghet",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "1982:887"
+    },
+    {
+      "sfs": "1977:818-K",
+      "name": "Konvention den 28 juni 1976 mellan Sverige och Förbundsrepubliken Tyskland om ersättning vid arbetslöshet",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "1977:818"
+    },
+    {
+      "sfs": "1988:106-K",
+      "name": "Konvention den 29 juni 1987 mellan Sverige och Förenade Konungariket Storbritannien och Nordirland om social trygghet",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "1988:106"
+    },
+    {
+      "sfs": "1984:555-K",
+      "name": "Konvention den 4 februari 1983 mellan Sverige och Spanien om social trygghet",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "1984:555"
+    },
+    {
+      "sfs": "1982:249-K",
+      "name": "Konvention den 4 januari 1980 mellan Sverige och Marocko om social trygghet",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "1982:249"
+    },
+    {
+      "sfs": "1979:56-K",
+      "name": "Konvention den 5 maj 1978 mellan Sverige och Grekland rörande social trygghet",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "1979:56"
+    },
+    {
+      "sfs": "2004:1192-K",
+      "name": "Konvention mellan Sverige och Amerikas förenta stater om social trygghet",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "2004:1192"
+    },
+    {
+      "sfs": "2005:234-K",
+      "name": "Konvention mellan Sverige och Turkiet om social trygghet",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "2005:234"
+    },
+    {
+      "sfs": "2013:524-K",
+      "name": "Konvention om social trygghet mellan Sverige och Indien",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "2013:524"
+    },
+    {
+      "sfs": "2002:221-K",
+      "name": "Konvention om social trygghet mellan Sverige och Kanada",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "2002:221"
+    },
+    {
+      "sfs": "2014:834-K",
+      "name": "Konvention om social trygghet mellan Sverige och Sydkorea",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "2014:834"
+    },
+    {
+      "sfs": "1999:1211-K",
+      "name": "Konvention om undanröjande av dubbelbeskattning vid justering av inkomst mellan företag i intressegemenskap",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "1999:1211"
+    },
+    {
+      "sfs": "1958:522-K",
+      "name": "Konventionen den 20 juni 1956 om indrivning av underhållsbidrag i utlandet",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "1958:522"
+    },
+    {
+      "sfs": "1997:265-K",
+      "name": "Konventionen den 21 mars 1996 mellan Sverige och Österrike om social trygghet",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "1997:265"
+    },
+    {
+      "sfs": "2015:225-K",
+      "name": "Konventionen om social trygghet mellan Sverige och Sydkorea",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "2015:225"
+    },
+    {
+      "sfs": "1958:122-K",
+      "name": "Mellan Sverige, Danmark, Finland och Norge träffad överenskommelse om upphävande av passkontrollen vid de internordiska gränserna",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "1958:122"
+    },
+    {
+      "sfs": "2025:278-K",
+      "name": "Nordiska konventionen om social trygghet",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "2025:278"
+    },
+    {
+      "sfs": "2016:927-K",
+      "name": "Skatteavtal mellan Sverige och Armenien",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "2016:927"
+    },
+    {
+      "sfs": "2016:928-K",
+      "name": "Skatteavtal mellan Sverige och Azerbajdzjan",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "2016:928"
+    },
+    {
+      "sfs": "2020:44-K",
+      "name": "Skatteavtal mellan Sverige och Brasilien",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "2020:44"
+    },
+    {
+      "sfs": "2004:1051-K",
+      "name": "Skatteavtal mellan Sverige och Chile",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "2004:1051"
+    },
+    {
+      "sfs": "2014:340-K",
+      "name": "Skatteavtal mellan Sverige och Georgien",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "2014:340"
+    },
+    {
+      "sfs": "2004:874-K",
+      "name": "Skatteavtal mellan Sverige och Malaysia",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "2004:874"
+    },
+    {
+      "sfs": "2012:638-K",
+      "name": "Skatteavtal mellan Sverige och Mauritius",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "2012:638"
+    },
+    {
+      "sfs": "2005:456-K",
+      "name": "Skatteavtal mellan Sverige och Nigeria",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "2005:456"
+    },
+    {
+      "sfs": "2005:248-K",
+      "name": "Skatteavtal mellan Sverige och Polen",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "2005:248"
+    },
+    {
+      "sfs": "2016:408-K",
+      "name": "Skatteavtal mellan Sverige och Saudiarabien",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "2016:408"
+    },
+    {
+      "sfs": "2021:1106-K",
+      "name": "Skatteavtal mellan Sverige och Slovenien",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "2021:1106"
+    },
+    {
+      "sfs": "2015:666-K",
+      "name": "Skatteavtal mellan Sverige samt Storbritannien och Nordirland",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "2015:666"
+    },
+    {
+      "sfs": "1996:1071-K",
+      "name": "Tillämpningsöverenskommelse den 3 oktober 1996 till konventionen om social trygghet mellan Konungariket Sverige och Republiken Chile",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "1996:1071"
+    },
+    {
+      "sfs": "1988:100-K",
+      "name": "Överenskommelse den 20 september 1986 mellan Sverige och Québec om social trygghet",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "1988:100"
+    },
+    {
+      "sfs": "1998:186-K",
+      "name": "Överenskommelse mellan Sverige och Lettland om sjukvård åt tillfälliga besökande",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "1998:186"
+    },
+    {
+      "sfs": "1998:185-K",
+      "name": "Överenskommelse mellan Sverige och Litauen om sjukvård åt tillfälliga besökande",
+      "type": "konvention",
+      "aliases": [],
+      "chaptered": false,
+      "section": "internationellt",
+      "treatyOf": "1998:185"
+    },
+    {
       "sfs": "1987:230",
       "name": "Äktenskapsbalken",
       "type": "lag",
@@ -1737,9 +2823,7 @@
       "sfs": "1987:822",
       "name": "Lagen om internationella köp",
       "type": "lag",
-      "aliases": [
-        "CISG"
-      ],
+      "aliases": [],
       "chaptered": false,
       "check": "lag om internationella köp",
       "section": "balkar",
@@ -8678,10 +9762,7 @@
       "sfs": "1994:1219",
       "name": "Lagen om den europeiska konventionen angående skydd för de mänskliga rättigheterna och de grundläggande friheterna",
       "type": "lag",
-      "aliases": [
-        "Europakonventionen",
-        "EKMR"
-      ],
+      "aliases": [],
       "chaptered": false,
       "check": "lag om den europeiska konventionen angående skydd för de mänskliga rättigheterna och de grundläggande friheterna",
       "section": "forvaltning"
@@ -48211,6 +49292,10 @@
     {
       "id": "grundlagar",
       "name": "Grundlagar"
+    },
+    {
+      "id": "internationellt",
+      "name": "Internationella konventioner och avtal"
     },
     {
       "id": "balkar",

@@ -1,12 +1,12 @@
 # Granskning av lagtexten
 
-Datum: 2026-10-26. 5018 författningar.
+Datum: 2026-10-26. 5137 författningar.
 
 ## Siffror
 
-- författningar: 5018
+- författningar: 5137
 - förordningar med lag: 1863
-- länkade hänvisningar %: 96.5
+- länkade hänvisningar %: 96.9
 - kommande upphävande: 4
 - paragraf som ännu inte trätt i kraft: 442
 - senaste ändring inte inarbetad hos Riksdagen: 264

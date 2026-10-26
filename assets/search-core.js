@@ -16,13 +16,21 @@
       const doc=(faps||[]).find(f=>f.id===id);
       return doc?{type:'fap',fap:doc}:null;
     }
+    // Bara förkortningen, lagens namn eller SFS-numret ("PL", "brottsbalken", "1984:387") öppnar författningens början.
+    const whole=norm(q),abbr=a=>/^[A-ZÅÄÖ][A-Za-zÅÄÖåäö]{0,7}$/.test(a)&&/[A-ZÅÄÖ].*[A-ZÅÄÖa-zåäö]|^[A-ZÅÄÖ]{2,}$/.test(a);
+    const exact=(laws||[]).filter(l=>norm(l.name)===whole||l.sfs===q||(l.aliases||[]).some(a=>abbr(a)&&norm(a)===whole));
+    if(exact.length){
+      exact.sort((a,b)=>Number(norm(b.name)===whole)-Number(norm(a.name)===whole)||Number(b.type==='lag')-Number(a.type==='lag'));
+      return {type:'law',meta:exact[0],chapter:null,para:null};
+    }
     const candidates=[];
     (laws||[]).forEach(l=>{
       [l.name,l.sfs,...(l.aliases||[])].forEach(alias=>{
         const prefix=String(alias||'').trim();
         if(!prefix||norm(prefix).length<2)return;
         if(q.toLocaleLowerCase('sv').startsWith(prefix.toLocaleLowerCase('sv'))){
-          const rest=q.slice(prefix.length).trim();
+          // "EKMR art. 8" och "EKMR artikel 8" fungerar som "EKMR 8".
+          const rest=q.slice(prefix.length).trim().replace(/^art(?:ikel|\.)?\s*(?=\d)/i,'');
           if(rest&&/^\d/.test(rest)) candidates.push({meta:l,rest,length:prefix.length});
         }
       });
@@ -48,6 +56,7 @@
     if(!direct)return null;
     if(direct.type==='fap')return direct;
     if(!doc||!Array.isArray(doc.chapters))return null;
+    if(direct.chapter==null)return direct;
     const ch=doc.chapters.find(c=>String(c.number)===String(direct.chapter));
     if(!ch)return null;
     if(!direct.para)return direct;

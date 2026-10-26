@@ -1,0 +1,270 @@
+{
+ "sfs": "2004:1192-K",
+ "title": "Konvention mellan Sverige och Amerikas förenta stater om social trygghet",
+ "officialTitle": "Bilaga till Lag (2004:1192) om konvention mellan Sverige och Amerikas \r\nförenta stater om social trygghet\r\n",
+ "sourceUrl": "https://data.riksdagen.se/dokument/sfs-2004-1192.html",
+ "parser": "KONVENTION",
+ "fetchedAt": "2026-10-26T14:42:08+00:00",
+ "unit": "artikel",
+ "treatyOf": "2004:1192",
+ "chapters": [
+  {
+   "number": "0",
+   "title": "Konvention mellan Sverige och Amerikas förenta stater om social trygghet",
+   "items": [
+    {
+     "type": "heading",
+     "text": "Avdelning I – Allmänna bestämmelser",
+     "editorial": false
+    },
+    {
+     "type": "para",
+     "number": "1",
+     "text": "1. \"territorium\"\n\nmed avseende på Förenta staterna, delstaterna, distriktet Columbia, samväldet Puerto Rico, Jungfruöarna, Guam, Amerikanska Samoa och Norra Marianerna, och\n\nmed avseende på Sverige, Konungariket Sveriges territorium;\n\n2. \"medborgare''\n\nmed avseende på Förenta Staterna, en medborgare i Förenta staterna enligt definitionen i paragraf 101 av 1952 års immigrations- och medborgarskapslag med senare ändringar och\n\nmed avseende på Sverige, en person med svenskt medborgarskap;\n\n3. \"lagstiftning\"\n\nlagar, förordningar och administrativa föreskrifter rörande de i artikel 2 angivna sociala trygghetssystemen;\n\n4. \"behörig myndighet\"\n\nmed avseende på Förenta staterna, kommissionären för social trygghet, och\n\nmed avseende på Sverige, regeringen eller den myndighet regeringen förordnar;\n\n5. \"försäkringsorgan\"\n\nmed avseende på Förenta staterna, socialförsäkringsadministrationen, och\n\nmed avseende på Sverige, varje organ eller myndighet som svarar för tillämpningen av den i artikel 2, 1 b) angivna lagstiftningen;\n\n6. \"försäkringsperiod\"\n\nen avgiftsperiod, period med inkomster av anställning eller självständig förvärvsverksamhet, bosättningsperiod eller varje liknande period som betraktas som en försäkringsperiod enligt den lagstiftning under vilken den fullgjorts;\n\n7. \"förmån\" eller \"pension\"\n\nvarje pension eller annan förmån som enligt lagstiftningen i en fördragsslutande stat utges på grund av ålderdom, till beroende personer eller efterlevande eller på grund av invaliditet.",
+     "title": "I denna konvention avses med uttrycken"
+    },
+    {
+     "type": "para",
+     "number": "2",
+     "text": "1. Denna konvention är tillämplig på följande lagstiftning om förmåner och avgifter:\n\na. med avseende på Förenta staterna, lagstiftningen om federala system för ålders-, efterlevande- och invalidpension:\n\ni) avdelning II i socialförsäkringslagen och därtill hörande föreskrifter med undantag av paragraferna 226, 226 A och 228 i nämnda avdelning och därtill hörande föreskrifter,\n\nii) kapitel 2 och kapitel 21 i 1986 års lag om inländsk beskattning och föreskrifter till dessa kapitel;\n\nb. med avseende på Sverige, lagstiftningen om\n\ni) sjukersättning och aktivitetsersättning,\n\nii) garantipensioner och inkomstgrundade ålderspensioner samt\n\niii) efterlevandepensioner och efterlevandestöd till barn;\n\nvarvid dock gäller att konventionen inte berör rätt till förmåner eller skyldighet att betala avgifter inom andra grenar av social trygghet än de ovan nämnda.\n\n2. Denna konvention skall också tillämpas på framtida lagar och föreskrifter som utvidgar en fördragsslutande stats lagstiftning som anges i punkt 1 till att gälla nya kategorier av förmånstagare eller nya förmåner, såvida inte denna stat har gjort invändning om detta till den andra staten senast tre månader efter det att sådana framtida lagar och föreskrifter har trätt i kraft.\n\n3. I den mån ej annat föreskrivs i konventionen skall uttrycket lagstiftning i första stycket inte omfatta avtal eller andra internationella överenskommelser mellan en fördragsslutande stat och en tredje stat och inte heller lagstiftning eller föreskrifter för genomförandet av sådana överenskommelser."
+    },
+    {
+     "type": "para",
+     "number": "3",
+     "text": "I den mån ej annat föreskrivs i denna konvention är konventionen tillämplig på:\n\na) medborgare i de fördragsslutande staterna,\n\nb) flyktingar och statslösa personer som avses i konventionen den 28 juli 1951 om flyktingars rättsliga ställning och protokollet den 31 januari 1967 till nämnda konvention samt konventionen den 28 september 1954 om statslösa personers rättsliga ställning,\n\nc) andra personer med avseende på rättigheter som de härleder från en medborgare i en fördragsslutande stat, från en flykting eller från en statslös person och\n\nd) de som är medborgare i annan stat än fördragsslutande stat och som inte ingår bland de personer som anges i c) i denna artikel."
+    },
+    {
+     "type": "para",
+     "number": "4",
+     "text": "I artikel 3 a), b) eller c) nämnda personer, som är bosatta inom en fördragsslutande stats territorium, skall vid tillämpningen av denna stats lagstiftning likställas med statens egna medborgare, i den mån ej annat föreskrivs i denna konvention."
+    },
+    {
+     "type": "para",
+     "number": "5",
+     "text": "I den mån ej annat föreskrivs i denna konvention skall bestämmelser i en fördragsslutande stats lagstiftning, enligt vilka rätt till eller utbetalning av förmåner är beroende av bosättning eller vistelse inom denna stats territorium, inte tillämpas på i artikel 3 a), b) eller c) angivna personer som är bosatta inom den andra fördragsslutande statens territorium."
+    },
+    {
+     "type": "para",
+     "number": "6",
+     "text": "I den mån ej annat föreskrivs i denna konvention skall förmåner som utges enligt lagstiftningen i en av de fördragsslutande staterna utges till medborgare i den andra fördragsslutande staten, som är bosatta inom en tredje stats territorium, på samma villkor och i samma utsträckning som till den första statens medborgare som är bosatta i denna tredje stat."
+    },
+    {
+     "type": "heading",
+     "text": "Avdelning II – Tillämplig lagstiftning om försäkringstillhörighet",
+     "editorial": false
+    },
+    {
+     "type": "para",
+     "number": "7",
+     "text": "1. I den mån ej annat föreskrivs i denna konvention skall en person, som är sysselsatt inom en fördragsslutande stats territorium, i fråga om denna sysselsättning omfattas av lagstiftningen endast i nämnda stat.\n\n2. a) Om en person som normalt är i tjänst hos en arbetsgivare som bedriver verksamhet inom den ena fördragsslutande statens territorium, av denna arbetsgivare utsänds till den andra fördragsslutande statens territorium för en period som inte förväntas överstiga 60 månader, skall han eller hon omfattas av lagstiftningen endast i den förra fördragsslutande staten som om han eller hon fortfarande var sysselsatt inom dess territorium.\n\nb) Vid tillämpning av föregående stycke skall en arbetsgivare och ett dotterbolag som tillhör arbetsgivaren (enligt definitionen i lagstiftningen i den fördragsslutande stat från vilken personen har utsänts) anses vara en och densamma, under förutsättning att anställningen inom den andra fördragsslutande statens territorium skulle ha omfattats av lagstiftningen i den fördragsslutande stat från vilken personen har utsänts, om inte denna konvention hade funnits.\n\nc) En person som har utsänts av en arbetsgivare inom en fördragsslutande stats territorium till den andra fördragsslutande statens territorium och som omfattas av lagstiftningen i den första staten enligt bestämmelserna i stycke a i denna punkt, skall anses vara bosatt endast i den förra staten vid tillämpning av svensk lagstiftning enligt artikel 2.1 b. Detsamma gäller medföljande make och barn under 18 år, så länge de inte har anställning som faller under den andra statens lagstiftning.\n\n3. Punkt 2 i denna artikel skall tillämpas när en person som har utsänts av sin arbetsgivare från en fördragsslutande stats territorium till en tredje stats territorium, och som är försäkrad enligt lagstiftningen i den fördragsslutande staten under sin anställning inom den tredje statens territorium, därefter av denna arbetsgivare utsänds från den tredje statens territorium till den andra fördragsslutande statens territorium."
+    },
+    {
+     "type": "para",
+     "number": "8",
+     "text": "En person, som i annat fall skulle omfattas av lagstiftningen i båda de fördragsslutande staterna med avseende på självständig förvärvsverksamhet utförd i endera staten och som är bosatt i en fördragsslutande stat, skall omfattas av lagstiftningen endast i den stat där han är bosatt."
+    },
+    {
+     "type": "para",
+     "number": "9",
+     "text": "1. Om en person är anställd som befäl eller medlem i besättningen på ett fartyg, som för en fördragsslutande stats flagga, och omfattas av lagstiftningen i båda de fördragsslutande staterna, skall han vara underkastad lagstiftningen endast i den stat, vars flagga fartyget för. Vid tillämpning av den föregående meningen förstås med fartyg som för Förenta staternas flagga ett fartyg som anses som amerikanskt enligt Förenta staternas lagstiftning.\n\n2. En person som i annat fall skulle ha omfattats av lagstiftningen i båda de fördragsslutande staterna med avseende på anställning som befäl eller besättningsmedlem på ett flygplan skall, vad avser denna anställning, endast omfattas av svensk lagstiftning om han är bosatt inom Sveriges territorium och endast av Förenta staternas lagstiftning om han är bosatt inom Förenta staternas territorium."
+    },
+    {
+     "type": "para",
+     "number": "10",
+     "text": "1. Bestämmelserna i Wienkonventionen den 18 april 1961 om diplomatiska förbindelser och i Wienkonventionen den 24 april 1963 om konsulära förbindelser berörs inte av denna konvention.\n\n2. Medborgare i en av de fördragsslutande staterna, som är anställda av denna stat inom den andra fördragsslutande statens territorium, men vilka inte är undantagna från den sistnämnda statens lagstiftning på grund av de i första stycket nämnda Wienkonventionerna, skall omfattas av lagstiftningen endast i den förstnämnda staten. Med anställning hos Förenta staterna avses anställning hos Förenta staternas regering eller hos ett självständigt regeringsorgan."
+    },
+    {
+     "type": "para",
+     "number": "11",
+     "text": "1. De behöriga myndigheterna i de båda fördragsslutande staterna kan komma överens om undantag från bestämmelserna i artiklarna 7, 8, 9 och 10 med avseende på enskilda personer eller persongrupper, dock att de berörda personerna skall omfattas av lagstiftningen i en av de fördragsslutande staterna.\n\n2. När en person, som enligt denna konvention omfattas av lagstiftningen i en fördragsslutande stat, även omfattas av lagstiftningen i den andra fördragsslutande staten eller i en tredje stat enligt bestämmelser i en konvention mellan en fördragsslutande stat och en tredje stat, kan de behöriga myndigheterna i de två fördragsslutande staterna komma överens om att undanta personen i fråga från tillämpningen av avdelning II av denna konvention."
+    },
+    {
+     "type": "heading",
+     "text": "Avdelning III – Bestämmelser om förmåner",
+     "editorial": false
+    },
+    {
+     "type": "heading",
+     "text": "Kapitel I – Bestämmelser tillämpliga på Förenta staterna",
+     "editorial": false
+    },
+    {
+     "type": "para",
+     "number": "12",
+     "text": "1. Om en person har fullgjort en försäkringsperiod av minst sex kvartal enligt Förenta staternas lagstiftning, men inte har fullgjort tillräckligt antal försäkringskvartal för att uppfylla villkoren för rätt till förmåner enligt Förenta staternas lagstiftning, skall försäkringsorganet i Förenta staterna för att fastställa rätten till förmåner enligt denna artikel medräkna försäkringsperioder fullgjorda enligt den svenska lagstiftningen om inkomstgrundad ålderspension i den mån de inte sammanfaller med försäkringsperioder som redan tillgodoräknats enligt Förenta staternas lagstiftning.\n\n2. Vid bestämmandet av rätten till förmån enligt första stycket i denna artikel skall försäkringsorganet i Förenta staterna tillgodoräkna personen en försäkringsperiod av fyra kvartal för varje förmånsgrundande år som intygats av försäkringsorganet i Sverige. Någon försäkringsperiod skall dock inte tillgodoräknas för kalenderkvartal som redan tillgodoräknats som försäkringskvartal enligt Förenta staternas lagstiftning. Sammanlagda antalet försäkringskvartal som tillgodoräknas för ett år får icke överstiga fyra.\n\n3. Om rätt till en förmån enligt Förenta staternas lagstiftning föreligger enligt bestämmelserna i första stycket, skall försäkringsorganet i Förenta staterna beräkna ett grundbelopp pro rata enligt Förenta staternas lagstiftning beräknat på a) de genomsnittsinkomster som tillgodoräknats uteslutande enligt Förenta staternas lagstiftning och b) förhållandet mellan längden av de försäkringsperioder som tillgodoräknats enligt Förenta staternas lagstiftning och längden av en försäkringstid för hela livet bestämd enligt Förenta staternas lagstiftning. De förmåner som utges enligt Förenta staternas lagstiftning skall grundas på detta grundbelopp pro rata.\n\n4. Rätten till en förmån från Förenta staterna på grundval av bestämmelserna i första stycket skall upphöra när enligt Förenta staternas lagstiftning försäkringsperioder förvärvats som är tillräckliga för rätt till lika stor eller större förmån utan åberopande av bestämmelserna i första stycket.\n\n5. Förenta staterna skall tillämpa artiklarna 4, 5 och 6 av denna konvention på ett sätt som överensstämmer med paragraf 233 (c) 4 i Förenta staternas socialförsäkringslag."
+    },
+    {
+     "type": "heading",
+     "text": "Kapitel II – Bestämmelser tillämpliga på Sverige",
+     "editorial": false
+    },
+    {
+     "type": "para",
+     "number": "13",
+     "text": "1. Om någon inte har rätt till en förmån på grund av att han eller hon inte har tillgodoräknats tillräckliga försäkringsperioder enligt svensk lagstiftning skall, om inte annat följer av denna konvention, rätten till förmånen bestämmas genom sammanläggning av försäkringsperioder som tillgodoräknats i de båda fördragsslutande staterna.\n\nVid tillämpning av bestämmelserna i denna punkt skall fyra kvartal med försäkring enligt Förenta staternas lagstiftning anses vara ett år som får tillgodoräknas enligt den svenska lagstiftningen.\n\n2. Bestämmelserna om sammanläggning i punkt 1 i denna artikel skall inte tillämpas på grundkravet på tre års bosättning i Sverige för rätt till garantipension eller till sjukersättning eller aktivitetsersättning i form av garantiersättning.\n\n3. Vid fastställande av rätten till sjukersättning eller aktivitetsersättning skall försäkring enligt Förenta staternas lagstiftning anses som försäkring enligt den svenska lagstiftningen. Vid tillämpning av föregående mening skall en person anses vara försäkrad enligt Förenta staternas lagstiftning om han eller hon är berättigad till en förmån enligt den lagstiftningen, eller kan tillgodoräkna sig minst fyra kvartals försäkringsperioder enligt den lagstiftningen under en period av åtta kalenderkvartal som slutar med det kalenderkvartal under vilket personen blev arbetsoförmögen enligt svensk lagstiftning.\n\nVid beräkning av inkomstrelaterad sjukersättning eller aktivitetsersättning skall endast inkomst som intjänats under perioder då svensk lagstiftning var tillämplig beaktas. Förmåner enligt Förenta staternas lagstiftning skall inte påverka ett sådant ersättningsbelopp.\n\n4. Bestämmelserna i artiklarna 5 och 6 skall inte tillämpas på efterlevandestöd till barn. De skall inte heller tillämpas på garantipensioner eller sjukersättning eller aktivitetsersättning i form av garantiersättning."
+    },
+    {
+     "type": "heading",
+     "text": "Avdelning IV – Övriga bestämmelser",
+     "editorial": false
+    },
+    {
+     "type": "para",
+     "number": "14",
+     "text": "1. De behöriga myndigheterna skall vidtaga nödiga administrativa åtgärder för tilllämpningen av denna konvention.\n\n2. Förbindelseorgan för genomförandet av konventionen är:\n\na) för Förenta staterna, socialförsäkringsadministrationen;\n\nb) för Sverige, Riksförsäkringsverket."
+    },
+    {
+     "type": "para",
+     "number": "15",
+     "text": "1. De fördragsslutande staternas behöriga myndigheter och försäkringsorgan skall, inom ramen för sina befogenheter, bistå varandra vid tillämpningen av konventionen. Sådant bistånd lämnas utan vederlag med de undantag om vilka enighet nås i en tillämpningsöverenskommelse.\n\n2. Skriftväxling mellan de behöriga myndigheterna och försäkringsorganen, meddelanden från enskilda personer och ansökningar eller andra handlingar kan avfattas på engelska eller svenska."
+    },
+    {
+     "type": "para",
+     "number": "16",
+     "text": "De behöriga myndigheterna skall snarast möjligt underrätta varandra om sådana ändringar i den i artikel 2 angivna lagstiftningen som kan beröra tillämpningen av konventionen."
+    },
+    {
+     "type": "para",
+     "number": "17",
+     "text": "De behöriga myndigheterna skall hålla varandra underrättade om de åtgärder som vidtas för tillämpningen av konventionen."
+    },
+    {
+     "type": "para",
+     "number": "18",
+     "text": "I en fördragsslutande stat medgiven befrielse från avgifter eller kostnader, inbegripet stämpel-, notariats- och registreringsavgifter, för intyg och andra handlingar som skall ingivas till myndigheter eller försäkringsorgan i denna stat skall gälla även för handlingar som vid tillämpningen av konventionen skall ingivas till myndigheter och försäkringsorgan i den andra staten. Handlingar som skall företes i ärenden enligt denna konvention behöver inte legaliseras genom diplomatisk eller konsulär myndighet."
+    },
+    {
+     "type": "para",
+     "number": "19",
+     "text": "En ansökan, besvärsinlaga eller annan handling, som enligt en fördragsslutande stats lagstiftning skall inges till ett försäkringsorgan i denna stat inom viss tid, skall anses ha inkommit i rätt tid, om den inom fastställd tid ingivits till ett försäkringsorgan i den andra staten. I sådant fall skall det försäkringsorgan, till vilket handlingen ingivits, anteckna dagen för mottagandet på handlingen och utan dröjsmål vidarebefordra den till förbindelseorganet i den andra staten."
+    },
+    {
+     "type": "para",
+     "number": "20",
+     "text": "1. En skriftlig ansökan om förmåner som ingivits till ett försäkringsorgan i en fördragsslutande stat skall skydda sökandens rättigheter enligt den andra fördragsslutande statens lagstiftning, om\n\na) sökanden begär att ansökan skall betraktas som ansökan enligt den andra statens lagstiftning eller\n\nb) sökanden, vid tiden för ansökningen lämnar upplysningar som visar att den person, på vars förhållanden anspråket grundar sig, har fullgjort försäkringsperioder enligt den andra statens lagstiftning förutsatt att sökanden inte särskilt begär att ansökan inte skall betraktas på detta sätt.\n\n2. Sökanden kan begära att en ansökan som ingivits till ett försäkringsorgan i en fördragsslutande stat får verkan från en annan dag i den andra fördragsslutande staten, inom gränserna för och i överensstämmelse med lagstiftningen i denna andra stat."
+    },
+    {
+     "type": "para",
+     "number": "21",
+     "text": "1. Utbetalningar enligt konventionen får göras i den utbetalande statens valuta.\n\n2. Om valutarestriktioner införs i någon av de fördragsslutande staterna, skall de båda staternas regeringar omedelbart besluta om erforderliga åtgärder för att säkerställa överföring av belopp som någon av staterna har att utbetala enligt bestämmelserna i konventionen."
+    },
+    {
+     "type": "para",
+     "number": "22",
+     "text": "1. Tvister som uppkommer vid tillämpningen av konventionen skall såvitt möjligt lösas i samförstånd av de fördragsslutande staternas behöriga myndigheter.\n\n2. Om en sådan tvist inte har lösts inom sex månader, kan var och en av de fördragsslutande staterna hänskjuta ärendet för bindande avgörande till en skiljedomstol, vars sammansättning och förfarande de fördragsslutande staterna skall komma överens om."
+    },
+    {
+     "type": "para",
+     "number": "23",
+     "text": "1. Denna konvention kan ändras i framtiden genom tilläggsavtal som från och med att de träder i kraft skall anses som integrerade delar av konventionen. Sådana tilläggsavtal kan ges retroaktiv verkan om så anges.\n\n2. Den behöriga myndigheten i endera staten kan kalla till möte för övervägande av tillläggsavtal."
+    },
+    {
+     "type": "heading",
+     "text": "Avdelning V – Övergångs- och slutbestämmelser",
+     "editorial": false
+    },
+    {
+     "type": "para",
+     "number": "24",
+     "text": "1. Denna konvention skall tillämpas på händelser som inträffat före dess ikraftträdande, i den mån de är av betydelse för rättigheter enligt den i artikel 2 angivna lagstiftningen. Konventionen grundar likväl ingen rätt till utbetalning av förmåner för tid före ikraftträdandet, och engångsbelopp vid dödsfall skall inte utbetalas om dödsfallet inträffade före ikraftträdandet. Försäkringsperioder som fullgjorts före konventionens ikraftträdande skall beaktas vid bestämmandet av rätt till förmåner enligt konventionen.\n\n2. Bestämmelserna i konventionens avdelning III är tillämpliga endast på en ansökan om förmåner som ingivits tidigast dagen för ikraftträdandet. Om inget slutgiltigt beslut har fattats med anledning av en ansökan som ingivits före dagen för konventionens ikraftträdande, skall ansökan anses ha ingivits nämnda dag.\n\n3. Beslut fattade före konventionens ikraftträdande skall icke beröra rättigheter som uppstår enligt konventionen. Konventionens ikraftträdande skall inte medföra att en kontantförmåns belopp sätts ned.\n\n4. Bestämmelser i svensk lagstiftning som begränsar rätten till förmåner för förfluten tid skall icke tillämpas på en rätt som uppkommer till följd av konventionens ikraftträdande, förutsatt att den som gör anspråk på förmånerna ansöker om dessa inom ett år från dagen efter konventionens ikraftträdande.\n\n5. Sysselsättningsperioder som anges i artikel 7 andra stycket skall räknas tidigast från den dag som denna konvention träder i kraft."
+    },
+    {
+     "type": "para",
+     "number": "25",
+     "text": "1. Denna konvention kan sägas upp av vardera av de fördragsslutande staterna. Om konventionen sägs upp, skall den förbli i kraft till utgången av kalenderåret efter det år, under vilket den ena staten skriftligen delgav den andra staten uppsägningen.\n\n2. Upphör konventionen genom uppsägning, skall dess bestämmelser äga fortsatt tilllämpning på förmåner som redan har beviljats. Genom särskild överenskommelse avgör de fördragsslutande staterna hur det skall förfaras med rättigheter under förvärvande."
+    },
+    {
+     "type": "para",
+     "number": "26",
+     "text": "Konventionen skall träda i kraft första dagen i tredje månaden efter den månad, under vilken vardera regeringen från den andra regeringen mottagit skriftlig underrättelse om att alla lagstadgade och författningsenliga åtgärder för konventionens ikraftträdande har fullgjorts.\n\nTill bevis härom har de fördragsslutande staternas ombud, vederbörligen befullmäktigade av sina respektive regeringar, undertecknat denna konvention."
+    }
+   ]
+  },
+  {
+   "number": "B1",
+   "title": "Bilaga 1",
+   "items": [
+    {
+     "type": "para",
+     "number": "1",
+     "text": "I denna tillämpningsöverenskommelse använda uttryck skall ha samma innebörd som i konventionen."
+    },
+    {
+     "type": "para",
+     "number": "2",
+     "text": "De i konventionens artikel 14 andra stycket angivna förbindelseorganen skall komma överens om gemensamma förfaranden och blanketter som erfordras för genomförandet av konventionen och denna tillämpningsöverenskommelse."
+    },
+    {
+     "type": "heading",
+     "text": "Kapitel 2 – Bestämmelser om försäkringstillhörighet",
+     "editorial": false
+    },
+    {
+     "type": "para",
+     "number": "3",
+     "text": "1. I fall som avses i konventionens artikel 7 andra stycket skall genom intyg visas att lagstiftningen i en fördragsslutande stat är tilllämplig. Aven i andra tillämpliga fall som avses i avdelning II i konventionen kan sådant intyg utfärdas.\n\n2. Det i första stycket nämnda intyget skall på begäran utfärdas\n\n- i Förenta staterna\n\nav socialförsäkringsadministrationen\n\n- i Sverige\n\nav Riksförsäkringsverket eller av de organ som verket har bemyndigat därtill."
+    },
+    {
+     "type": "heading",
+     "text": "Kapitel 3 – Bestämmelser om förmåner",
+     "editorial": false
+    },
+    {
+     "type": "para",
+     "number": "4",
+     "text": "1. Det försäkringsorgan i en fördragsslutande stat, till vilket en ansökan om förmåner först inges i enlighet med artikel 20 i konventionen, skall utan dröjsmål underrätta den andra fördragsslutande statens försäkringsorgan härom, varvid för detta ändamål upprättade blanketter används. Försäkringsorganet skall även översända handlingar och andra tillgängliga uppgifter som kan erfordras för att försäkringsorganet i den andra staten skall kunna fastställa sökandens rätt till förmåner enligt bestämmelserna i konventionens avdelning III. Avser ansökan förmåner vid invaliditet, skall försäkringsorganet särskilt översända alla läkarutlåtanden om sökandens invaliditet som det förfogar över och som har betydelse för ärendet.\n\n2. Det försäkringsorgan i en fördragsslutande stat som tar emot en ansökan som ingivits till ett försäkringsorgan i den andra fördragsslutande staten skall utan dröjsmål förse försäkringsorganet i den andra staten med sådana utlåtanden och andra tillgängliga uppgifter som detta kan behöva för att slutbehandla ärendet.\n\n3. Det försäkringsorgan i fördragsslutande stat, till vilket en ansökan om förmåner ingivits, skall styrka riktigheten av de uppgifter som lämnas om sökanden och hans familjemedlemmar. Förbindelseorganen skall komma överens om vilka slag av uppgifter som skall styrkas."
+    },
+    {
+     "type": "para",
+     "number": "5",
+     "text": "Vid tillämpningen av artikel 12 i konventionen skall det svenska försäkringsorganet underrätta Förenta staternas försäkringsorgan om de år, för vilka en person har förmånsgrundande försäkringsperioder enligt svensk lagstiftning."
+    },
+    {
+     "type": "para",
+     "number": "6",
+     "text": "Vid tillämpning av artikel 13 i konventionen skall försäkringsorganet i Förenta staterna när så erfordras underrätta det svenska försäkringsorganet om de försäkringsperioder som en person fullgjort enligt Förenta staternas lagstiftning."
+    },
+    {
+     "type": "heading",
+     "text": "Kapitel 4 – Övriga bestämmelser",
+     "editorial": false
+    },
+    {
+     "type": "para",
+     "number": "7",
+     "text": "På det sätt varom närmare överenskommelse träffas med stöd av artikel 2 i denna tilllämpningsöverenskommelse skall försäkringsorganet i en fördragsslutande stat på begäran av försäkringsorganet i den andra fördragsslutande staten tillhandahålla tillgängliga uppgifter om varje angiven enskild persons anspråk som erfordras för tillämpning av konventionen eller den i konventionens artikel 2 första stycket angivna lagstiftningen."
+    },
+    {
+     "type": "para",
+     "number": "8",
+     "text": "Kopior av handlingar som av försäkringsorganet i en fördragsslutande stat intygas vara sanna och riktiga kopior skall försäkringsorganet i den andra fördragsslutande staten utan ytterligare bestyrkande godta som sanna och riktiga kopior. Försäkringsorganet i var och en av de fördragsslutande staterna avgör vid tilllämpning av sin lagstiftning slutligt bevisvärdet av handlingar som underställts organet, oberoende av varifrån de kommer."
+    },
+    {
+     "type": "para",
+     "number": "9",
+     "text": "De två fördragsslutande staternas förbindelseorgan skall på sätt varom överenskommelse skall träffas, för varje kalenderår utväxla statistik över det antal intyg som utfärdats enligt artikel 3 i denna tillämpningsöverenskommelse och de utbetalningar som enligt konventionen gjorts till förmånstagare. Uppgifterna skall för varje förmånsslag omfatta antalet förmånstagare och totala förmånsbeloppet."
+    },
+    {
+     "type": "para",
+     "number": "10",
+     "text": "1. Begärs administrativt bistånd enligt artikel 15 i konventionen skall de försäkringsorgan som lämnar biståndet ersättas för andra utgifter än normala personal och driftkostnader.\n\n2. Begär försäkringsorganet i en fördragsslutande stat att en sökande till förmån eller förmånstagare skall genomgå läkarundersökning, skall sådan undersökning, om försäkringsorganet så begär, ombesörjas av försäkringsorganet i den andra fördragsslutande staten, där sökanden eller förmånstagaren vistas, i överensstämmelse med de regler som gäller för det försäkringsorgan som ombesörjer undersökningen och på bekostnad av det försäkringsorgan som begär undersökningen.\n\n3. Försäkringsorganet i endera fördragsslutande staten skall på begäran, utan kostnad för försäkringsorganet i den andra fördragsslutande staten, tillhandahålla alla medicinska uppgifter och handlingar som det förfogar över och som är av betydelse vid bedömning av sökandens eller förmånstagarens arbetsoförmåga.\n\n4. Belopp som skall ersättas enligt första och andra styckena skall gottgöras så snart detaljerade uppgifter om utgifterna framlagts."
+    },
+    {
+     "type": "para",
+     "number": "11",
+     "text": "I fall då konventionen eller tillämpningsöverenskommelsen föreskriver att meddelanden lämnas mellan försäkringsorgan i de fördragsslutande staterna, kan försäkringsorganen lämna sådana meddelanden antingen direkt eller genom förbindelseorganen."
+    },
+    {
+     "type": "para",
+     "number": "12",
+     "text": "Såvida inte annat är medgivet enligt den allmänna lagstiftningen i en fördragsslutande stat skall uppgifter om en enskild person, som i överensstämmelse med konventionen vidarebefordras till denna stat av den andra fördragsslutande staten, användas uteslutande för tilllämpning av konventionen. Uppgifter av detta slag som en fördragsslutande stat har mottagit skall behandlas i enlighet med den nationella lagstiftningen i nämnda stat om skydd för uppgifter av privat och konfidentiell natur."
+    },
+    {
+     "type": "para",
+     "number": "13",
+     "text": "Denna tillämpningsöverenskommelse skall träda i kraft samma dag som konventionen träder i kraft och skall gälla under samma tid."
+    }
+   ]
+  }
+ ]
+}

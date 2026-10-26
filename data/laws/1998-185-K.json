@@ -1,0 +1,53 @@
+{
+ "sfs": "1998:185-K",
+ "title": "Överenskommelse mellan Sverige och Litauen om sjukvård åt tillfälliga besökande",
+ "officialTitle": "Bilaga till Förordning (1998:185) om tillämpning av en\r\növerenskommelse mellan Sverige och Litauen om\r\nsjukvård åt tillfälliga besökande\r\n",
+ "sourceUrl": "https://data.riksdagen.se/dokument/sfs-1998-185.html",
+ "parser": "KONVENTION",
+ "fetchedAt": "2026-10-26T13:51:06+00:00",
+ "unit": "artikel",
+ "treatyOf": "1998:185",
+ "chapters": [
+  {
+   "number": "0",
+   "title": "Överenskommelse mellan Sverige och Litauen om sjukvård åt tillfälliga besökande",
+   "items": [
+    {
+     "type": "para",
+     "number": "1",
+     "text": "1. I denna överenskommelse avses med \"sjukvård\":\n\na) med avseende på Litauen, sjukvård enligt den litauiska hälsovårdslagstiftningen;\n\nb) med avseende på Sverige, sjukvård enligt den svenska lagstiftningen om sjukförsäkring.\n\n2. I denna överenskommelse avses med \"patientavgift\" en fastställd avgift som en person som är bosatt inom en stats territorium måste betala för att erhålla sjukvård i denna stat.\n\n3. Denna överenskommelse skall tillämpas även på sådan lagstiftning som ersätter, ändrar, kompletterar eller kodifierar den lagstiftning som anges i första stycket av denna artikel."
+    },
+    {
+     "type": "para",
+     "number": "2",
+     "text": "1. Denna överenskommelse är tillämplig på en person som är bosatt inom något av de båda staternas territorier och som har rätt till sjukvård enligt den statens lagstiftning som anges i artikel 1 samt antingen:\n\na) vistas tillfälligt inom den andra statens territorium; eller\n\nb) vistas inom den andra statens territorium som chef för en beskickning eller ett konsulat, som medlem av den diplomatiska eller konsulära personalen, som medlemmar av den administrativa eller tekniska personalen, eller som en familjemedlem till en sådan person tillhörande dennes hushåll eller som privattjänare till en sådan person.\n\n2. Denna överenskommelse är inte tillämplig när personer beger sig till den andra statens territorium i akt och mening att erhålla sjukvård."
+    },
+    {
+     "type": "para",
+     "number": "3",
+     "text": "1. Personer på vilka första stycket a) av artikel 2 är tillämpligt och som behöver omedelbart nödvändig sjukvård medan de vistas inom den andra statens territorium, skall erhålla sådan vård på samma villkor som gäller för personer som är omfattade av den statens lagstiftning. Vården skall tillhandahållas till dess att de tillfrisknar eller till dess att deras hälsotillstånd tillåter dem att återvända eller sändas hem till den stats territorium där de är bosatta.\n\n2. Personer på vilka första stycket b) av artikel 2 är tillämpligt skall ges sjukvård på samma villkor som gäller för personer som är omfattade av den andra statens lagstiftning även om vården inte är omedelbart nödvändig och oavsett längden av vistelsen inom den vårdgivande statens territorium.\n\n3. Personer på vilka första stycket av artikel 2 är tillämpligt skall ges omedelbart nödvändig tandvård oberoende av deras ålder."
+    },
+    {
+     "type": "para",
+     "number": "4",
+     "text": "1. Kostnaderna för sjukvårdsförmåner som utgetts enligt denna överenskommelse skall inte avräknas mellan de fördragsslutande staterna.\n\n2. Personer som erhåller sjukvård inom en stats territorium enligt denna överenskommelse skall erlägga de patientavgifter som fastställts med stöd av den statens lagstiftning, på samma sätt som personer som är bosatta inom den statens territorium."
+    },
+    {
+     "type": "para",
+     "number": "5",
+     "text": "För att erhålla sjukvård enligt denna överenskommelse i den andra statens territorium måste den person som behöver vården visa upp:\n\na) med avseende på invånare i Litauen, antingen ett giltigt litauiskt pass eller annan identitetshandling med uppgift om att innehavaren är bosatt i Litauen; och\n\nb) med avseende på invånare i Sverige, antingen ett giltigt svenskt pass eller ett intyg om sjukförsäkringstillhörighet i Sverige utfärdat av en svensk försäkringskassa."
+    },
+    {
+     "type": "para",
+     "number": "6",
+     "text": "1. Behöriga myndigheter för tillämpningen av denna överenskommelse är:\n\na) med avseende på Litauen, Rådet för obligatorisk sjukförsäkring;\n\nb) med avseende på Sverige, Riksförsäkringsverket.\n\n2. De behöriga myndigheterna skall snarast möjligt sända varandra information om sådana ändringar av lagar och andra författningar som gäller inom deras respektive territorier, i den mån ändringarna kan väsentligt påverka arten och omfattningen av de förmåner som utges enligt detta avtal.\n\n3. Frågor eller tvister som rör tillämpningen av denna överenskommelse skall lösas genom samråd mellan de behöriga myndigheterna."
+    },
+    {
+     "type": "para",
+     "number": "7",
+     "text": "1. Denna överenskommelse skall träda i kraft första dagen i tredje månaden efter den månad då båda staterna på diplomatisk väg har underrättat varandra om att författningsenliga och konstitutionella villkor för ikraftträdandet av överenskommelsen har fullgjorts.\n\n2. Denna överenskommelse, ingången för en icke begränsad tidsperiod, gäller till utgången av den tolfte månaden efter den då någon av staterna på diplomatisk väg från den andra staten skriftligen erhåller uppgift om att denna beslutat säga upp överenskommelsen.\n\n3. Upphör överenskommelsen att gälla enligt andra stycket av denna artikel skall överenskommelsen fortsätta att tillämpas för den sjukvård som getts före eller som ges vid utgången av den uppsägningstid som anges i nämnda stycke."
+    }
+   ]
+  }
+ ]
+}

@@ -42,3 +42,14 @@ assert.equal(rankSuggestions('RB',rankedLaws,[],topic,[])[0].title,'Rättegångs
 assert.equal(rankSuggestions('husr',rankedLaws,[],topic,[])[0].type,'topic');
 assert.equal(rankSuggestions('BrB 24:1',laws,[],[],[])[0].type,'quick');
 console.log('Sökrankning: 4 kontroller godkända');
+// 1.6: bara förkortningen eller namnet öppnar författningens början, och artiklar i konventioner.
+const all=require('../data/catalog.json').laws;
+const lawOnly=s=>{const r=parseQuick(s,all,[]);return r&&[r.meta.sfs,r.chapter,r.para];};
+assert.deepEqual(lawOnly('PL'),['1984:387',null,null]);
+assert.deepEqual(lawOnly('brb'),['1962:700',null,null]);
+assert.deepEqual(lawOnly('Polislagen'),['1984:387',null,null]);
+assert.equal(lawOnly('husrannsakan'),null,'ämnesord är inte förkortningar');
+assert.deepEqual(lawOnly('EKMR 8'),['1994:1219-K','0','8']);
+assert.deepEqual(lawOnly('EKMR art. 6'),['1994:1219-K','0','6']);
+assert.deepEqual(lawOnly('Barnkonventionen'),['2018:1197-K',null,null]);
+console.log('Snabbkoder 1.6: lag utan lagrum och konventionsartiklar godkända');

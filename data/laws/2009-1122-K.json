@@ -1,0 +1,102 @@
+{
+ "sfs": "2009:1122-K",
+ "title": "Avtal mellan Sverige och Jersey för undvikande av dubbelbeskattning av fysiska personer",
+ "officialTitle": "Bilaga till Lag (2009:1122) om avtal mellan Sverige och Jersey för undvikande av dubbelbeskattning av fysiska personer",
+ "sourceUrl": "https://data.riksdagen.se/dokument/sfs-2009-1122.html",
+ "parser": "KONVENTION",
+ "fetchedAt": "2026-10-26T14:43:06+00:00",
+ "unit": "artikel",
+ "treatyOf": "2009:1122",
+ "chapters": [
+  {
+   "number": "0",
+   "title": "Avtal mellan Sverige och Jersey för undvikande av dubbelbeskattning av fysiska personer",
+   "items": [
+    {
+     "type": "para",
+     "number": "1",
+     "text": "Detta avtal tillämpas på fysiska personer som har hemvist i en part eller i båda parterna.",
+     "title": "Fysiska personer på vilka avtalet tillämpas"
+    },
+    {
+     "type": "para",
+     "number": "2",
+     "text": "1. De för närvarande utgående skatter på vilka detta avtal tillämpas är:\n\na) i Jersey: inkomstskatt, (i det följande benämnd \"skatt i Jersey\"),\n\nb) i Sverige:\n\n1. den statliga inkomstskatten,\n\n2. den särskilda inkomstskatten för utomlands bosatta,\n\n3. den särskilda inkomstskatten för utomlands bosatta artister m.fl., och\n\n4. den kommunala inkomstskatten\n\n(i det följande benämnd \"svensk skatt\").\n\n2. Avtalet tillämpas även på skatter av samma eller i huvudsak likartat slag, som efter undertecknandet av avtalet tas ut vid sidan av eller i stället för de för närvarande utgående skatterna. Parternas behöriga myndigheter ska meddela varandra de väsentliga ändringar som gjorts i respektive skattelagstiftning beträffande fysiska personer.",
+     "title": "Skatter som omfattas av avtalet"
+    },
+    {
+     "type": "para",
+     "number": "3",
+     "text": "1. Om inte sammanhanget föranleder annat, har vid tillämpningen av detta avtal följande uttryck nedan angiven betydelse:\n\na) \"en part\" avser Jersey eller Sverige, beroende på sammanhanget; \"parterna\" avser Jersey och Sverige,\n\nb) \"Jersey\" avser Bailiwick of Jersey, innefattande dess territorialvatten,\n\nc) \"Sverige\" avser Konungariket Sverige och innefattar, när uttrycket används i geografisk betydelse, Sveriges territorium, Sveriges territorialvatten och andra havsområden över vilka Sverige, i överensstämmelse med folkrättens regler, utövar suveräna rättigheter eller jurisdiktion,\n\nd) \"behörig myndighet\" avser:",
+     "title": "Allmänna definitioner"
+    },
+    {
+     "type": "para",
+     "number": "4",
+     "text": "1. Vid tillämpningen av detta avtal avser uttrycket \"person med hemvist i en part\" i fråga om fysisk person, varje fysisk person som enligt lagstiftningen i denna part är skattskyldig där på grund av domicil, bosättning eller annan liknande omständighet. Detta uttryck inbegriper emellertid inte fysisk person som är skattskyldig i denna part endast för inkomst från källa i denna part.\n\n2. Då på grund av bestämmelserna i punkt 1 fysisk person har hemvist i båda parterna, bestäms hans hemvist på följande sätt:\n\na) han anses ha hemvist endast i den part där han har en bostad som stadigvarande står till hans förfogande. Om han har en sådan bostad i båda parterna, anses han ha hemvist endast i den part med vilken hans personliga och ekonomiska förbindelser är starkast (centrum för levnadsintressena),\n\nb) om det inte kan avgöras i vilken part han har centrum för sina levnadsintressen eller om han inte i någondera parten har en bostad som stadigvarande står till hans förfogande, anses han ha hemvist endast i den part där han stadigvarande vistas,\n\nc) om han stadigvarande vistas i båda parterna eller inte vistas stadigvarande i någon av dem, ska parternas behöriga myndigheter avgöra frågan genom ömsesidig överenskommelse.",
+     "title": "Hemvist"
+    },
+    {
+     "type": "para",
+     "number": "5",
+     "text": "1. Om inte bestämmelserna i artiklarna 6, 7, 8 och 9 föranleder annat, beskattas lön och annan liknande ersättning som person med hemvist i en part uppbär på grund av anställning, endast i denna part, såvida inte arbetet utförs i den andra parten. Om arbetet utförs i denna andra part, får ersättning som uppbärs för arbetet beskattas där.\n\n2. Utan hinder av bestämmelserna i punkt 1 beskattas ersättning, som person med hemvist i en part uppbär för arbete som utförs i den andra parten, endast i den förstnämnda parten om\n\na) mottagaren vistas i den andra parten under tidsperiod eller tidsperioder som sammanlagt inte överstiger 183 dagar under en tolvmånadersperiod som börjar eller slutar under beskattningsåret i fråga, och\n\nb) ersättningen betalas av arbetsgivare som inte har hemvist i den andra parten eller på dennes vägnar, samt\n\nc) ersättningen inte belastar en stadigvarande plats för affärsverksamhet vilken arbetsgivaren har i den andra parten och från vilken verksamheten helt eller delvis bedrivs.\n\n3. Utan hinder av föregående bestämmelser i denna artikel får ersättning för arbete, som utförs ombord på skepp eller luftfartyg och som används i internationell trafik av ett företag i en part, beskattas i denna part. Om person med hemvist i Sverige uppbär ersättning för arbete som utförs ombord på ett luftfartyg som används i internationell trafik av luftfartskonsortiet Scandinavian Airlines System (SAS), ska sådan ersättning beskattas endast i Sverige.",
+     "title": "Enskild tjänst"
+    },
+    {
+     "type": "para",
+     "number": "6",
+     "text": "Styrelsearvode och annan liknande ersättning, som person med hemvist i en part uppbär i egenskap av medlem i styrelse i bolag med hemvist i den andra parten, får beskattas i denna andra part.",
+     "title": "Styrelsearvode"
+    },
+    {
+     "type": "para",
+     "number": "7",
+     "text": "1. Inkomst, som person med hemvist i en part förvärvar genom sin personliga verksamhet i den andra parten i egenskap av artist, såsom teater- eller filmskådespelare, radio- eller televisionsartist eller musiker, eller i egenskap av sportutövare, får beskattas i denna andra part.\n\n2. I fall då inkomst genom personlig verksamhet, som artist eller sportutövare utövar i denna egenskap, inte tillfaller artisten eller sportutövaren själv utan annan fysisk eller juridisk person, får denna inkomst beskattas i den part där artisten eller sportutövaren utövar verksamheten.",
+     "title": "Artister och sportutövare"
+    },
+    {
+     "type": "para",
+     "number": "8",
+     "text": "1. Pension och annan liknande ersättning, utbetalning enligt socialförsäkringslagstiftningen och livränta, vilka härrör från en part och betalas till en person med hemvist i den andra parten, får beskattas i den förstnämnda parten.\n\n2. Med uttrycket \"livränta\" förstås ett fastställt belopp, som utbetalas periodiskt på fastställda tider under en persons livstid eller under angiven eller fastställbar tidsperiod och som utgår på grund av förpliktelse att verkställa dessa utbetalningar som ersättning för däremot fullt svarande vederlag i pengar eller pengars värde.",
+     "title": "Pension"
+    },
+    {
+     "type": "para",
+     "number": "9",
+     "text": "1. a) Lön och annan liknande ersättning, med undantag för pension, som betalas av en part, en av dess politiska underavdelningar, offentligrättsliga organ eller lokala myndigheter till fysisk person på grund av arbete som utförs i denna parts, underavdelnings, organs eller myndighets tjänst, beskattas endast i denna part.\n\nb) Sådan lön och annan liknande ersättning beskattas emellertid endast i den andra parten om arbetet utförs i denna part och den fysiska personen har hemvist i denna part och inte fick hemvist i denna part uteslutande för att utföra arbetet.\n\n2. Bestämmelserna i artiklarna 5, 6 och 7 tillämpas på lön och annan liknande ersättning som betalas på grund av arbete som utförs i samband med rörelse som bedrivs av en part, en av dess politiska underavdelningar, offentligrättsliga organ eller lokala myndigheter.",
+     "title": "Offentlig tjänst"
+    },
+    {
+     "type": "para",
+     "number": "10",
+     "text": "Studerande eller affärspraktikant, som har eller omedelbart före vistelse i en part hade hemvist i den andra parten och som vistas i den förstnämnda parten uteslutande för sin undervisning eller praktik, beskattas inte i denna part för belopp som han erhåller för sitt uppehälle, sin undervisning eller praktik, under förutsättning att beloppen härrör från källa utanför denna part.",
+     "title": "Studerande"
+    },
+    {
+     "type": "para",
+     "number": "11",
+     "text": "1. I Jersey ska dubbelbeskattning undvikas på följande sätt:\n\nMed beaktande av bestämmelserna i Jerseys lagstiftning som tillåter att skatt som betalats i ett annat territorium än Jersey avräknas mot skatt i Jersey (som inte ska påverka den allmänna princip som anges här),\n\n1) om person med hemvist i Jersey förvärvar inkomst som enligt bestämmelserna i detta avtal får beskattas i Sverige, ska Jersey - med beaktande av bestämmelserna i 3) nedan - från skatten i Jersey på inkomsten för personen i fråga avräkna ett belopp motsvarande den inkomstskatt som erlagts i Sverige,\n\n2) avräkningsbeloppet ska emellertid inte överstiga den del av inkomstskatten, beräknad före avräkning, som är hänförlig till sådan inkomst som får beskattas i Sverige,\n\n3) om person med hemvist i Jersey förvärvar inkomst, som enligt bestämmelserna i detta avtal beskattas endast i Sverige, får Jersey inräkna inkomsten i skatteunderlaget, men ska från skatten i Jersey avräkna ett belopp motsvarande den del av inkomstskatten som är hänförlig till inkomsten som förvärvats från Sverige.\n\n2. I Sverige ska dubbelbeskattning undvikas på följande sätt:\n\na) Om person med hemvist i Sverige förvärvar inkomst som enligt Jerseys lagstiftning och i enlighet med bestämmelserna i detta avtal får beskattas i Jersey, ska Sverige - med beaktande av bestämmelserna i svensk lagstiftning beträffande avräkning av utländsk skatt (såsom de kan komma att ändras från tid till annan utan att den allmänna princip som anges här ändras) - från den svenska skatten på inkomsten avräkna ett belopp motsvarande den skatt som erlagts på inkomsten i Jersey.\n\nb) Om person med hemvist i Sverige förvärvar inkomst, som enligt bestämmelserna i detta avtal beskattas endast i Jersey, får Sverige vid bestämmandet av svensk progressiv skatt beakta sådan inkomst som beskattas endast i Jersey.",
+     "title": "Undanröjande av dubbelbeskattning"
+    },
+    {
+     "type": "para",
+     "number": "12",
+     "text": "1. Om en fysisk person anser att en part eller båda parterna vidtagit åtgärder som för honom medför eller kommer att medföra beskattning som strider mot bestämmelserna i detta avtal, kan han, utan att detta påverkar hans rätt att använda sig av de rättsmedel som finns i dessa parters interna rättsordning, lägga fram saken för den behöriga myndigheten i den part där han har hemvist. Saken ska läggas fram inom tre år från den tidpunkt då personen i fråga fick vetskap om den åtgärd som givit upphov till beskattning som strider mot bestämmelserna i avtalet.\n\n2. Om den behöriga myndigheten finner invändningen grundad men inte själv kan få till stånd en tillfredsställande lösning, ska myndigheten söka avgöra saken genom ömsesidig överenskommelse med den behöriga myndigheten i den andra parten i syfte att undvika beskattning som strider mot avtalet. Överenskommelse som träffats genomförs utan hinder av tidsgränser i parternas interna lagstiftning.\n\n3. Parternas behöriga myndigheter ska genom ömsesidig överenskommelse söka avgöra svårigheter eller tvivelsmål som uppkommer i fråga om tolkningen eller tillämpningen av avtalet.\n\n4. Parternas behöriga myndigheter kan träda i direkt förbindelse med varandra i syfte att träffa överenskommelse i den mening som avses i föregående punkter.",
+     "title": "Förfarandet vid ömsesidig överenskommelse"
+    },
+    {
+     "type": "para",
+     "number": "13",
+     "text": "1. Detta avtal träder i kraft den trettionde dagen efter den dag då den sista av de skriftliga underrättelser - som parterna ska lämna när de åtgärder vidtagits som krävs enligt respektive parts lagstiftning - har lämnats.\n\n2. Avtalet ska tillämpas:\n\na) i Jersey:\n\npå skatt som tas ut för beskattningsår som börjar den 1 januari det år som närmast följer efter det år då avtalet träder i kraft eller senare,\n\nb) i Sverige:\n\npå skatt som tas ut för beskattningsår som börjar den 1 januari det år som närmast följer efter det år då avtalet träder i kraft eller senare.\n\n3. Utan hinder av punkt 2, är detta avtal endast tillämpligt när avtalet mellan Konungariket Sverige och Jersey om utbyte av upplysningar i skatteärenden undertecknat den 28 oktober 2008 är tillämpligt.",
+     "title": "Ikraftträdande"
+    },
+    {
+     "type": "para",
+     "number": "14",
+     "text": "1. Detta avtal förblir i kraft till dess det sägs upp av en part. Vardera parten kan skriftligen säga upp avtalet genom underrättelse härom minst sex månader före utgången av något kalenderår. I händelse av sådan uppsägning upphör avtalet att gälla i fråga om skatt som tas ut för beskattningsår som börjar den 1 januari det år som följer närmast efter utgången av sexmånadersperioden eller senare.\n\n2. Utan hinder av punkt 1, upphör detta avtal att gälla, utan uppsägning, den dag då avtalet mellan Konungariket Sverige och Jersey om utbyte av upplysningar i skatteärenden undertecknat den 28 oktober 2008 upphör att gälla.",
+     "title": "Upphörande"
+    }
+   ]
+  }
+ ]
+}

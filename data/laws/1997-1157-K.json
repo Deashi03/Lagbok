@@ -1,0 +1,114 @@
+{
+ "sfs": "1997:1157-K",
+ "title": "Handräckning i skatteärenden mellan de nordiska länderna",
+ "officialTitle": "Bilaga till Förordning (1997:1157) om handräckning i skatteärenden mellan de nordiska länderna",
+ "sourceUrl": "https://data.riksdagen.se/dokument/sfs-1997-1157.html",
+ "parser": "KONVENTION",
+ "fetchedAt": "2026-10-26T13:51:46+00:00",
+ "unit": "artikel",
+ "treatyOf": "1997:1157",
+ "chapters": [
+  {
+   "number": "0",
+   "title": "Handräckning i skatteärenden mellan de nordiska länderna",
+   "items": [
+    {
+     "type": "para",
+     "number": "1",
+     "text": "Denna överenskommelse tillämpas på inkomstskatter som omfattas av avtal mellan de nordiska länderna för att undvika dubbelbeskattning beträffande skatter på inkomst och på förmögenhet (i det följande benämnt \"dubbelbeskattningsavtalet\").",
+     "title": "Skatter som omfattas av överenskommelsen"
+    },
+    {
+     "type": "para",
+     "number": "2",
+     "text": "1. Om inte sammanhanget föranleder annat, har vid tillämpningen av denna överenskommelse följande uttryck nedan angiven betydelse:\n\na) \"pension\" avser utbetalningar enligt bestämmelserna i artikel 18 i 1996 års dubbelbeskattningsavtal eller motsvarande artikel i annat dubbelbeskattningsavtal som avses i artikel 1;\n\nb) \"skatt\" avser slutlig skatt eller preliminär skatt som skall erläggas i avräkning på slutlig skatt. Om endast slutlig skatt eller endast preliminär skatt avses används uttrycket \"slutlig skatt\" respektive \"preliminär skatt\", varvid källskatt på inkomst av arbete och pension likställs med såväl \"slutlig skatt\" som \"preliminär skatt\";\n\nc) \"hemviststaten\" avser den avtalsslutande stat där en person har hemvist;\n\nd) \"arbetsstaten\" avser sådan annan avtalsslutande stat än hemviststaten där en person utför arbete som avses i denna överenskommelse;\n\ne) \"den ansökande staten\" avser en avtalsslutande stat som till annan avtalsslutande stat gör framställning om överföring av skatt;\n\nf) \"den anmodade staten\" avser en avtalsslutande stat som från annan avtalsslutande stat tar emot framställning om överföring av skatt.\n\n2. I denna överenskommelse förstås med att preliminär skatt har erlagts att skatten har betalats eller innehållits genom avdrag från en arbetstagares lön eller från pension.\n\nDetta gäller även i fall då skatten är innehållen och gottskriven den skattskyldige, men inte är inbetald till skattemyndigheten i den anmodade staten.\n\n3. Övriga uttryck, som förekommer i denna överenskommelse och som även förekommer i dubbelbeskattningsavtalet, skall ha den betydelse som uttrycket har enligt nämnda avtal.\n\n4. Då en avtalsslutande stat tillämpar denna överenskommelse vid någon tidpunkt anses, såvida inte sammanhanget föranleder annat, varje uttryck, som inte omfattas av punkterna 1-3, ha den betydelse som uttrycket har vid denna tidpunkt enligt den statens lagstiftning i fråga om sådana skatter på vilka överenskommelsen tillämpas, och den betydelse som uttrycket har enligt tillämplig skattelagstiftning i denna stat äger företräde framför den betydelse uttrycket ges i annan lagstiftning i denna stat.\n\nII. Uppbörd av skatt på arbetsinkomst",
+     "title": "Definitioner"
+    },
+    {
+     "type": "para",
+     "number": "3",
+     "text": "1. När en person med hemvist i en avtalsslutande stat har inkomst av arbete som utförs i en annan avtalsslutande stat och hemviststaten finner att arbetet kommer att pågå under tidsperiod eller tidsperioder som sammanlagt inte kommer att överstiga 183 dagar under en tolvmånadersperiod samt att ersättningen betalas av eller för arbetsgivare med hemvist i denna stat, skall preliminär skatt erläggas till hemviststaten.\n\nSkattemyndighet i arbetsstaten skall i sådant fall inte kräva preliminär skatt, om det genom skriftligt meddelande från skattemyndighet i hemviststaten visas att avdrag för preliminär skatt sker där. Godtar arbetsstaten hemviststatens bedömning enligt första meningen, kan arbetsstaten underlåta att kräva preliminär skatt även om meddelande enligt andra meningen inte lämnats. Om avdrag för preliminär skatt inte längre görs i hemviststaten, skall skattemyndigheten där, så snart den fått kännedom om detta, underrätta skattemyndigheten i arbetsstaten.\n\n2. Bestämmelserna i punkt 1 tillämpas inte om skattemyndighet i hemviststaten finner att utgiven ersättning rätteligen skall belasta fast driftställe eller stadigvarande anordning i arbetsstaten. Görs därför inte längre avdrag för preliminär skatt i hemviststaten, skall skattemyndigheten där snarast underrätta skattemyndigheten i arbetsstaten.\n\n3. Framgår av underrättelse från arbetsgivaren eller på annat sätt att förutsättningar för skatteavdrag i hemviststaten i enlighet med punkt 1 inte längre föreligger eller att sådant avdrag inte görs, kan avdrag för preliminär skatt krävas i arbetsstaten. Skattemyndigheten i arbetsstaten skall innan sådant avdrag sker underrätta skattemyndigheten i hemviststaten om de ändrade förhållandena och att sådan skatt kommer att krävas i arbetsstaten.",
+     "title": "Stat i vilken preliminär skatt kan krävas"
+    },
+    {
+     "type": "para",
+     "number": "4",
+     "text": "1. I fall då ersättningen skall beskattas i arbetsstaten enligt bestämmelserna i artikel 21 punkt 7 i 1996 års dubbelbeskattningsavtal eller motsvarande bestämmelser i annat dubbelbeskattningsavtal som avses i artikel 1, får preliminär skatt krävas i denna stat. Detsamma gäller i fall då ersättning som avses i artikel 3 punkt 1 betalas av eller för arbetsgivare som varken har hemvist i arbetsstaten eller i arbetstagarens hemviststat.\n\n2. Finner skattemyndigheten i arbetsstaten att preliminär skatt erläggs eller kommer att erläggas i arbetsstaten enligt bestämmelserna i denna artikel, skall denna myndighet underrätta skattemyndigheten i arbetstagarens hemviststat om nämnda förhållande. Sedan sistnämnda skattemyndighet tagit emot sådan underrättelse, skall preliminär skatt inte längre krävas i arbetstagarens hemviststat.",
+     "title": "Krav på preliminär skatt i arbetsstaten"
+    },
+    {
+     "type": "para",
+     "number": "5",
+     "text": "1. Finner skattemyndigheten i arbetsstaten att fråga är om uthyrning av arbetskraft, kan preliminär skatt tas ut där.\n\nArbetstagare som avses i artikel 3 punkt 1 anses uthyrd när han av någon (uthyrare) ställs till förfogande för att utföra arbete i annans verksamhet i arbetsstaten (uppdragsgivare), förutsatt att uppdragsgivaren har hemvist eller fast driftställe i arbetsstaten och uthyraren inte har ansvar och inte heller står risken för arbetsresultatet.\n\n2. Vid avgörandet av frågan om en arbetstagare skall anses uthyrd, skall göras en samlad bedömning, varvid särskilt beaktas om\n\na) den övergripande arbetsledningen åvilar uppdragsgivaren,\n\nb) arbetet utförs på en arbetsplats som disponeras av uppdragsgivaren och för vilken han har ansvar,\n\nc) ersättningen till uthyraren beräknas efter den tid som gått åt eller med ledning av annat samband mellan ersättningen och den lön arbetstagaren får,\n\nd) största delen av arbetsredskap och material ställs till förfogande av uppdragsgivaren, och\n\ne) uthyraren inte ensidigt bestämmer antalet arbetstagare och de kvalifikationer dessa skall ha.\n\n3. Skattemyndigheten i arbetsstaten skall underrätta skattemyndigheten i hemviststaten om att preliminär skatt betalas i arbetsstaten. Har sådan underrättelse tagits emot, skall hemviststaten inte kräva preliminär skatt på inkomsten.",
+     "title": "Uthyrning av arbetskraft"
+    },
+    {
+     "type": "para",
+     "number": "6",
+     "text": "1. Om skattemyndigheten i en avtalsslutande stat, som enligt bestämmelserna ovan skall avstå från att kräva preliminär skatt, inte godtar beslut av skattemyndighet i annan avtalsslutande stat, skall frågan lösas genom ömsesidig överenskommelse mellan de behöriga myndigheterna i dessa avtalsslutande stater.\n\n2. Om de behöriga myndigheterna inte kommer överens om annat skall, till dess frågan är avgjord, skatt inte krävas i\n\na) arbetsstaten, i fall då frågan skall avgöras enligt bestämmelserna i artikel 3,\n\nb) hemviststaten, i fall då frågan skall avgöras enligt bestämmelserna i artikel 4 eller artikel 5.",
+     "title": "Ömsesidig överenskommelse vid tvist om uttagande av preliminär skatt"
+    },
+    {
+     "type": "para",
+     "number": "7",
+     "text": "Om dubbelbeskattningsavtalet eller särskild överenskommelse mellan avtalsslutande stater innehåller bestämmelser om beskattning av inkomst som s.k. gränsgångare med hemvist i en avtalsslutande stat förvärvar på grund av personligt arbete som utförs i annan avtalsslutande stat, skall bestämmelserna i artiklarna 3-6 inte tillämpas i fråga om sådan inkomst.\n\nIII. Överföring av inkomstskatt",
+     "title": "Gränsgångare"
+    },
+    {
+     "type": "para",
+     "number": "8",
+     "text": "Har skatt på arbetsinkomst, pension eller inkomst av näringsverksamhet erlagts i en avtalsslutande stat kan den erlagda skatten, efter framställning av den behöriga myndigheten i annan avtalsslutande stat, överföras till denna andra stat för att där gottskrivas den skattskyldige som skatt på sådan inkomst.",
+     "title": "Allmänt om överföring av skatt"
+    },
+    {
+     "type": "para",
+     "number": "9",
+     "text": "1. Har preliminär skatt erlagts på arbetsinkomst eller pension i annan avtalsslutande stat än den som enligt dubbelbeskattningsavtalet har rätt att kräva slutlig skatt, skall, på framställning av den sistnämnda staten, skatten överföras till denna stat.\n\n2. Framställning enligt punkt 1 skall ha kommit in till behörig myndighet, i Danmark och Färöarna senast den 1 februari, i Norge senast den 1 april och i Finland, Island och Sverige senast den 31 maj under året efter inkomståret.\n\n3. Överföring skall inte ske med högre belopp än det som med hänsyn till den skattskyldiges inkomstförhållanden borde ha erlagts som preliminär skatt på arbetsinkomsten eller pensionen enligt lagstiftningen i den ansökande staten. Inte heller skall högre belopp överföras än det som har erlagts i preliminär skatt på arbetsinkomsten eller pensionen i den anmodade staten.\n\nUndantas arbetsinkomst eller pension från beskattning i den anmodade staten, hindrar detta inte överföring av preliminär skatt som enligt vad som var känt vid tidpunkten för uppbörden borde ha erlagts i denna stat.",
+     "title": "Framställning om överföring av skatt på arbetsinkomst eller pension på preliminärskattestadiet"
+    },
+    {
+     "type": "para",
+     "number": "10",
+     "text": "1. Görs framställning om överföring av skatt inom tre år efter inkomstårets utgång, skall, med de begränsningar som följer av punkt 2, skatt som har erlagts för inkomsten i den anmodade staten överföras till den stat som enligt dubbelbeskattningsavtalet i första hand har rätt att beskatta inkomsten. I fråga om överföring av skatt på arbetsinkomst eller pension gäller detta endast om framställningen görs efter tidpunkt som anges i artikel 9 men inom tre år efter inkomstårets utgång.\n\n2. Den anmodade staten får begränsa överföringen till belopp med vilket den i denna stat erlagda skatten överstiger det på inkomståret belöpande skattekrav som kvarstår sedan inkomsten undantagits från beskattning eller, sedan avräkning medgetts för slutlig skatt på inkomsten i den ansökande staten.\n\nAvräkningsbeloppet får dock begränsas till den del av inkomstskatten (beräknad utan avräkning) i den anmodade staten som belöper på den inkomst som får beskattas i den ansökande staten.",
+     "title": "Framställning om överföring av skatt inom tre år efter inkomstårets utgång"
+    },
+    {
+     "type": "para",
+     "number": "11",
+     "text": "Görs framställning om överföring av skatt sedan tre år förflutit efter inkomstårets utgång, kan överföring ske enligt bestämmelserna i artikel 10. Överföringsbeloppet får emellertid i sådant fall begränsas även med hänsyn till andra krav som den anmodade staten har på sådana skatter och avgifter som inte belöper på inkomståret. Denna kvittningsrätt är inte begränsad till skatter och avgifter som avses i handräckningsavtalet den 7 december 1989. Den anmodade staten är i stället berättigad att enligt sin egen lagstiftning använda skattebeloppet för kvittning mot varje vid omdebiteringstillfället föreliggande fordran mot den skattskyldige.",
+     "title": "Framställning om överföring av skatt sedan tre år förflutit efter inkomstårets utgång"
+    },
+    {
+     "type": "para",
+     "number": "12",
+     "text": "1. Har preliminär skatt erlagts för samma inkomst i flera avtalsslutande stater, skall den stat, som enligt bestämmelserna i artikel 6 inte skall kräva skatt, återbetala skatten.\n\n2. Uppkommer i en avtalsslutande stat fråga om återbetalning av skatt, skall återbetalningen, om annan avtalsslutande stat har anmält ett anspråk på skatten, anstå i avvaktan på att den sistnämnda staten gör framställning om överföring av skatten inom tid som anges i artikel 9 punkt 2. Om den skattskyldige själv begär återbetalning av skatt, tillämpas punkt 3 i denna artikel.\n\n3. Skall återbetalning av för mycket erlagd skatt ske i en avtalsslutande stat på inkomst förvärvad i annan avtalsslutande stat och har denna andra stat inte framställt krav på överföring av skatt, skall, innan återbetalning sker, denna stat underrättas härom. Har den förstnämnda staten inte inom 30 dagar efter det sådan underrättelse avsänts tagit emot sådant krav på överföring, får återbetalning ske.",
+     "title": "Återbetalning"
+    },
+    {
+     "type": "para",
+     "number": "13",
+     "text": "Den anmodade staten är inte skyldig att erlägga ränta på skattebelopp som överförs enligt artiklarna 8-11. Den ansökande staten får inte heller kräva ränta på sådant belopp.\n\nIV. Övriga bestämmelser",
+     "title": "Ränta"
+    },
+    {
+     "type": "para",
+     "number": "14",
+     "text": "1. Underrättelse enligt artiklarna 3-6 skall innehålla uppgift om\n\na) arbetstagarens namn och födelsedatum samt adress och beskattningsort i båda staterna,\n\nb) arbetsgivarens namn och adress i båda staterna, och\n\nc) tid för vilken preliminär skatt har erlagts.\n\nFinner skattemyndigheten att de uppgifter som lämnats inte är tillräckliga som underlag för beslut om att preliminärskatteavdrag inte skall ske, skall skattemyndigheten i den andra staten omedelbart underrättas om detta.\n\n2. Underrättelser enligt artikel 12 punkt 3 skall innehålla uppgift om\n\na) den skattskyldiges namn och födelsedatum/identifikationsnummer samt adress i båda staterna, och\n\nb) den inkomst och inkomstperiod som återbetalningen avser,\n\nsamt i det fall fråga är om arbetsinkomst eller pension\n\nc) arbetsgivarens/utbetalarens namn och adress, om möjligt i båda staterna, och\n\nd) den skattskyldiges civilstånd.\n\n3. Framställning om överföring av skatt enligt artiklarna 9-11 skall innehålla uppgift om\n\na) den skattskyldiges namn och födelsedatum/identifikationsnummer samt adress i den anmodade staten,\n\nb) inkomst och inkomstperiod som skatten avser, och\n\nc) belopp, som skall överföras,\n\nsamt i det fall fråga är om arbetsinkomst eller pension\n\nd) arbetsgivarens/utbetalarens namn och adress, om möjligt i båda staterna.\n\n4. Underrättelse skall såvitt möjligt även innehålla arbetstagarens personnummer i båda staterna samt arbetsgivarens identifikationsnummer i båda staterna.\n\n5. Underrättelser och framställningar enligt denna överenskommelse sänds genom behörig myndighet.",
+     "title": "Underrättelser och framställningar"
+    },
+    {
+     "type": "para",
+     "number": "15",
+     "text": "De behöriga mydigheterna kan komma överens om den närmare tillämpningen av bestämmelserna i denna överenskommelse.",
+     "title": "Närmare tillämpning"
+    },
+    {
+     "type": "para",
+     "number": "16",
+     "text": "Denna överenskommelse träder i kraft den 1 januari 1998. Genom denna överenskommelse upphävs överenskommelsen den 19 juni 1991 om uppbörd och överföring av skatt.\n\nSedan denna överenskommelse har trätt i kraft, tillämpas dess bestämmelser på ärenden som efter ikraftträdandet har kommit in till den behöriga myndigheten i den anmodade staten.\n\nDenna överenskommelse är utfärdad i sju exemplar på danska, färöiska, finska, isländska, norska och svenska språken, varvid på svenska språket utfärdades två texter, en för Finland och en för Sverige, vilka samtliga texter har samma giltighet.",
+     "title": "Ikraftträdande"
+    }
+   ]
+  }
+ ]
+}
