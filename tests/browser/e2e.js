@@ -46,6 +46,14 @@ const B=process.env.LAGBOK_URL||'http://localhost:8765/';
  await page.click('[data-action="toast-undo"]');await wait(500);
  assert.equal(await page.locator('#p-7 mark.hl').count(),0);
  // Snabbhopp
+ // Dra med pennan över några ord i samma stycke
+ const dbox=await page.locator('#p-7 > .paragraph-content p').first().boundingBox();
+ const before=await page.locator('#p-7 mark.hl').count();
+ await page.mouse.move(dbox.x+8,dbox.y+12);await page.mouse.down();
+ for(let i=1;i<=6;i++)await page.mouse.move(dbox.x+8+i*30,dbox.y+12);
+ await page.mouse.up();await wait(400);
+ assert.equal(await page.locator('#p-7 mark.hl').count(),before+1,'ett drag med pennan ger en markering');
+ assert.ok((await page.locator('#p-7 mark.hl').last().textContent()).trim().split(/\s+/).length>=2,'draget markerar flera ord');
  await page.click('[data-action="pen-done"]');await page.click('#in-law-search');await page.fill('#jump-query','rb 23 8b');await page.press('#jump-query','Enter');await wait(800);
  assert.equal(await page.evaluate(()=>location.hash),'#/law/1942%3A740/23/8b');
  // Sparat: egna markeringar och anteckningar först

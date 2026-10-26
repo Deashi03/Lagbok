@@ -1501,7 +1501,7 @@
       document.body.appendChild(penBar);
     }
     penBar.hidden=!state.pen;
-    penBar.innerHTML='<span class="pen-hint">'+(state.penAnchor?'Tryck på sista ordet':'Tryck på första ordet')+'</span>'+
+    penBar.innerHTML='<span class="pen-hint">'+(state.penAnchor?'Tryck på sista ordet':'Dra över texten')+'</span>'+
       highlights.COLORS.map(([c,label])=>'<button type="button" class="hl-swatch hl-'+c+(pref.lastColor===c?' selected':'')+'" data-action="pen-color" data-color="'+c+'" aria-label="'+label+'"></button>').join('')+
       '<button type="button" class="hl-note-button" data-action="pen-done">Klar</button>';
   }
@@ -1509,7 +1509,7 @@
     state.pen=!state.pen;state.penAnchor=null;
     document.documentElement.dataset.pen=state.pen?'on':'off';
     hideHighlightBar();updatePenBar();renderKeep();
-    if(state.pen)toast('Penna på: tryck på första och sista ordet');
+    if(state.pen)toast('Penna på: dra över texten, eller tryck på första och sista ordet');
   }
   function caretAt(x,y){
     if(document.caretRangeFromPoint)return document.caretRangeFromPoint(x,y);
@@ -1548,6 +1548,39 @@
     createHighlight(key,start,end,text.slice(start,end),pref.lastColor||'yellow');
     renderKeep().then(updatePenBar);
   }
+  // Dra med pennan: ett drag över texten markerar direkt, ett tryck fungerar som förut (första och sista ordet).
+  // Vågräta drag tillhör pennan, lodräta rullar sidan (touch-action: pan-y i pennläge).
+  let penDrag=null,penDragEnded=0;
+  function clearPenAnchor(){$$('mark.pen-anchor').forEach(m=>{const p=m.parentNode;while(m.firstChild)p.insertBefore(m.firstChild,m);m.remove();});}
+  document.addEventListener('pointerdown',e=>{
+    if(!state.pen||e.button>0||e.target.closest('mark.hl'))return;
+    const content=e.target.closest('.paragraph-content');
+    if(!content||!content.parentElement||!content.parentElement.classList.contains('paragraph')||!view.contains(content))return;
+    const w=wordAt(content,e);if(!w)return;
+    penDrag={content,key:content.parentElement.dataset.key,x:e.clientX,y:e.clientY,first:w,last:w,moving:false};
+  });
+  document.addEventListener('pointermove',e=>{
+    const d=penDrag;if(!d)return;
+    if(!d.moving){
+      if(Math.abs(e.clientX-d.x)<10&&Math.abs(e.clientY-d.y)<10)return;
+      if(Math.abs(e.clientY-d.y)>Math.abs(e.clientX-d.x)*1.5&&e.pointerType==='touch'){penDrag=null;return;}
+      d.moving=true;state.penAnchor=null;
+    }
+    const w=wordAt(d.content,e);if(w)d.last=w;
+    clearPenAnchor();
+    const start=Math.min(d.first.start,d.last.start),end=Math.max(d.first.end,d.last.end);
+    highlights.wrap(d.content,start,end,()=>{const m=document.createElement('mark');m.className='pen-anchor';return m;});
+  });
+  function endPenDrag(cancel){
+    const d=penDrag;penDrag=null;if(!d||!d.moving)return;
+    penDragEnded=Date.now();clearPenAnchor();
+    if(cancel)return;
+    const start=Math.min(d.first.start,d.last.start),end=Math.max(d.first.end,d.last.end);
+    createHighlight(d.key,start,end,d.content.textContent.slice(start,end),pref.lastColor||'yellow');
+    renderKeep().then(updatePenBar);
+  }
+  document.addEventListener('pointerup',()=>endPenDrag(false));
+  document.addEventListener('pointercancel',()=>endPenDrag(true));
   function applyHighlights(){
     if(typeof view.querySelectorAll!=='function'||!highlights)return;
     for(const article of view.querySelectorAll('article.paragraph[data-key]')){
@@ -1736,6 +1769,7 @@
   document.addEventListener('click',e=>{
     if(!e.target.closest('.hl-pop')&&!e.target.closest('mark.hl'))closePopover();
     const close=e.target.closest('[data-action="close"]'); if(close){closeSheet();return;}
+    if(state.pen&&Date.now()-penDragEnded<500){e.preventDefault();return;}
     if(state.pen&&!e.target.closest('mark.hl')){
       const content=e.target.closest('.paragraph-content');
       if(content&&content.parentElement&&content.parentElement.classList.contains('paragraph')&&view.contains(content)){e.preventDefault();penTap(e,content);return;}
