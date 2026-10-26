@@ -8,7 +8,7 @@ Huvudflikar: Lagbok & sök, Sparat. Version 0.2 har smarta sökförslag och snab
 
 ## Källor och juridisk varning
 
-Lagtext hämtas från Sveriges riksdags öppna data och sparas separat i data/laws. Importerade dokument kan innehålla äldre eller framtida lydelser och övergångsbestämmelser. Den här appen fastställer inte vilken lydelse som gäller vid ett angivet datum och är inte en auktoritativ lagtextkälla. Kontrollera alltid originalet innan text används rättsligt.
+Lagtexten hämtas från riksdagen.se (data.riksdagen.se) och sparas separat i data/laws. Den officiella källan är Svensk författningssamling (svenskforfattningssamling.se). Importerade dokument kan innehålla äldre eller framtida lydelser och övergångsbestämmelser. Den här appen fastställer inte vilken lydelse som gäller vid ett angivet datum och är inte en auktoritativ lagtextkälla. Kontrollera alltid originalet innan text används rättsligt.
 
 ## Import och publicering
 
@@ -17,7 +17,7 @@ python -m unittest discover -s tests -v
 
 GitHub Actions "Kontrollera lagändringar" hämtar de första författningarna vid ändring av importskriptet och gör därefter schemalagda granskningsförslag. För publicering behöver repositoryägaren aktivera **Settings → Pages → Build and deployment → Deploy from a branch → main / (root)**. I offline-läge fungerar enbart dokument som webbläsaren redan hunnit cachelagra.
 
-Källor: Sveriges riksdag, data.riksdagen.se, samt Polismyndighetens författningssamling. Fristående privat projekt.
+Källor: riksdagen.se (data.riksdagen.se) och Polismyndighetens författningssamling. Kontrollera mot Svensk författningssamling. Fristående privat projekt utan koppling till riksdagen.se, Regeringskansliet eller någon myndighet.
 
 ## Version 0.3
 Lugn läsdesign i mjukvitt, djupgrönt och diskret vinrött; kompakt läsläge, förbättrad sökrankning och förhandsvisning av interna lagrumshänvisningar. Referenser måste verifieras innan ett annat lagrum visas.
@@ -89,7 +89,7 @@ Läsaren har en enda innehållsknapp, utan föregående/nästa länkar eller ver
 - **Annat:** kapitelöversikt för stora lagar, sökfilter på typ (lag, förordning) och balk, hantering av offlineutrymme, och ett webbläsartest i CI som kör de viktigaste flödena i iPhone-storlek.
 
 ## Version 1.0
-- **Hela svensk lag i appen: 1 853 författningar.** Det är 1 766 av 1 770 gällande lagar i SFS, alltså 99,8 %. Den stora blå lagboken består främst av lagar, så nästan all dess lagtext finns nu med. Förordningarna, 87 av omkring 3 200, byggs ut i kommande versioner. Riksdagens förteckning över hela SFS har gåtts igenom, och varje gällande lag har lagts in med sin lagtext. Fyra lagar saknar text hos Riksdagen.
+- **Hela svensk lag i appen: 1 853 författningar.** Det är 1 766 av 1 770 gällande lagar i SFS, alltså 99,8 %. Förordningarna, 87 av omkring 3 200, byggs ut i kommande versioner. Riksdagens förteckning över hela SFS har gåtts igenom, och varje gällande lag har lagts in med sin lagtext. Fyra lagar saknar text hos Riksdagen.
 - **Placerade som i Sveriges Rikes Lag:** först grundlagarna, sedan balkarna i lagbokens ordning med sina anslutande författningar, nu även Byggningabalken och Handelsbalken med avtalslagen, köplagen, skuldebrevslagen m.fl. Därefter kommer 14 rättsområden. Placeringarna föreslogs automatiskt utifrån titel och departement och granskades sedan; 342 rättades för hand (`data/placement.json`).
 - **Förkortningar** för alla författningar som har en vedertagen förkortning: SkolL, DelgF, IL, ML, ÅRL, HB med flera, totalt 327 unika. De syns i katalogen och i lagens rubrik och fungerar som snabbkoder, till exempel *SkolL 7:2*. Ett test stoppar dubbletter.
 - **Katalogen:** avdelningar som kan fällas ihop och bara ritas när de öppnas, så att starten är lika snabb med 1 853 författningar. Överst finns snabbval för avdelningarna och ett **register A–Ö**.
@@ -124,3 +124,12 @@ Läsaren har en enda innehållsknapp, utan föregående/nästa länkar eller ver
 
 ## Version 1.3
 - **Introduktion vid första starten:** ett bildspel i elva steg visar appens funktioner. Det tar upp hemskärmen, sök och snabbkoder, katalogens ordning, länkar och kopplingar, markeringar och anteckningar, favoriter, lydelse vid datum, Nytt i lagen, användning utan nät och integritet. Sist kommer ansvarsfriskrivningen, signerad Jonathan. Bildspelet visas aldrig igen när man har tryckt *Jag förstår*. Under *Inställningar → Visa introduktionen igen* går det att se det på nytt. Det går att svepa mellan bilderna, och *Hoppa över* leder direkt till det sista steget.
+
+## Version 1.4
+- **Introduktionen omskriven** med enklare och mer personligt språk. Den anger att texten hämtas från riksdagen.se och att Svensk författningssamling är den officiella källan.
+- **Renare startsida:** överst finns bara *Register A–Ö*, *Nytt i lagen* (när det finns ändringar) och dina favoriter. Avdelningsknapparna är borttagna.
+- **Anslutande författningar på en rad:** i stället för en lång lista visas "N anslutande förordningar ›", som öppnar en lista där myndigheternas instruktioner ligger för sig. En förordning visar "Kompletterar X ›". Paragrafkopplingarna är oförändrade.
+- **Putsning:** en paragrafrubrik som upprepar rubriken ovanför visas inte, lagens namn står i sökvägen, förarbetslänkarna är diskreta ("prop." och "bet."), startbild i stället för vit skärm, vänligt meddelande när appen saknar nät vid första starten, och versionsmärket "Beta 1.4".
+- **Om Lagboken** under Inställningar beskriver källa, kopplingar, integritet och kontakt. Där finns också Polisens FAP, som har flyttats från startsidan.
+- **Rapportera fel** öppnar ett färdigt e-postmeddelande till jonathanlindblom@rocketmail.com med lagrum, länk, källa och version.
+- **Bättre sökning:** balkar och lagar rankas före förordningar, och sökord i lagens namn väger tyngre. Vanliga ord som misshandel, beslag, rattfylleri, uppsägning och bodelning leder direkt till rätt lagrum.

@@ -59,7 +59,17 @@ const B=process.env.LAGBOK_URL||'http://localhost:8765/';
  await page.goto(B+'#/catalog');await wait(700);
  const chips=await page.locator('.fav-row .fav-chip').allTextContents();
  assert.ok(chips.includes('BrB')&&chips.includes('RB 24 kap.'),'favoriterna ska synas som genvägar: '+chips.join(', '));
- assert.equal(await page.locator('.section-index').count(),0,'avdelningsknapparna döljs när det finns favoriter');
+ const top=await page.locator('.section-index .chip').allTextContents();
+ assert.ok(top.length>=1&&top.length<=2&&top[0].includes('Register A–Ö'),'överst finns bara A–Ö och Nytt i lagen: '+top.join(', '));
+ // Anslutande förordningar samlas på en rad som öppnar en lista
+ await page.goto(B+'#/law/1984%3A387');await wait(900);
+ assert.match(await page.textContent('.relation-row'),/anslutande förordning/);
+ await page.click('.relation-row');await wait(400);
+ assert.match(await page.textContent('.sheet'),/Polisförordning/i);
+ await page.keyboard.press('Escape');await wait(200);
+ // Om Lagboken
+ await page.goto(B+'#/about');await wait(600);
+ assert.match(await page.textContent('#view'),/Svensk författningssamling/);
  // Lydelse vid datum
  await page.goto(B+'#/law/1949%3A381/2/10');await wait(900);
  await page.evaluate(()=>{const b=document.querySelector('#p-10 [data-action="para-menu"]');b&&b.click();});await wait(400);
@@ -71,6 +81,6 @@ const B=process.env.LAGBOK_URL||'http://localhost:8765/';
  await page.goto(B+'#/nytt');await wait(800);
  assert.match(await page.textContent('#view h1'),/Nytt i lagen/);
  assert.deepEqual(errors,[]);
- console.log('Webbläsartest: katalog, kopplingar, meny, sök, penna, ångra, snabbhopp, Sparat, introduktion, favoriter, lydelse vid datum och Nytt i lagen godkända');
+ console.log('Webbläsartest: katalog, kopplingar, meny, sök, penna, ångra, snabbhopp, Sparat, introduktion, favoriter, anslutande förordningar, Om Lagboken, lydelse vid datum och Nytt i lagen godkända');
  await browser.close();
 })().catch(e=>{console.error(e);process.exitCode=1;});

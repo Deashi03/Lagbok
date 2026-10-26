@@ -1,29 +1,29 @@
-/* Lagboken 1.3 – introduktion vid första starten. Visas en gång; kan visas igen från Inställningar. */
+/* Lagboken 1.4 – introduktion vid första starten. Visas en gång; kan visas igen från Inställningar. */
 (function(root){
   'use strict';
   const SLIDES=[
     {art:'<div class="tut-mark">§</div>',title:'Välkommen till Lagboken',
-     text:'Svensk lag i telefonen: alla gällande lagar och nästan alla förordningar, hämtade direkt från Riksdagen och kontrollerade varje månad. Här är en kort genomgång av vad appen kan.'},
-    {art:'<div class="tut-phone"><span class="tut-share">⬆︎</span><span>Lägg till på hemskärmen</span></div>',title:'Lägg appen på hemskärmen',
-     text:'Öppna sidan i Safari, tryck på Dela ⬆︎ och välj <b>Lägg till på hemskärmen</b>. Då startar Lagboken som en vanlig app, direkt och i helskärm.'},
-    {art:'<div class="tut-search">⌕ <span>BrB 24:1</span></div><div class="tut-chips"><span>husrannsakan</span><span>RB 23</span><span>SkolL 7:2</span></div>',title:'Sök och snabbkoder',
-     text:'Sök på lagens namn, ett juridiskt begrepp eller ord i lagtexten. Skriv en förkortning och ett lagrum, till exempel <b>BrB 24:1</b> eller <b>PL 10</b>, så hoppar du direkt dit. Knappen ⌕ uppe till höger fungerar överallt.'},
-    {art:'<div class="tut-tree"><b>Rättegångsbalken</b><span>├ Förundersökningskungörelsen</span><span>├ Lagen om offentligt biträde</span><span>└ …</span></div>',title:'Ordnad som en lagbok',
-     text:'Grundlagarna först, sedan balkarna med sina anslutande lagar och därefter rättsområdena. Förordningar hänger under den lag de kompletterar. Längst ned finns ett register A–Ö.'},
-    {art:'<div class="tut-para"><b>24 kap. 1 §</b><span>… enligt <u>23 kap. 3 §</u> …</span><em>§ Kompletteras av FuK 1 §</em></div>',title:'Läs med länkar och kopplingar',
-     text:'Hänvisningar i texten är länkar, och en knapp tar dig tillbaka. Under paragrafen ser du vilka förordningar som kompletterar den och vad som hänvisar hit. Kommande ändringar visas med datum och markering av vad som är nytt.'},
-    {art:'<div class="tut-pen"><mark>stryk under</mark> ✎ anteckning</div>',title:'Markera och anteckna',
-     text:'Tryck på <b>Penna</b> och dra över texten för att stryka under, eller markera text och välj färg. Via ⋯ vid en paragraf kan du skriva anteckningar, kopiera hänvisningen, dela och samla lagrum. Allt hittar du under <b>Sparat</b>.'},
-    {art:'<div class="tut-chips fav"><span>BrB</span><span>RB 24 kap.</span><span>PL</span></div>',title:'Favoriter',
-     text:'Tryck ☆ vid en lag eller ett kapitel så hamnar den överst i katalogen som genväg. Under <b>Ordna</b> kan du flytta och ta bort dem.'},
-    {art:'<div class="tut-date">◷ Visar lydelsen 1 juni 2027</div>',title:'Lydelse vid datum och Nytt i lagen',
-     text:'Välj <b>Visa lydelse vid ett datum</b> i paragrafmenyn för att se lagen som den löd eller kommer att lyda, till exempel vid en gärning. Under <b>Nytt i lagen</b> ser du vad som ändrats vid varje uppdatering, och dina favoriter och bevakningar kommer först.'},
-    {art:'<div class="tut-mark small">⇣</div>',title:'Utan internet',
-     text:'Lagar du har öppnat sparas automatiskt. Under <b>Inställningar</b> kan du ladda ner en avdelning eller hela lagboken, cirka 120 MB, så att allt fungerar utan nät.'},
-    {art:'<div class="tut-mark small">🔒</div>',title:'Dina uppgifter stannar hos dig',
-     text:'Favoriter, markeringar och anteckningar sparas bara på den här enheten. Appen har inga konton och ingen spårning. Gör gärna en säkerhetskopia under Inställningar.'},
+     text:'Här finns i stort sett all svensk lag samlad, med texten från riksdagen.se och uppdaterad varje månad. Det tar en minut att gå igenom det viktigaste.'},
+    {art:'<div class="tut-phone"><span class="tut-share">⬆︎</span><span>Lägg till på hemskärmen</span></div>',title:'Lägg den på hemskärmen',
+     text:'Öppna sidan i Safari, tryck på dela-knappen ⬆︎ och välj <b>Lägg till på hemskärmen</b>. Sedan startar Lagboken som vilken app som helst.'},
+    {art:'<div class="tut-search">⌕ <span>BrB 24:1</span></div><div class="tut-chips"><span>husrannsakan</span><span>RB 23</span><span>PL 10</span></div>',title:'Sök',
+     text:'Skriv det du letar efter, till exempel <i>husrannsakan</i>. Vet du var det står kan du skriva <b>BrB 24:1</b> och hamna direkt i paragrafen. Förstoringsglaset uppe till höger finns på varje sida.'},
+    {art:'<div class="tut-tree"><b>Rättegångsbalken</b><span>├ Förundersökningskungörelsen</span><span>├ Lagen om offentligt biträde</span><span>└ …</span></div>',title:'Hitta rätt lag',
+     text:'Lagarna ligger ordnade som i en tryckt lagbok: grundlagarna först, sedan balkarna med lagarna som hör till dem, och därefter ett område i taget. Letar du efter ett namn finns registret A–Ö.'},
+    {art:'<div class="tut-para"><b>24 kap. 1 §</b><span>… enligt <u>23 kap. 3 §</u> …</span><em>§ Kompletteras av FuK 1 §</em></div>',title:'Hoppa mellan paragrafer',
+     text:'Står det ”enligt 23 kap. 3 §” räcker det att trycka, så kommer du dit och kan gå tillbaka lika lätt. Under paragrafen ser du om en förordning fyller ut den, och vad som hänvisar hit.'},
+    {art:'<div class="tut-pen"><mark>stryk under</mark> ✎ anteckning</div>',title:'Stryk under och skriv anteckningar',
+     text:'Tryck på <b>Penna</b> och dra fingret över texten, precis som med en överstrykningspenna. Bakom de tre prickarna vid varje paragraf kan du skriva en anteckning, kopiera eller dela. Allt sparat hittar du under <b>Sparat</b>.'},
+    {art:'<div class="tut-chips fav"><span>BrB</span><span>RB 24 kap.</span><span>PL</span></div>',title:'Spara det du använder ofta',
+     text:'Tryck på stjärnan vid en lag eller ett kapitel. Då ligger den överst när du öppnar appen, ett tryck bort.'},
+    {art:'<div class="tut-date">◷ Visar lydelsen 1 juni 2027</div>',title:'Gamla och kommande lydelser',
+     text:'Vill du se hur en paragraf löd ett visst datum, till exempel när något hände, väljer du det i menyn vid paragrafen. Ändringar som är på väg syns redan nu, med datum. Under <b>Nytt i lagen</b> ser du vad som ändrats sedan sist.'},
+    {art:'<div class="tut-mark small">⇣</div>',title:'Utan täckning',
+     text:'Det du har läst finns kvar i telefonen. Ska du vara någonstans utan nät kan du ladda ner lagboken i förväg under <b>Inställningar</b>, en del i taget eller allt på en gång (ungefär 120 MB).'},
+    {art:'<div class="tut-mark small">🔒</div>',title:'Det du sparar är ditt',
+     text:'Favoriter, understrykningar och anteckningar finns bara i din telefon. Det finns inga konton och ingenting skickas någonstans. Vill du flytta dem till en annan telefon gör du en säkerhetskopia under Inställningar.'},
     {art:'<div class="tut-mark">§</div>',title:'Viktigt att veta',final:true,
-     text:'Lagboken är ett privat projekt och har ingen koppling till Riksdagen, Regeringskansliet eller någon myndighet. Texten hämtas från Riksdagens öppna data och kan innehålla fel eller sakna den senaste ändringen. Den ersätter inte Svensk författningssamling. <b>Kontrollera alltid mot den officiella källan</b> innan texten används rättsligt. Hittar du ett fel, välj <b>Rapportera fel i texten</b> i paragrafmenyn.'}
+     text:'Jag har byggt Lagboken på egen hand. Den har ingen koppling till riksdagen.se, Regeringskansliet eller någon myndighet. Texten hämtas från riksdagen.se och kan ibland ligga efter eller innehålla fel, så kolla mot <b>Svensk författningssamling</b> innan du använder den på riktigt. Hittar du något som inte stämmer får du gärna höra av dig via <b>Rapportera fel</b> i menyn vid paragrafen.'}
   ];
   function show(onDone){
     if(document.getElementById('tutorial'))return;
@@ -34,7 +34,7 @@
       box.innerHTML='<div class="tut-card'+(dir?' tut-'+dir:'')+'">'+
         (last?'':'<button type="button" class="tut-skip" data-tut="skip">Hoppa över</button>')+
         '<div class="tut-art" aria-hidden="true">'+s.art+'</div><h2>'+s.title+'</h2><p>'+s.text+'</p>'+
-        (s.final?'<p class="tut-sign">Lycka till med läsningen!<br><span>Jonathan</span></p>':'')+
+        (s.final?'<p class="tut-sign">Hoppas den kommer till nytta!<br><span>Jonathan</span></p>':'')+
         '<div class="tut-dots" aria-hidden="true">'+SLIDES.map((_,i)=>'<i'+(i===at?' class="on"':'')+'></i>').join('')+'</div>'+
         '<div class="tut-actions">'+(at?'<button type="button" class="button" data-tut="back">Tillbaka</button>':'<span></span>')+
         '<button type="button" class="button primary" data-tut="'+(last?'done':'next')+'">'+(last?'Jag förstår':'Nästa')+'</button></div></div>';

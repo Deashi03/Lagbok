@@ -75,6 +75,8 @@
       else if(q.length>=3&&name.includes(q))score=250;
       else if(q.length>=3&&aliases.some(a=>a.startsWith(q)))score=430;
       else if(q.length>=3&&aliases.some(a=>a.includes(q)))score=200;
+      // Vid ofullständig träff hamnar förordningar och kungörelser efter lagarna.
+      if(score&&score<950&&l.type&&l.type!=='lag')score-=60;
       if(score)add(score,'law','law:'+l.sfs,l.name,(l.aliases||[])[0]+' · SFS '+l.sfs,{law:l});
     }
     if(q.length>=2){
