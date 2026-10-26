@@ -121,3 +121,6 @@ Läsaren har en enda innehållsknapp, utan föregående/nästa länkar eller ver
 - **Nytt i lagen:** en sida med det som ändrats vid varje import, där dina favoriter och bevakningar kommer först, och det som träder i kraft det närmaste året. En prick på fliken visar när det finns något nytt.
 - **Källdatum** ("Kontrollerad mot Riksdagen …") i varje lags rubrik, och **Rapportera fel i texten** i paragrafmenyn, som öppnar ett färdigt ärende i projektets GitHub.
 - Stora avdelningar ritas i omgångar och öppnas direkt.
+
+## Version 1.3
+- **Introduktion vid första starten:** ett bildspel i elva steg visar appens funktioner. Det tar upp hemskärmen, sök och snabbkoder, katalogens ordning, länkar och kopplingar, markeringar och anteckningar, favoriter, lydelse vid datum, Nytt i lagen, användning utan nät och integritet. Sist kommer ansvarsfriskrivningen, signerad Jonathan. Bildspelet visas aldrig igen när man har tryckt *Jag förstår*. Under *Inställningar → Visa introduktionen igen* går det att se det på nytt. Det går att svepa mellan bilderna, och *Hoppa över* leder direkt till det sista steget.

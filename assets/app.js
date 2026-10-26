@@ -1,7 +1,7 @@
 /* Lagboken: snabb offlinevänlig juridisk läsapp utan externa JavaScript-beroenden. */
 (function () {
   'use strict';
-  const APP_VERSION='1.2';
+  const APP_VERSION='1.3';
   const $ = (sel, root=document) => root.querySelector(sel);
   const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
   const view = $('#view');
@@ -714,6 +714,8 @@
       '<div class="actions"><button type="button" class="button primary" data-action="offline">Ladda ner hela lagboken</button></div>'+
       '<div class="actions offline-areas">'+state.sections.map(a=>'<button type="button" class="button" data-action="offline" data-area="'+attr(a.id)+'">'+html(a.name)+'</button>').join('')+'</div>'+
       '<p class="small muted" id="offline-status">Kontrollerar sparade lagar …</p>'+
+      '<div class="section-title">Introduktion</div><p class="small muted">Genomgången av appens funktioner som visades första gången.</p>'+
+      '<div class="actions"><button type="button" class="button" data-action="tutorial">Visa introduktionen igen</button></div>'+
       '<div class="section-title">Säkerhetskopia</div>'+backupNotice()+
       '<p class="small muted">Favoriter, anteckningar och inställningar sparas bara på den här enheten. Spara en kopia som fil och läs in den igen vid behov.</p>'+
       '<div class="actions"><button type="button" class="button" data-action="export">Exportera</button>'+
@@ -1755,6 +1757,7 @@
     if(a==='open-section'){const d=$('#sec-'+CSS.escape(btn.dataset.id));if(d){d.open=true;fillSection(d);d.scrollIntoView({block:'start',behavior:'smooth'});}return;}
     if(a==='letter'){const t=$('#letter-'+CSS.escape(btn.dataset.id));if(t)t.scrollIntoView({block:'start',behavior:'smooth'});return;}
     if(a==='report'){reportError(k);return;}
+    if(a==='tutorial'){if(window.LagbokTutorial)window.LagbokTutorial.show();return;}
     if(a==='date-clear'){setAtDate(null);return;}
     if(a==='date-change'){showDatePicker(route().sfs);return;}
     if(a==='history'){closeSheet();showDatePicker(k);return;}
@@ -1856,6 +1859,9 @@
     idle(()=>{if(searchIndex&&searchIndex.warm)searchIndex.warm();});
     fetchJson('data/index/relations.json').then(r=>{state.relations=r;if(route().page==='law')renderKeep();}).catch(()=>{});
     registerWorker();
+    // Första gången: introduktionen. Den visas aldrig igen när man har tryckt "Jag förstår".
+    if(!pref.tutorialDone&&window.LagbokTutorial&&!/[?&]notutorial\b/.test(location.search))
+      window.LagbokTutorial.show(()=>{pref.tutorialDone=new Date().toISOString();savePrefs();});
   }
   boot();
 })();

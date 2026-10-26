@@ -1,10 +1,10 @@
-// Lagboken 1.2. Appen startar direkt från sparade kopior (stale-while-revalidate): allt som redan finns
+// Lagboken 1.3. Appen startar direkt från sparade kopior (stale-while-revalidate): allt som redan finns
 // i cachen visas utan att vänta på nätet, och en ny kopia hämtas samtidigt i bakgrunden. Ändras appens
 // filer meddelas sidan, som visar raden "Ny version". Ändras katalogen läses den in på nytt utan omstart.
 // Lagtexten ligger i en separat cache som behålls mellan versioner så att nedladdade lagar finns kvar offline.
-const VERSION='lagboken-shell-v12';
+const VERSION='lagboken-shell-v13';
 const DATA='lagboken-data';
-const CORE=['./','./index.html','./assets/app.css','./assets/app.js','./assets/search-core.js','./assets/legal-links.js','./assets/editorial.js','./assets/law-model.js','./assets/search-index.js','./assets/highlights.js','./assets/toc-model.js','./icon.svg','./icon-180.png','./icon-192.png','./manifest.webmanifest'];
+const CORE=['./','./index.html','./assets/app.css','./assets/app.js','./assets/search-core.js','./assets/legal-links.js','./assets/editorial.js','./assets/law-model.js','./assets/search-index.js','./assets/highlights.js','./assets/toc-model.js','./assets/tutorial.js','./icon.svg','./icon-180.png','./icon-192.png','./manifest.webmanifest'];
 // Filer vars ändring ska meddelas sidan.
 const WATCHED=/(?:\/|index\.html|\.js|\.css|data\/(?:index\/)?catalog\.json)$/;
 self.addEventListener('install',event=>event.waitUntil(caches.open(VERSION).then(c=>c.addAll(CORE.filter(u=>u!=='./').map(u=>new Request(u,{cache:'reload'})))).then(()=>self.skipWaiting())));
