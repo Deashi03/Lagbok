@@ -41,7 +41,26 @@ const B=process.env.LAGBOK_URL||'http://localhost:8765/';
  // Sparat: egna markeringar och anteckningar först
  await page.goto(B+'#/saved');await wait(600);
  assert.match(await page.locator('#view .section-title').first().textContent(),/Markeringar och anteckningar/);
+ // Favoriter: lag och kapitel blir genvägar överst i katalogen
+ await page.goto(B+'#/law/1962%3A700');await wait(900);
+ await page.click('.law-head [data-action="fav"]');await wait(300);
+ await page.goto(B+'#/law/1942%3A740/24');await wait(900);
+ await page.click('.reader-heading .fav-star');await wait(300);
+ await page.goto(B+'#/catalog');await wait(700);
+ const chips=await page.locator('.fav-row .fav-chip').allTextContents();
+ assert.ok(chips.includes('BrB')&&chips.includes('RB 24 kap.'),'favoriterna ska synas som genvägar: '+chips.join(', '));
+ assert.equal(await page.locator('.section-index').count(),0,'avdelningsknapparna döljs när det finns favoriter');
+ // Lydelse vid datum
+ await page.goto(B+'#/law/1949%3A381/2/10');await wait(900);
+ await page.evaluate(()=>{const b=document.querySelector('#p-10 [data-action="para-menu"]');b&&b.click();});await wait(400);
+ await page.click('[data-action="history"]');await wait(300);
+ await page.fill('#at-date','2027-06-01');await page.click('#date-form button[type=submit]');await wait(800);
+ assert.ok(await page.locator('.date-banner').count()===1,'datumraden visas');
+ await page.click('.date-banner [data-action="date-clear"]');await wait(500);
+ // Nytt i lagen
+ await page.goto(B+'#/nytt');await wait(800);
+ assert.match(await page.textContent('#view h1'),/Nytt i lagen/);
  assert.deepEqual(errors,[]);
- console.log('Webbläsartest: katalog, kopplingar, meny, sök, penna, ångra, snabbhopp och Sparat godkända');
+ console.log('Webbläsartest: katalog, kopplingar, meny, sök, penna, ångra, snabbhopp, Sparat, favoriter, lydelse vid datum och Nytt i lagen godkända');
  await browser.close();
 })().catch(e=>{console.error(e);process.exitCode=1;});

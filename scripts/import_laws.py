@@ -75,10 +75,33 @@ def version(raw):
         out["amendedBy"]=m[2];text=text[:m.start()].rstrip()
     out["text"]=text
     return out
+def single_current(versions):
+    """Högst en lydelse får gälla i dag utan datum. Finns flera (källan saknar markeringar) gäller den med
+    senaste ändringen och som inte är en upphävandenotering; övriga märks som tidigare lydelse."""
+    now=[v for v in versions if "inForce" not in v and not v.get("superseded")]
+    if len(now)<=1:return versions
+    best=max(now,key=lambda v:(not REPEALED.match(v["text"]),amendment_key(v["amendedBy"]) if v.get("amendedBy") else (0,0)))
+    for v in now:
+        if v is not best:v["superseded"]=True
+    return [best]+[v for v in versions if v is not best]
 def build_para(number,raws):
     versions=[version(r) for r in raws if r and r.strip()]
     transitions=[v.pop("_transitions") for v in versions if "_transitions" in v]
     appendix=[v.pop("_appendix") for v in versions if "_appendix" in v]
+    # Riksdagen har ibland kvar både gammal och ny lydelse utan markering om ikraftträdande eller
+    # upphörande. Den nyaste ändringen gäller; äldre omarkerade lydelser märks som tidigare lydelse.
+    # En lydelse som upphör ett visst datum ersätts av en lydelse som träder i kraft samma dag. Saknar den nya
+    # lydelsen markering i källan får den datumet från den som upphör.
+    plain=[v for v in versions if "inForce" not in v and "expires" not in v]
+    ending=[v for v in versions if v.get("expires")]
+    if len(plain)==1 and len(ending)==1 and not any("inForce" in v for v in versions) and len(versions)==2:
+        plain[0]["inForce"]=dict(ending[0]["expires"]);plain=[]
+    if len(plain)>1:
+        newest=max(plain,key=lambda v:amendment_key(v["amendedBy"]) if v.get("amendedBy") else (0,0))
+        for v in plain:
+            if v is not newest:v["superseded"]=True
+        versions=[newest]+[v for v in versions if v is not newest]
+    versions=single_current(versions)
     first=versions[0]
     item={"type":"para","number":number,"text":first["text"]}
     if len(versions)>1 or "inForce" in first or "expires" in first:
@@ -304,6 +327,50 @@ def write_report(report,fail,repealed=()):
     text+="\n\nKontrollera lagtext, ikraftträdande och övergångsbestämmelser innan sammanslagning. Redaktionella rubriker kontrolleras av testerna."
     print(text)
     if target:Path(target).write_text(text+"\n",encoding="utf-8")
+HISTORY=ROOT/"data/history";CHANGES=ROOT/"data/changes.json"
+def current_text(item):
+    """Den lydelse som gäller i dag (samma regel som appen): utan kommande- eller upphörandemarkering."""
+    today=dt.date.today().isoformat()
+    for v in item.get("versions") or [item]:
+        f=(v.get("inForce") or {}).get("date");e=(v.get("expires") or {}).get("date")
+        if v.get("superseded") or (v.get("inForce") and (not f or f>today)) or (e and e<=today):continue
+        return v
+    return None
+def record_history(sfs,name,old,new):
+    """Sparar lydelser som ersätts (data/history/<sfs>.json) och en ändringslogg (data/changes.json),
+    så att appen kan visa lydelsen vid ett visst datum och vad som är nytt sedan förra månaden."""
+    today=dt.date.today().isoformat()
+    a,b=paragraphs(old),paragraphs(new)
+    added=[k for k in b if k not in a];removed=[k for k in a if k not in b];changed=[]
+    hist_file=HISTORY/(slug(sfs)+".json")
+    hist=json.loads(hist_file.read_text(encoding="utf-8")) if hist_file.exists() else []
+    for k in b:
+        if k not in a:continue
+        before,after=current_text(a[k]),current_text(b[k])
+        if before and after and before["text"]!=after["text"]:
+            changed.append(k)
+            hist.append({"chapter":k[0],"number":k[1],"text":before["text"],"amendedBy":before.get("amendedBy"),"until":today})
+    for k in removed:
+        before=current_text(a[k])
+        if before:hist.append({"chapter":k[0],"number":k[1],"text":before["text"],"amendedBy":before.get("amendedBy"),"until":today})
+    if hist:
+        HISTORY.mkdir(parents=True,exist_ok=True)
+        hist_file.write_text(json.dumps(hist,ensure_ascii=False,separators=(",",":"))+"\n",encoding="utf-8")
+    if old is None or added or changed or removed:
+        log=json.loads(CHANGES.read_text(encoding="utf-8")) if CHANGES.exists() else []
+        log.append({"date":today,"sfs":sfs,"name":name,"new":old is None,"amendedBy":new.get("latestAmendment"),
+                    "added":[list(k) for k in added][:200],"changed":[list(k) for k in changed][:200],"removed":[list(k) for k in removed][:200]})
+        CHANGES.write_text(json.dumps(log[-3000:],ensure_ascii=False,indent=0)+"\n",encoding="utf-8")
+def unconsolidated(doc):
+    """Riksdagen anger en senare ändring (amendedTo) än den som finns inarbetad i texten, bilagan eller
+    övergångsbestämmelserna. Då har källans sammanställning ännu inte uppdaterats."""
+    to=doc.get("amendedTo")
+    if not to or to==doc["sfs"]:return None
+    text=json.dumps([doc.get("chapters"),doc.get("appendix"),doc.get("transitions")],ensure_ascii=False)
+    if to in text:return None
+    latest=doc.get("latestAmendment")
+    if latest and amendment_key(latest)>=amendment_key(to):return None
+    return to
 def fetch(sfs):
     # Äldre författningar ("1736:0123 2", "1898:64 s.10") har mellanslag i Riksdagens dokument-id.
     ids=["sfs-"+slug(sfs)]
@@ -336,7 +403,12 @@ def run():
             futures={m["sfs"]:pool.submit(fetch,m["sfs"]) for m in metas[n:n+150]}
         id=meta["sfs"]
         try:
-            doc=futures[id].result().get("dokumentstatus",{}).get("dokument",{})
+            status=futures[id].result().get("dokumentstatus",{})
+            doc=status.get("dokument",{})
+            # Riksdagens uppgift om senaste ändring ("t.o.m. SFS 2026:1622"), för kontroll av att ingen ändring saknas.
+            upp=(status.get("dokuppgift") or {}).get("uppgift") or []
+            upp=upp if isinstance(upp,list) else [upp]
+            amended_to=next((re.search(r"(\d{4}:\d+)",u.get("text","")).group(1) for u in upp if u.get("kod")=="andrattillochmed" and re.search(r"\d{4}:\d+",u.get("text",""))),None)
             official=doc.get("titel")
             check_title(meta,official)
             repeal_at=check_in_force(doc)
@@ -350,6 +422,10 @@ def run():
             editorial(chs,id)
             output=document(id,meta["name"],method,chs,official)
             if repeal_at:output["repealAt"]=repeal_at
+            if amended_to:
+                output["amendedTo"]=amended_to
+                gap=unconsolidated(output)
+                if gap:output["unconsolidated"]=gap
             chaptered=any(c["number"]!="0" for c in chs)
             if meta.get("chaptered")!=chaptered:meta["chaptered"]=chaptered;changed=True
             file=OUT/(slug(id)+".json")
@@ -359,6 +435,7 @@ def run():
                 if {k:v for k,v in output.items() if k!="fetchedAt"}=={k:v for k,v in previous.items() if k!="fetchedAt"}:
                     print(id,"unchanged");continue
             report.append(describe_changes(meta["name"],id,previous,output))
+            if not os.environ.get("NO_HISTORY"):record_history(id,meta["name"],previous,output)
             OUT.mkdir(parents=True,exist_ok=True)
             file.write_text(json.dumps(output,ensure_ascii=False,separators=(",",":"))+"\n",encoding="utf-8")
             print(id,"imported",count(chs),"paragraphs",method)

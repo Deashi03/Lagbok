@@ -14,6 +14,7 @@
   function status(v,day){
     const started=!v.inForce||(!!v.inForce.date&&v.inForce.date<=day);
     const ended=!!(v.expires&&v.expires.date&&v.expires.date<=day);
+    if(v.superseded)return started&&!ended?'superseded':ended?'expired':'upcoming';
     return !started?'upcoming':ended?'expired':'current';
   }
   function versions(item){
@@ -37,6 +38,7 @@
   function describe(v){
     if(v.status==='upcoming')return 'Kommande lydelse · träder i kraft '+when(v.inForce);
     if(v.status==='expired')return 'Upphörd lydelse';
+    if(v.status==='superseded')return 'Tidigare lydelse'+(v.amendedBy?' (SFS '+v.amendedBy+')':'')+' · kan gälla enligt övergångsbestämmelser';
     if(v.expires)return 'Gäller till '+(v.expires.date?formatDate(v.expires.date):'den dag regeringen bestämmer');
     return 'Annan lydelse i källan';
   }

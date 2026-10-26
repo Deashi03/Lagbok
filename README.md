@@ -107,3 +107,17 @@ Läsaren har en enda innehållsknapp, utan föregående/nästa länkar eller ver
 - **Sökfältet följer med** när man scrollar i katalogen och lägger sig under toppfältet.
 - Appen läser en kompakt katalog (`data/index/catalog.json`, cirka 110 kB över nätet), så starten förblir snabb med 5 000 författningar.
 - Hänvisningar utan lagnamn i en förordning ("enligt 2 kap. 1 §") länkas till lagen förordningen kompletterar, om paragrafen inte finns i förordningen själv.
+
+## Version 1.2
+- **Granskning av all lagtext** (`scripts/audit.py`, körs i CI och efter varje månadsimport; rapport i `data/audit-report.md`):
+  - *Gällande lydelse:* Riksdagen har ibland kvar både gammal och ny lydelse utan datummarkering. Tidigare visade appen då den äldre. Nu gäller lydelsen med den senaste ändringen, och den äldre visas hopfälld som "Tidigare lydelse (SFS …) · kan gälla enligt övergångsbestämmelser". Saknar en ny lydelse sitt ikraftträdandedatum hämtas det från lydelsen den ersätter. Ingen paragraf har längre två gällande lydelser.
+  - *Ännu inte i kraft:* 442 paragrafer som träder i kraft senare visas avskilda, med streckad kant och datum, och räknas inte som gällande. 225 träder i kraft "när regeringen bestämmer".
+  - *Riksdagens text släpar:* för 264 författningar anger Riksdagen en ändring (t.ex. BrB t.o.m. SFS 2026:1656) som ännu inte finns i den text Riksdagen publicerar. Lagen visar då en varning.
+  - *Hänvisningar:* punktlistor efter en namngiven lag ("Följande bestämmelser i förvaltningslagen gäller inte: – 32 § …") och avstavade lagnamn länkas nu. Andelen länkade hänvisningar ökade från 95,9 % till 96,5 %.
+  - Inga upphävda författningar, tomma eller sammanslagna paragrafer, felaktiga balk- eller lagkopplingar eller titelfel.
+- **Favoriter:** en ☆ vid lagens rubrik och vid varje kapitel. Favoriterna ersätter avdelningsknapparna överst i katalogen (till exempel BrB, RB 24 kap., SkolL). De mest använda kommer först, och under *Ordna* går de att flytta och ta bort. Avdelningarna finns under *Avdelningar ▾*.
+- **Lydelse vid datum:** i paragrafmenyn kan man välja ett datum och se lagen som den löd då, med markering av vad som skiljer sig från i dag. Från och med nu sparar varje månadsimport de lydelser som ersätts (`data/history/`).
+- **Förarbeten:** varje "Ändrad genom SFS …" länkar till propositionen och betänkandet, hämtade från Riksdagens betänkanden från 1990-talet och framåt (`scripts/forarbeten.py`).
+- **Nytt i lagen:** en sida med det som ändrats vid varje import, där dina favoriter och bevakningar kommer först, och det som träder i kraft det närmaste året. En prick på fliken visar när det finns något nytt.
+- **Källdatum** ("Kontrollerad mot Riksdagen …") i varje lags rubrik, och **Rapportera fel i texten** i paragrafmenyn, som öppnar ett färdigt ärende i projektets GitHub.
+- Stora avdelningar ritas i omgångar och öppnas direkt.

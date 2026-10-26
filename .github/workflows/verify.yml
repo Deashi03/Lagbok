@@ -33,6 +33,10 @@ jobs:
           node tests/test_relations.js
           node tests/test_search_index.js
           node tests/test_highlights.js
+      - name: Granska lagtexten
+        run: |
+          python scripts/audit.py
+          cat data/audit-report.md >> "$GITHUB_STEP_SUMMARY"
       - name: Kontrollera att sökindexet matchar lagtexten
         run: |
           node scripts/build_indexes.js
