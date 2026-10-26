@@ -1,6 +1,6 @@
 {
   "version": "0.9",
-  "generated": "2026-10-26T00:21:18+00:00",
+  "generated": "2026-10-26T00:46:51+00:00",
   "source": "Sveriges riksdag, Riksdagens öppna data",
   "laws": [
     {
@@ -729,7 +729,7 @@
         "RP",
         "promulgationslagen RB"
       ],
-      "chaptered": false,
+      "chaptered": true,
       "check": "införande av nya rättegångsbalken",
       "section": "balkar",
       "parent": "1942:740"
@@ -972,7 +972,7 @@
         "SkbrL",
         "skuldebrev"
       ],
-      "chaptered": false,
+      "chaptered": true,
       "check": "skuldebrev",
       "section": "civil"
     },
@@ -1008,7 +1008,7 @@
         "FAL",
         "försäkringsavtal"
       ],
-      "chaptered": false,
+      "chaptered": true,
       "check": "försäkringsavtalslag",
       "section": "civil"
     },
@@ -1091,7 +1091,7 @@
         "arbetstvistlagen",
         "LRA"
       ],
-      "chaptered": false,
+      "chaptered": true,
       "check": "rättegången i arbetstvister",
       "section": "civil"
     },
@@ -1359,7 +1359,7 @@
       "aliases": [
         "polisiärt samarbete"
       ],
-      "chaptered": false,
+      "chaptered": true,
       "check": "polisiärt samarbete",
       "section": "polis"
     },
@@ -1741,7 +1741,7 @@
         "LOU",
         "upphandling"
       ],
-      "chaptered": false,
+      "chaptered": true,
       "check": "offentlig upphandling",
       "section": "forvaltning"
     },
@@ -1836,7 +1836,7 @@
         "PL patient",
         "patientlag"
       ],
-      "chaptered": false,
+      "chaptered": true,
       "check": "patientlag",
       "section": "vard"
     },
@@ -1848,7 +1848,7 @@
         "PSL",
         "patientsäkerhet"
       ],
-      "chaptered": false,
+      "chaptered": true,
       "check": "patientsäkerhetslag",
       "section": "vard"
     },
@@ -1860,7 +1860,7 @@
         "SmL",
         "smittskydd"
       ],
-      "chaptered": false,
+      "chaptered": true,
       "check": "smittskyddslag",
       "section": "vard"
     }

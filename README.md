@@ -71,3 +71,8 @@ Läsaren har en enda innehållsknapp, utan föregående/nästa länkar eller ver
 - **Uppdateringar direkt:** appen hämtar alltid senaste versionen när det finns internet och visar ”Ny version – tryck för att uppdatera”. Version och datum för lagdata står under *Inställningar*.
 - **Animationer:** ingen grön blinkning längre. Korta övergångar mellan vyer, menyer som glider upp och kan dras ned, utfällning, märkpennedrag vid markering, platshållare vid laddning. Allt stängs av med iPhones *Reducera rörelse*.
 - **Svep från vänsterkanten** för att gå tillbaka, **textstorlek med reglage**, val av **typsnitt** (rakt eller bok), **Mina genvägar** på startsidan, påminnelse om **säkerhetskopia**, förhandsvisning vid delning av länk och bättre stöd för VoiceOver.
+
+## Version 0.9
+- **154 författningar** (tidigare 130): bl.a. promulgationslagarna till BrB och RB, lagen om beräkning av strafftid, lagen om visst stöldgods, näringsförbud, medling med anledning av brott, lagen om internationellt polisiärt samarbete, betalningsföreläggande, skuldebrevslagen, konsumenttjänstlagen, produktansvarslagen, försäkringsavtalslagen, marknadsföringslagen, MBL, semester-, arbetstids- och föräldraledighetslagen, LOU, LSS, patientlagen, patientsäkerhetslagen och smittskyddslagen. Titelkontrollen stoppade tre felaktiga SFS-nummer som rättades före import.
+- **Sök i författningen:** knappen *⌕ Sök* i läsvyn öppnar ett sökfält som fungerar som ”Sök på sidan”: antal träffar, pilar för föregående/nästa (även över kapitelgränser) och markerade sökord.
+- **Rättad menyanimation:** menyerna glider nu upp jämnt. Tidigare skrev animationen över centreringen så att menyn låg fel en kort stund och sedan hoppade på plats.
