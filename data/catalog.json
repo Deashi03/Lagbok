@@ -1,6 +1,6 @@
 {
   "version": "0.9",
-  "generated": "2026-10-26T08:39:08+00:00",
+  "generated": "2026-10-26T08:44:50+00:00",
   "source": "Sveriges riksdag, Riksdagens öppna data",
   "laws": [
     {
@@ -289,7 +289,8 @@
       ],
       "chaptered": true,
       "section": "balkar",
-      "parent": "1962:700"
+      "parent": "1962:700",
+      "available": false
     },
     {
       "sfs": "1996:70",
@@ -302,7 +303,8 @@
       "chaptered": true,
       "check": "vapenförordning",
       "section": "balkar",
-      "parent": "1962:700"
+      "parent": "1962:700",
+      "available": false
     },
     {
       "sfs": "2000:1225",
@@ -553,6 +555,81 @@
       "aliases": [],
       "chaptered": true,
       "check": "förordning om verkställighet av frivårdspåföljder",
+      "section": "balkar",
+      "parent": "1962:700"
+    },
+    {
+      "sfs": "2026:408",
+      "name": "Vapenlagen",
+      "type": "lag",
+      "aliases": [
+        "VL",
+        "vapen"
+      ],
+      "chaptered": true,
+      "check": "vapenlag",
+      "section": "balkar",
+      "parent": "1962:700"
+    },
+    {
+      "sfs": "2026:409",
+      "name": "Vapenförordningen",
+      "type": "förordning",
+      "aliases": [
+        "VF"
+      ],
+      "chaptered": true,
+      "check": "vapenförordning",
+      "section": "balkar",
+      "parent": "1962:700"
+    },
+    {
+      "sfs": "1982:316",
+      "name": "Lagen om förbud mot könsstympning av kvinnor och oskuldsingrepp på kvinnor",
+      "type": "lag",
+      "aliases": [],
+      "chaptered": true,
+      "check": "lag om förbud mot könsstympning av kvinnor och oskuldsingrepp på kvinnor",
+      "section": "balkar",
+      "parent": "1962:700"
+    },
+    {
+      "sfs": "2012:179",
+      "name": "Lagen om straff för olovlig befattning med klusterammunition",
+      "type": "lag",
+      "aliases": [],
+      "chaptered": false,
+      "check": "lag om straff för olovlig befattning med klusterammunition",
+      "section": "balkar",
+      "parent": "1962:700"
+    },
+    {
+      "sfs": "1997:1024",
+      "name": "Lagen om Skatteverkets brottsbekämpande verksamhet",
+      "type": "lag",
+      "aliases": [],
+      "chaptered": false,
+      "check": "lag om skatteverkets brottsbekämpande verksamhet",
+      "section": "balkar",
+      "parent": "1962:700"
+    },
+    {
+      "sfs": "2026:252",
+      "name": "Lagen om verkställighet av säkerhetsförvaring",
+      "type": "lag",
+      "aliases": [],
+      "chaptered": true,
+      "check": "lag om verkställighet av säkerhetsförvaring",
+      "section": "balkar",
+      "parent": "1962:700"
+    },
+    {
+      "sfs": "2020:616",
+      "name": "Lagen om verkställighet av ungdomsövervakning",
+      "type": "lag",
+      "aliases": [],
+      "chaptered": false,
+      "check": "lag om verkställighet av ungdomsövervakning",
       "section": "balkar",
       "parent": "1962:700"
     },
@@ -1080,6 +1157,66 @@
       "parent": "1942:740"
     },
     {
+      "sfs": "1982:805",
+      "name": "Förordningen om ersättning av allmänna medel till vittnen, m.m.",
+      "type": "förordning",
+      "aliases": [],
+      "chaptered": false,
+      "check": "förordning om ersättning av allmänna medel till vittnen m m",
+      "section": "balkar",
+      "parent": "1942:740"
+    },
+    {
+      "sfs": "2017:1000",
+      "name": "Lagen om en europeisk utredningsorder",
+      "type": "lag",
+      "aliases": [],
+      "chaptered": true,
+      "check": "lag om en europeisk utredningsorder",
+      "section": "balkar",
+      "parent": "1942:740"
+    },
+    {
+      "sfs": "2015:109",
+      "name": "Förordningen om erkännande och verkställighet av frihetsberövande påföljder inom Europeiska unionen",
+      "type": "förordning",
+      "aliases": [],
+      "chaptered": true,
+      "check": "förordning om erkännande och verkställighet av frihetsberövande påföljder inom europeiska unionen",
+      "section": "balkar",
+      "parent": "1942:740"
+    },
+    {
+      "sfs": "1946:816",
+      "name": "Lagen om bevisupptagning åt utländsk domstol",
+      "type": "lag",
+      "aliases": [],
+      "chaptered": false,
+      "check": "lag om bevisupptagning åt utländsk domstol",
+      "section": "balkar",
+      "parent": "1942:740"
+    },
+    {
+      "sfs": "2018:1741",
+      "name": "Förordningen om domstolarnas behandling av personuppgifter inom brottsdatalagens område",
+      "type": "förordning",
+      "aliases": [],
+      "chaptered": false,
+      "check": "förordning om domstolarnas behandling av personuppgifter inom brottsdatalagens område",
+      "section": "balkar",
+      "parent": "1942:740"
+    },
+    {
+      "sfs": "1994:1763",
+      "name": "Förordningen med särskilda bestämmelser om unga lagöverträdare",
+      "type": "förordning",
+      "aliases": [],
+      "chaptered": false,
+      "check": "förordning med särskilda bestämmelser om unga lagöverträdare",
+      "section": "balkar",
+      "parent": "1942:740"
+    },
+    {
       "sfs": "1981:774",
       "name": "Utsökningsbalken",
       "type": "lag",
@@ -1157,6 +1294,16 @@
       "aliases": [],
       "chaptered": false,
       "check": "förmånsrättslag",
+      "section": "balkar",
+      "parent": "1981:774"
+    },
+    {
+      "sfs": "1986:1042",
+      "name": "Lagen om verkställighet av \nvissa utländska beslut om rättegångskostnader",
+      "type": "lag",
+      "aliases": [],
+      "chaptered": false,
+      "check": "lag om verkställighet av vissa utländska beslut om rättegångskostnader",
       "section": "balkar",
       "parent": "1981:774"
     },
@@ -2055,6 +2202,52 @@
       "section": "polis"
     },
     {
+      "sfs": "2023:474",
+      "name": "Lagen om polisiära befogenheter i gränsnära områden",
+      "type": "lag",
+      "aliases": [],
+      "chaptered": false,
+      "check": "lag om polisiära befogenheter i gränsnära områden",
+      "section": "polis"
+    },
+    {
+      "sfs": "2024:7",
+      "name": "Lagen om preventiva vistelseförbud",
+      "type": "lag",
+      "aliases": [],
+      "chaptered": false,
+      "check": "lag om preventiva vistelseförbud",
+      "section": "polis"
+    },
+    {
+      "sfs": "2025:327",
+      "name": "Lagen om internationella sanktioner",
+      "type": "lag",
+      "aliases": [],
+      "chaptered": false,
+      "check": "lag om internationella sanktioner",
+      "section": "polis"
+    },
+    {
+      "sfs": "2000:1064",
+      "name": "Lagen om kontroll av produkter med dubbla användningsområden och av tekniskt bistånd",
+      "type": "lag",
+      "aliases": [],
+      "chaptered": false,
+      "check": "lag om kontroll av produkter med dubbla användningsområden och av tekniskt bistånd",
+      "section": "polis"
+    },
+    {
+      "sfs": "1976:1091",
+      "name": "Förordningen om föreskrifter rörande alkoholutandningsprov",
+      "type": "förordning",
+      "aliases": [],
+      "chaptered": false,
+      "check": "förordning om föreskrifter rörande alkoholutandningsprov",
+      "section": "polis",
+      "available": false
+    },
+    {
       "sfs": "1998:1276",
       "name": "Trafikförordningen",
       "type": "förordning",
@@ -2245,6 +2438,42 @@
       "aliases": [],
       "chaptered": false,
       "check": "lag om trängselskatt",
+      "section": "trafik"
+    },
+    {
+      "sfs": "2019:370",
+      "name": "Lagen om fordons registrering och användning",
+      "type": "lag",
+      "aliases": [],
+      "chaptered": false,
+      "check": "lag om fordons registrering och användning",
+      "section": "trafik"
+    },
+    {
+      "sfs": "2019:383",
+      "name": "Förordningen om fordons registrering och användning",
+      "type": "förordning",
+      "aliases": [],
+      "chaptered": true,
+      "check": "förordning om fordons registrering och användning",
+      "section": "trafik"
+    },
+    {
+      "sfs": "2004:865",
+      "name": "Förordningen om kör- och vilotider samt färdskrivare, m.m.",
+      "type": "förordning",
+      "aliases": [],
+      "chaptered": true,
+      "check": "förordning om kör- och vilotider samt färdskrivare m m",
+      "section": "trafik"
+    },
+    {
+      "sfs": "2013:1164",
+      "name": "Lagen om elektroniska vägtullssystem",
+      "type": "lag",
+      "aliases": [],
+      "chaptered": false,
+      "check": "lag om elektroniska vägtullssystem",
       "section": "trafik"
     },
     {
@@ -2679,6 +2908,35 @@
       "aliases": [],
       "chaptered": false,
       "check": "förordning med instruktion för migrationsverket",
+      "section": "forvaltning"
+    },
+    {
+      "sfs": "2023:499",
+      "name": "Lagen med instruktion för Riksdagens ombudsmän (JO)",
+      "type": "lag",
+      "aliases": [
+        "JO"
+      ],
+      "chaptered": false,
+      "check": "lag med instruktion för riksdagens ombudsmän jo",
+      "section": "forvaltning"
+    },
+    {
+      "sfs": "2009:47",
+      "name": "Lagen om vissa kommunala befogenheter",
+      "type": "lag",
+      "aliases": [],
+      "chaptered": true,
+      "check": "lag om vissa kommunala befogenheter",
+      "section": "forvaltning"
+    },
+    {
+      "sfs": "1977:266",
+      "name": "Lagen om statlig ersättning vid ideell skada m.m.",
+      "type": "lag",
+      "aliases": [],
+      "chaptered": false,
+      "check": "lag om statlig ersättning vid ideell skada m m",
       "section": "forvaltning"
     },
     {
