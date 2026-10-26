@@ -9,9 +9,9 @@ const B=process.env.LAGBOK_URL||'http://localhost:8765/';
  const errors=[];page.on('pageerror',e=>errors.push(e.message));
  const wait=ms=>page.waitForTimeout(ms);
  // Katalog i lagbokens ordning, balkarna med anslutande författningar synliga
- await page.goto(B+'#/catalog');await page.waitForSelector('.balk-group');
+ await page.goto(B+'#/catalog');await page.waitForSelector('.law-tree');
  assert.equal(await page.locator('#catalog-directory > .section-title').first().textContent(),'Grundlagar');
- assert.ok(await page.locator('.balk-group .children-list').first().isVisible());
+ assert.ok(await page.locator('.law-tree .tree-row').first().isVisible());
  // Kopplingar lag ↔ förordning
  await page.goto(B+'#/law/1942%3A740/23/1');await wait(900);
  assert.match((await page.locator('#p-1 .link-chip').allTextContents()).join(' '),/Kompletteras av FuK 1 §/);

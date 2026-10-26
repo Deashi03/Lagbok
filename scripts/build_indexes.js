@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 /* Bygger sökindex och register över hänvisningar ur data/laws.
-   data/index/paras.json          – alla paragrafer: [lag, kapitel, paragraf, rubrik]
-   data/index/terms/<xx>.json     – ord -> paragrafnummer (deltakodade), uppdelat på ordets två första tecken
+   data/index/meta.json           – lagarnas ordning, antal paragrafer, blockstorlek och orddelarnas namn
+   data/index/paras/<n>.json      – paragrafer i block: [lag, kapitel, paragraf, rubrik]
+   data/index/terms/<xx>.json     – ord -> paragrafnummer (deltakodade), uppdelat på ordets två (eller tre) första tecken
    data/index/backlinks/<sfs>.json – "kapitel|paragraf" -> kopplingar [lag, kapitel, paragraf, typ] där typ är
                                     "ref" (hänvisar hit), "föreskrift" (förordning som kompletterar) eller
                                     "kompletterar" (lagparagraf som förordningsparagrafen kompletterar)
@@ -153,15 +154,33 @@ for(const [f,rel] of Object.entries(relations)){
   }
 }
 fs.writeFileSync(path.join(out,'relations.json'),JSON.stringify(relations));
-fs.writeFileSync(path.join(out,'paras.json'),JSON.stringify({laws:laws.map(l=>l.sfs),p:paras}));
-const shards=new Map();
+// Paragrafregistret delas i block om CHUNK paragrafer som hämtas när en sökträff finns i blocket.
+// Orddelar som blir större än SPLIT byte delas vidare ett tecken i taget ("fo" -> "for", "fos", "fo_"),
+// så att varje fil förblir liten även när hela Sveriges Rikes Lag finns i appen.
+const CHUNK=2000,SPLIT=60000;
+fs.mkdirSync(path.join(out,'paras'),{recursive:true});
+for(let c=0;c*CHUNK<paras.length;c++)fs.writeFileSync(path.join(out,'paras',c+'.json'),JSON.stringify(paras.slice(c*CHUNK,(c+1)*CHUNK)));
+const encode=list=>{let prev=0;return list.map(n=>{const d=n-prev;prev=n;return d;});};
+const byPrefix=new Map();
 for(const [term,list] of [...postings].sort((a,b)=>a[0]<b[0]?-1:1)){
-  const shard=term.slice(0,2);
-  if(!shards.has(shard))shards.set(shard,{});
-  let prev=0;shards.get(shard)[term]=list.map(n=>{const d=n-prev;prev=n;return d;});
+  const p=term.slice(0,2);
+  if(!byPrefix.has(p))byPrefix.set(p,{});
+  byPrefix.get(p)[term]=encode(list);
 }
+const shards=new Map();
+function place(prefix,data){
+  if(JSON.stringify(data).length<=SPLIT||prefix.length>=6){shards.set(prefix,data);return;}
+  const parts=new Map();
+  for(const [term,list] of Object.entries(data)){
+    const name=term.length>prefix.length?term.slice(0,prefix.length+1):prefix+'_';
+    if(!parts.has(name))parts.set(name,{});
+    parts.get(name)[term]=list;
+  }
+  for(const [name,part] of parts)name.endsWith('_')?shards.set(name,part):place(name,part);
+}
+for(const [p,data] of byPrefix)place(p,data);
 for(const [name,data] of shards)fs.writeFileSync(path.join(out,'terms',name+'.json'),JSON.stringify(data));
-fs.writeFileSync(path.join(out,'shards.json'),JSON.stringify([...shards.keys()]));
+fs.writeFileSync(path.join(out,'meta.json'),JSON.stringify({laws:laws.map(l=>l.sfs),count:paras.length,chunk:CHUNK,shards:[...shards.keys()].sort()}));
 const bySfs=new Map();
 for(const [k,sources] of backlinks){
   const [sfs,target]=k.split('#');

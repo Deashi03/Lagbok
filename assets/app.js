@@ -1,7 +1,7 @@
 /* Lagboken: snabb offlinevänlig juridisk läsapp utan externa JavaScript-beroenden. */
 (function () {
   'use strict';
-  const APP_VERSION='0.9';
+  const APP_VERSION='1.0';
   const $ = (sel, root=document) => root.querySelector(sel);
   const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
   const view = $('#view');
@@ -32,7 +32,7 @@
   function applyPrefs() {
     const dark = pref.theme === 'dark' || (pref.theme === 'system' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
     document.documentElement.dataset.theme = dark ? 'dark' : 'light';
-    const themeMeta=document.querySelector('meta[name="theme-color"]');if(themeMeta)themeMeta.content=dark?'#17251D':'#F7F6F0';
+    const themeMeta=document.querySelector('meta[name="theme-color"]');if(themeMeta)themeMeta.content=dark?'#17251D':'#FFFDF9';
     document.documentElement.style.setProperty('--fontscale',String(pref.fontSize));
     document.documentElement.dataset.readerFont=pref.fontFamily==='serif'?'serif':'sans';
     document.documentElement.style.setProperty('--lineheight',String(pref.lineHeight));
@@ -164,9 +164,10 @@
       '</div><p class="small muted" style="margin-top:17px"><a href="#/catalog" data-link="1">Alla författningar</a> · <a href="#/fap" data-link="1">Polisens FAP</a></p>' + footer() + '</div>';
   }
   // Katalogen följer Sveriges Rikes Lag: grundlagar, balkarna med anslutande författningar, övriga områden.
-  function childRow(law){
-    return '<a class="list-row child-row" href="'+attr(urlFor(law.sfs))+'" data-link="1"><div class="grow"><div class="row-title">'+html(law.name)+'</div>'+
-      '<div class="row-sub">'+(law.type==='förordning'?'<span class="type-tag">Förordning</span> ':'')+'SFS '+html(law.sfs)+'</div></div><span class="chevron">›</span></a>';
+  // Anslutande författningar hänger under sin balk som grenar i ett träd; balken själv är en vanlig rad.
+  function childRow(law,last){
+    return '<a class="tree-row'+(last?' last':'')+'" href="'+attr(urlFor(law.sfs))+'" data-link="1"><span class="tree-branch" aria-hidden="true"></span>'+
+      '<span class="grow"><span class="tree-title">'+html(law.name)+'</span><span class="tree-sub">'+(law.type==='förordning'?'Förordning':'Lag')+' · '+html(law.sfs)+'</span></span><span class="chevron">›</span></a>';
   }
   function readTarget(sfs){
     const pos=pref.readPos[sfs];if(!pos)return null;
@@ -195,9 +196,8 @@
       return '<div class="section-title">'+html(sec.name)+'</div><div class="card-list">'+top.map(law=>{
         const kids=state.catalog.filter(k=>k.parent===law.sfs);
         if(!kids.length)return lawRow(law);
-        // Balken och dess anslutande författningar i ett gemensamt kort, sammanbundna av en ”rygg”.
-        return '<div class="balk-group">'+lawRow(law)+'<div class="children-list" aria-label="Anslutande författningar till '+attr(law.name)+'">'+
-          '<div class="children-label">Anslutande författningar · '+kids.length+'</div>'+kids.map(childRow).join('')+'</div></div>';
+        return listRow(law.name,(law.type==='förordning'?'Förordning':'Lag')+' · SFS '+law.sfs+' · '+kids.length+' anslutande',urlFor(law.sfs),law.sfs).replace('class="list-row"','class="list-row has-tree"')+
+          '<div class="law-tree" role="group" aria-label="Anslutande författningar till '+attr(law.name)+'">'+kids.map((k,i)=>childRow(k,i===kids.length-1)).join('')+'</div>';
       }).join('')+'</div>';
     }).join('');
   }
@@ -636,9 +636,10 @@
     // Lagtext, register över hänvisningar och sökindexet behövs för full funktion utan nät.
     const files=laws.flatMap(l=>[lawUrl(l.sfs),'data/index/backlinks/'+sfsFile(l.sfs)+'.json']);
     try{
-      files.push('data/index/paras.json','data/index/status.json','data/index/upcoming.json','data/index/shards.json');
-      const list=await fetchJson('data/index/shards.json').catch(()=>[]);
-      for(const n of list)files.push('data/index/terms/'+n+'.json');
+      files.push('data/index/meta.json','data/index/status.json','data/index/upcoming.json','data/index/relations.json');
+      const meta=await fetchJson('data/index/meta.json');
+      for(let c=0;c*meta.chunk<meta.count;c++)files.push('data/index/paras/'+c+'.json');
+      for(const n of meta.shards)files.push('data/index/terms/'+n+'.json');
     }catch(_){}
     let n=0;
     for(const url of files){
@@ -1586,6 +1587,12 @@
     if(!('serviceWorker' in navigator))return;
     const hadController=!!navigator.serviceWorker.controller;
     navigator.serviceWorker.addEventListener('controllerchange',()=>{if(hadController)showUpdateBanner();});
+    // Service workern svarar från sparade kopior och meddelar när nätet har något nyare.
+    navigator.serviceWorker.addEventListener('message',e=>{
+      const msg=e.data||{};
+      if(msg.type==='shell-updated')showUpdateBanner();
+      if(msg.type==='catalog-updated')loadCatalog().then(()=>renderKeep()).catch(()=>{});
+    });
     const go=()=>navigator.serviceWorker.register('sw.js').then(reg=>{
       // Leta efter uppdateringar när appen öppnas igen från hemskärmen.
       document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')reg.update().catch(()=>{});});
@@ -1599,13 +1606,16 @@
     b.addEventListener('click',()=>location.reload());
     document.body.appendChild(b);
   }
+  async function loadCatalog(){
+    const resp=await fetch('data/catalog.json');
+    if(!resp.ok)throw Error('Katalog saknas');
+    const data=await resp.json();
+    state.catalog=(data.laws||[]).filter(l=>l.available!==false);state.fap=data.fap||[];state.version=data.version||'';state.sections=data.sections||[];window.LAGBOK_GENERATED=data.generated;
+    legalLinks.configure&&legalLinks.configure(state.catalog);
+  }
   async function boot(){
     try {
-      const resp=await fetch('data/catalog.json',{cache:'no-store'});
-      if(!resp.ok)throw Error('Katalog saknas');
-      const data=await resp.json();
-      state.catalog=(data.laws||[]).filter(l=>l.available!==false);state.fap=data.fap||[];state.version=data.version||'';state.sections=data.sections||[];window.LAGBOK_GENERATED=data.generated;
-      legalLinks.configure&&legalLinks.configure(state.catalog);
+      await loadCatalog();
     } catch(_) {
       view.innerHTML='<div class="page"><div class="empty">Författningskatalogen kunde inte laddas. Försök igen med internetanslutning.</div></div>';
       return;

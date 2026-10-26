@@ -1,4 +1,4 @@
-/* Lagboken 0.6 – fritextsökning i ett färdigbyggt index (scripts/build_indexes.js).
+/* Lagboken 1.0 – fritextsökning i ett färdigbyggt index (scripts/build_indexes.js).
    Bara de indexdelar som behövs för sökorden hämtas; lagtexten laddas först när träffar visas.
    Varje sökord måste finnas i paragrafen. Ordet matchas också som början av längre ord,
    så att "husrannsak" hittar både husrannsakan och husrannsakningar. */
@@ -29,20 +29,33 @@
   }
   function decode(list){let n=0;return list.map(d=>(n+=d));}
   function create(fetchJson){
-    let base=null;const shards=new Map();
-    function paras(){if(!base)base=fetchJson('data/index/paras.json').catch(e=>{base=null;throw e;});return base;}
+    let base=null;const shards=new Map(),chunks=new Map();
+    function meta(){if(!base)base=fetchJson('data/index/meta.json').then(m=>Object.assign(m,{names:new Set(m.shards)})).catch(e=>{base=null;throw e;});return base;}
     function shard(name){
       if(!shards.has(name))shards.set(name,Promise.resolve().then(()=>fetchJson('data/index/terms/'+name+'.json')).catch(()=>({})));
       return shards.get(name);
+    }
+    function chunk(n){
+      if(!chunks.has(n))chunks.set(n,Promise.resolve().then(()=>fetchJson('data/index/paras/'+n+'.json')).catch(e=>{chunks.delete(n);throw e;}));
+      return chunks.get(n);
+    }
+    // Orddelar som kan innehålla ord som börjar med t.
+    function shardsFor(m,t){
+      for(let k=t.length;k>=2;k--)if(m.names.has(t.slice(0,k)))return [t.slice(0,k)];
+      return m.shards.filter(n=>n.startsWith(t));
+    }
+    async function terms(m,t){
+      const parts=await Promise.all(shardsFor(m,t).map(shard));
+      return Object.assign({},...parts);
     }
     async function query(q,options){
       const limit=(options&&options.limit)||60;
       const tokens=expand(words(q));
       if(!tokens.length)return {total:0,hits:[],tokens};
-      const idx=await paras();
+      const idx=await meta();
       const matches=[];
       for(const t of tokens){
-        const data=await shard(t.slice(0,2));
+        const data=await terms(idx,t);
         const exact=new Set(data[t]?decode(data[t]):[]),all=new Set(exact);
         for(const term in data)if(term!==t&&term.startsWith(t))for(const n of decode(data[term]))all.add(n);
         matches.push({token:t,exact,all});
@@ -51,8 +64,12 @@
       let candidates=[...matches[0].all];
       for(const m of matches.slice(1))candidates=candidates.filter(n=>m.all.has(n));
       const lawCount=idx.laws.length;
+      // Bara de block som innehåller kandidater hämtas.
+      const need=[...new Set(candidates.map(n=>Math.floor(n/idx.chunk)))];
+      const loaded=new Map(await Promise.all(need.map(c=>chunk(c).then(rows=>[c,rows]))));
+      const row=n=>loaded.get(Math.floor(n/idx.chunk))[n%idx.chunk];
       const scored=candidates.map(n=>{
-        const p=idx.p[n],title=fold(p[3]);
+        const p=row(n),title=fold(p[3]);
         let score=0;
         for(const m of matches){
           score+=m.exact.has(n)?2:1;
@@ -62,10 +79,10 @@
         return {n,score};
       }).sort((a,b)=>b.score-a.score||a.n-b.n);
       return {total:scored.length,tokens,hits:scored.slice(0,limit).map(({n,score})=>{
-        const p=idx.p[n];return {sfs:idx.laws[p[0]],chapter:p[1],number:p[2],title:p[3],score};
+        const p=row(n);return {sfs:idx.laws[p[0]],chapter:p[1],number:p[2],title:p[3],score};
       })};
     }
-    function warm(){paras().catch(()=>{});['ha','br','po','gr','an','fo'].forEach(n=>shard(n));}
+    function warm(){meta().then(m=>['ha','br','po','gr','an'].forEach(t=>shardsFor(m,t).slice(0,4).forEach(shard))).catch(()=>{});}
     return {query,warm};
   }
   // Kort utdrag kring första träffen, med sökorden markerade.
