@@ -102,7 +102,7 @@ html[data-focus="true"] .reader-heading .source-disclosure,html[data-focus="true
 @media(min-width:821px){.app-shell{border:1px solid var(--border)}}
 @media(max-width:550px){.app-shell:has(#query:focus) .bottom-nav{display:none}.page,.law-reader,.law-head{padding-left:18px;padding-right:18px}.reader-context{padding-left:18px;padding-right:18px}.fap-frame{height:62dvh;min-height:280px}}
 @media(max-width:355px){.chapter-navigation{gap:4px}.chapter-menu{padding:8px 5px}}
-html[data-theme="dark"]{color-scheme:dark;--bg:#132019;--panel:#17251D;--text:#F3F1E9;--secondary:#BBC8BB;--accent:#B6D9BE;--accent-strong:#264D39;--wine:#D7A2AF;--border:#374A3B;--soft:#22372A;--soft-green:#304737}
+html[data-theme="dark"]{color-scheme:dark;--bg:#0F1813;--panel:#131D17;--text:#F8F6F0;--secondary:#D0DAD0;--accent:#C6E6CD;--accent-strong:#264D39;--wine:#D7A2AF;--border:#3A4E40;--soft:#1E2C24;--soft-green:#2A3D31}
 html[data-theme="dark"] .paragraph:target{background:linear-gradient(90deg,#304737,transparent)}
 html[data-theme="dark"] .search-excerpt mark{background:#6B472B;color:#FFFDF9}
 
@@ -302,7 +302,7 @@ details.area[open]>.area-title:after{content:"⌃"}
 .relation-line>span{font-size:11px;font-weight:700;color:var(--wine);text-transform:uppercase;letter-spacing:.05em;margin-right:2px}
 .relation-line .chip{border-color:var(--wine);color:var(--wine)}
 .pen-toggle{white-space:nowrap}.pen-toggle.on{background:var(--wine)!important;color:#FFFDF9!important;border-radius:999px;padding:6px 10px!important}
-html[data-pen="on"] .paragraph-content{cursor:text;-webkit-user-select:none;user-select:none}
+html[data-pen="on"] .paragraph-content{cursor:text;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;touch-action:pan-y}
 html[data-pen="on"] .paragraph-content .law-ref{pointer-events:none}
 mark.pen-anchor{background:transparent;color:inherit;outline:2px dashed var(--wine);outline-offset:1px;border-radius:2px}
 .pen-bar .pen-hint{font-size:12px;color:var(--secondary);max-width:92px;line-height:1.25}
@@ -551,4 +551,25 @@ html[data-theme="dark"] .tut-date{background:#4A3E1E;color:#F3E6C2}
 .catalog-meta a{color:inherit}
 /* Mörkt läge: appikonen behåller sin mörkgröna färg och primärknappar får mörk text på ljusgrönt. */
 html[data-theme="dark"] .tut-mark:not(.small){background:#264D39}
-html[data-theme="dark"] .button.primary{color:#132019}
+html[data-theme="dark"] .button.primary{color:#0F1813}
+/* 1.5: rubrikraden i en lag – namn och plats, sedan ⌕ ✎ ☷ ⋯ i lika stora knappar. */
+.topbar.law-mode .top-title{opacity:1;translate:0 0;display:flex;flex-direction:column;min-width:0;line-height:1.2}
+.topbar .tt-name{font-weight:700;font-size:16px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.topbar .tt-sub{font-weight:450;font-size:12px;color:var(--secondary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.topbar .law-tool{width:40px;height:40px;font-size:20px;border-radius:11px;color:var(--accent);flex-shrink:0}
+.topbar .law-tool.on{background:var(--wine);color:#FFFDF9}
+.topbar.law-mode .top-actions{gap:0}
+/* Sökraden: fält med räknare, ↑ ↓ och växeln lagen / hela lagboken. */
+.reader-context .find-bar{padding:2px 0 0;gap:7px}
+.find-field{flex:1;min-width:0;position:relative;display:flex;align-items:center}
+.find-field input{width:100%;height:40px;border:1px solid var(--border);border-radius:11px;padding:0 74px 0 11px;font-size:16px;background:var(--panel);color:var(--text)}
+.find-field input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 20%,transparent)}
+.find-field .find-count{position:absolute;right:10px;font-size:12.5px;color:var(--secondary);min-width:0;pointer-events:none}
+.reader-context .find-bar .find-step{flex:0 0 40px;width:40px!important;height:40px;font-size:18px!important;color:var(--accent);border-radius:11px!important}
+.find-scope{flex-basis:100%;display:flex;gap:3px;padding:3px;margin:2px 0 3px;background:var(--soft);border-radius:10px}
+.reader-context .find-scope button{flex:1;min-width:0;padding:7px 6px;border-radius:8px;font-size:13.5px;font-weight:650;color:var(--accent);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.reader-context .find-scope button.on{background:var(--panel);color:var(--text);box-shadow:0 1px 3px #0002}
+.menu-version{text-align:center;margin:14px 0 0}
+.topbar .law-tool svg{display:block}
+html[data-theme="dark"] .topbar .law-tool.on{color:#0F1813}
+.sheet-menu-row .grow{display:flex;flex-direction:column;align-items:flex-start;text-align:left}

@@ -37,16 +37,32 @@ const B=process.env.LAGBOK_URL||'http://localhost:8765/';
  assert.match(await page.textContent('#find-count'),/träffar/);
  await page.press('#find-input','Enter');await wait(700);
  assert.ok(await page.locator('mark.find-hit').count()>0);
+ assert.equal(await page.locator('#find-button.on').count(),1,'⌕ i rubrikraden visar att sökningen är öppen');
+ const at1=await page.textContent('#find-count');await page.click('[data-action="find-next"]');await wait(600);
+ assert.notEqual(await page.textContent('#find-count'),at1,'↓ hoppar till nästa träff');
+ await page.click('[data-action="find-all"]');await wait(900);
+ assert.equal(await page.evaluate(()=>location.hash),'#/catalog');
+ assert.equal(await page.inputValue('#query'),'gripa','sökordet följer med till hela lagboken');
+ await page.goBack();await wait(900);
+ assert.equal(await page.locator('.reader-context').count(),0,'ingen extra rad när sökningen är stängd');
  // Penna, markering och ångra
  await page.goto(B+'#/law/1942%3A740/24/7');await wait(900);
- await page.click('.pen-toggle');await wait(300);
+ await page.click('#pen-button');await wait(300);
  const box=await page.locator('#p-7 > .paragraph-content p').first().boundingBox();
  await page.mouse.click(box.x+15,box.y+12);await wait(200);await page.mouse.click(box.x+200,box.y+12);await wait(600);
  assert.equal(await page.locator('#p-7 mark.hl').count(),1);
  await page.click('[data-action="toast-undo"]');await wait(500);
  assert.equal(await page.locator('#p-7 mark.hl').count(),0);
  // Snabbhopp
- await page.click('[data-action="pen-done"]');await page.click('#in-law-search');await page.fill('#jump-query','rb 23 8b');await page.press('#jump-query','Enter');await wait(800);
+ // Dra med pennan över några ord i samma stycke
+ const dbox=await page.locator('#p-7 > .paragraph-content p').first().boundingBox();
+ const before=await page.locator('#p-7 mark.hl').count();
+ await page.mouse.move(dbox.x+8,dbox.y+12);await page.mouse.down();
+ for(let i=1;i<=6;i++)await page.mouse.move(dbox.x+8+i*30,dbox.y+12);
+ await page.mouse.up();await wait(400);
+ assert.equal(await page.locator('#p-7 mark.hl').count(),before+1,'ett drag med pennan ger en markering');
+ assert.ok((await page.locator('#p-7 mark.hl').last().textContent()).trim().split(/\s+/).length>=2,'draget markerar flera ord');
+ await page.click('[data-action="pen-done"]');if(!await page.locator('#find-input').count())await page.click('#find-button');await wait(300);await page.fill('#find-input','rb 23 8b');await page.press('#find-input','Enter');await wait(800);
  assert.equal(await page.evaluate(()=>location.hash),'#/law/1942%3A740/23/8b');
  // Sparat: egna markeringar och anteckningar först
  await page.goto(B+'#/saved');await wait(600);

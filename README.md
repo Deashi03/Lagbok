@@ -133,3 +133,11 @@ Läsaren har en enda innehållsknapp, utan föregående/nästa länkar eller ver
 - **Om Lagboken** under Inställningar beskriver källa, kopplingar, integritet och kontakt. Där finns också Polisens FAP, som har flyttats från startsidan.
 - **Rapportera fel** öppnar ett färdigt e-postmeddelande till jonathanlindblom@rocketmail.com med lagrum, länk, källa och version.
 - **Bättre sökning:** balkar och lagar rankas före förordningar, och sökord i lagens namn väger tyngre. Vanliga ord som misshandel, beslag, rattfylleri, uppsägning och bodelning leder direkt till rätt lagrum.
+
+## Version 1.5
+- **Ny rubrikrad i lagarna:** lagens namn står överst med förkortning och kapitel under. Till höger sitter fyra lika stora knappar: ⌕ sök i lagen, ✎ penna, ☷ innehåll och ⋯ mer. Den gamla extraraden med Sök, Penna och Innehåll är borta, så lagtexten får mer plats.
+- **En sökning i lagen:** ⌕ öppnar sökraden. Orden markeras i texten, räknaren visar "3 av 29", och ↑ ↓ hoppar mellan träffarna. Lagrum som "2:1" eller "rb 23 8b" öppnas direkt med Enter. Växeln *I hela lagboken* tar med sökordet till den stora sökningen. Ett nytt tryck på ⌕ stänger raden.
+- **Pennan kan dra:** dra fingret över texten för att markera direkt. Tryck på första och sista ordet fungerar som förut, och lodräta drag rullar sidan.
+- **Tydligare mörkt läge:** mörkare bakgrund, ljusare text och rubriker.
+- Versionen står i ⋯-menyn när du läser en lag.
+
