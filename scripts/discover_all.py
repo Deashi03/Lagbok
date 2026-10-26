@@ -43,9 +43,9 @@ SECTIONS=[("grundlagar","Grundlagar"),("balkar","Balkarna med anslutande förfat
  ("foretag","Bolag, bank, försäkring och finans"),("marknad","Konsument, konkurrens och immaterialrätt"),("arbete","Arbetsrätt"),
  ("vard","Socialrätt, vård och socialförsäkring"),("utbildning","Utbildning, kultur, medier och trossamfund"),("skatt","Skatt, tull och avgifter"),
  ("miljo","Miljö, plan, bygg och energi"),("jordbruk","Jordbruk, livsmedel, djur och natur"),("trafik","Trafik, transport och kommunikation"),
- ("forsvar","Försvar, beredskap och internationellt")]
+ ("forsvar","Försvar, beredskap och internationellt"),("instruktioner","Myndigheters instruktioner")]
 def clean(title):
-    t=re.sub(r"/[^/]*/","",title or "");t=re.sub(r"Kungl\. Maj:ts\s*","",t,flags=re.I)
+    t=re.sub(r"/[^/]*/","",title or "");t=re.sub(r"^\s*r\d+/\s*","",t);t=re.sub(r"Kungl\. Maj:ts\s*","",t,flags=re.I)
     t=re.sub(r"\s+"," ",t).strip().rstrip(";").strip()
     # Två rubriker (nuvarande och kommande): den nuvarande gäller.
     return re.split(r"\s+(?=(?:Lag|Förordning) \(\d{4}:)",t)[0]
@@ -55,6 +55,11 @@ def is_law(title):
     return bool(re.fullmatch(r"(?i)lag|[\wåäö-]*(lag|balk|ordning)",head))
 # Granskade placeringar (data/placement.json) går före reglerna: {"SFS": "avdelning"}.
 PLACEMENT=json.loads((ROOT/"data/placement.json").read_text(encoding="utf-8")) if (ROOT/"data/placement.json").exists() else {}
+def is_reg(title):
+    """Förordningar och kungörelser (inte tillkännagivanden eller myndighetsföreskrifter)."""
+    head=clean(title).split("(")[0].strip().lower()
+    if re.search(r"tillkännagivande|föreskrift|meddelande|cirkulär|reglemente|stadga|taxa",head):return False
+    return bool(re.search(r"förordning|kungörelse",head))
 def area(title,organ,sfs=None):
     if sfs in PLACEMENT:return PLACEMENT[sfs]
     t=clean(title).lower()
@@ -76,7 +81,7 @@ def listing():
             if not docs or p>=int(data.get("@sidor") or 1):break
             p+=1;time.sleep(.1)
     return list(out.values())
-def add():
+def add(regs=False):
     catalog=json.loads(CATALOG.read_text(encoding="utf-8"))
     have={l["sfs"] for l in catalog["laws"]}
     known={s for s,_ in SECTIONS};ids=[s["id"] for s in catalog["sections"]]
@@ -85,15 +90,19 @@ def add():
         else:next(s for s in catalog["sections"] if s["id"]==sid)["name"]=name
     order={sid:i for i,(sid,_) in enumerate(SECTIONS)}
     catalog["sections"].sort(key=lambda s:order.get(s["id"],99))
-    entries=[];seen={re.sub(r"[\s.]","",s) for s in have}
+    # Författningar som saknar lagtext hos Riksdagen eller i praktiken är upphävda ("Utgår genom …").
+    excluded=json.loads((ROOT/"data/excluded.json").read_text(encoding="utf-8")) if (ROOT/"data/excluded.json").exists() else {}
+    entries=[];seen={re.sub(r"[\s.]","",s) for s in list(have)+list(excluded)}
     # Äldre författningar har sidnummer i beteckningen: "1736:0123 2", "1898:64 s.10".
     all_docs=sorted(listing(),key=lambda d:(" " not in (d["sfs"] or ""),d["sfs"] or ""))
     for d in all_docs:
         key=re.sub(r"[\s.]","",d["sfs"] or "")
-        if d["upphavd"] or d["sfs"] in have or key in seen or not SFS.fullmatch(d["sfs"] or "") or not is_law(d["titel"]):continue
+        kind="lag" if is_law(d["titel"]) else "förordning" if regs and is_reg(d["titel"]) else None
+        if d["upphavd"] or d["sfs"] in have or key in seen or not SFS.fullmatch(d["sfs"] or "") or not kind:continue
         seen.add(key)
         t=clean(d["titel"])
-        entries.append({"sfs":d["sfs"],"name":dl.display_name(t),"type":"lag","aliases":[],"chaptered":False,"check":dl.norm(t),"section":area(t,d["organ"],d["sfs"])})
+        sec="instruktioner" if kind=="förordning" and re.search(r"med instruktion för|instruktion för",t,re.I) else area(t,d["organ"],d["sfs"])
+        entries.append({"sfs":d["sfs"],"name":dl.display_name(t),"type":kind,"aliases":[],"chaptered":False,"check":dl.norm(t),"section":sec})
     by=collections.defaultdict(list)
     for e in entries:by[e["section"]].append(e)
     laws=catalog["laws"]
@@ -105,10 +114,10 @@ def add():
         laws[at:at]=add_here
     gallande=[d for d in all_docs if not d["upphavd"]]
     # Underlag för appens täckningsmätare: hur många gällande författningar och lagar SFS innehåller.
-    catalog["coverage"]={"all":len(gallande),"laws":sum(1 for d in gallande if is_law(d["titel"])),"date":time.strftime("%Y-%m-%d")}
+    catalog["coverage"]={"all":len(gallande),"laws":sum(1 for d in gallande if is_law(d["titel"])),"regs":sum(1 for d in gallande if is_reg(d["titel"])),"date":time.strftime("%Y-%m-%d")}
     CATALOG.write_text(json.dumps(catalog,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
     lines=["## Alla gällande lagar","",f"Gällande författningar i SFS: {len(gallande)}, varav lagar: {sum(1 for d in gallande if is_law(d['titel']))}.",
-           f"Tillagda lagar: {len(entries)}.",""]+[f"- {dict(SECTIONS)[s]}: {len(v)}" for s,v in sorted(by.items(),key=lambda kv:order.get(kv[0],99))]
+           f"Tillagda författningar: {len(entries)} (lagar {sum(e['type']=='lag' for e in entries)}, förordningar {sum(e['type']=='förordning' for e in entries)}).",""]+[f"- {dict(SECTIONS)[s]}: {len(v)}" for s,v in sorted(by.items(),key=lambda kv:order.get(kv[0],99))]
     REPORT.write_text("\n".join(lines)+"\n",encoding="utf-8");print("\n".join(lines))
 # Hänvisningar ur en lags text till balkarna: [(balk, antal)].
 BALK_NAMES=None
@@ -146,5 +155,80 @@ def place():
     CATALOG.write_text(json.dumps(catalog,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
     for m in moved:print("→",m[1],"·",m[0],f"({m[2]} hänvisningar)")
     print(len(moved),"lagar placerade under balkar")
+GENERAL={"2017:900","1971:291","2009:400","2017:725","1962:700","1942:740","2018:218","1999:1229","2011:1244","1974:152","1949:105","1991:1469","1986:223"}
+def anchor():
+    """Förordningar hängs på den lag de kompletterar ("Denna förordning kompletterar lagen (2010:1932)",
+    "meddelas med stöd av …") och placeras i lagens avdelning. Förordningar utan tydlig lag behåller
+    den avdelning som titeln visar. Granskade undantag: data/placement.json ("lag:<SFS>" eller avdelning)."""
+    catalog=json.loads(CATALOG.read_text(encoding="utf-8"))
+    laws={l["sfs"]:l for l in catalog["laws"] if l["type"]=="lag"}
+    single={l["name"].lower():s for s,l in laws.items() if re.fullmatch(r"[a-zåäö-]+(?:lagen|balken)",l["name"].lower())}
+    stats=collections.Counter()
+    for reg in catalog["laws"]:
+        if reg["type"]!="förordning":continue
+        f=LAWS/(reg["sfs"].replace(":","-").replace(" ","-")+".json")
+        if not f.exists():continue
+        fixed=PLACEMENT.get(reg["sfs"],"")
+        if fixed.startswith("lag:"):hit=fixed[4:]
+        elif fixed:reg["section"]=fixed;reg.pop("anchor",None);stats["granskad"]+=1;continue
+        else:
+            doc=json.loads(f.read_text(encoding="utf-8"))
+            paras=[i.get("text","") for c in doc["chapters"] for i in c["items"] if i["type"]=="para"]
+            def mentions(text):
+                out=[s for s in re.findall(r"\((\d{4}:\d+)\)",text) if s in laws]
+                low=text.lower()
+                for name,s in single.items():
+                    out+= [s]*len(re.findall(r"(?<![a-zåäö])"+re.escape(name)+r"(?![a-zåäö])",low))
+                return out
+            # Allmänna lagar som nämns i nästan alla förordningar (överklagande, sekretess, skatt) räknas bara
+            # när förordningen uttryckligen kompletterar dem eller har samma namnstam.
+            general=lambda s:s in GENERAL and not sameStem(reg["name"],laws[s]["name"])
+            first=[s for s in mentions(" ".join(paras[:3])) if not general(s)]
+            count=collections.Counter(s for s in mentions(" ".join(paras)) if not general(s))
+            said_all=re.findall(r"(?:kompletterar|med stöd av|i anslutning till)[^.]{0,120}?\((\d{4}:\d+)\)"," ".join(paras[:3]))
+            first=list(dict.fromkeys([s for s in said_all if s in laws]+first))
+            hit=None
+            if first:
+                kin=[s for s in dict.fromkeys(first) if sameStem(reg["name"],laws[s]["name"])]
+                said=re.search(r"(?:kompletterar|med stöd av|i anslutning till|tillämpning av|verkställighet av)[^.]{0,120}?\((\d{4}:\d+)\)"," ".join(paras[:3]))
+                hit=kin[0] if kin else said.group(1) if said and said.group(1) in laws else Counter_top(first)
+            elif count:
+                s,n=count.most_common(1)[0]
+                if n>=3 and n>=0.5*sum(count.values()):hit=s
+            if not hit:
+                kin=[s for s in count if sameStem(reg["name"],laws[s]["name"])]
+                hit=kin[0] if len(kin)==1 else None
+        if hit and hit in laws:
+            law=laws[hit];reg["anchor"]=hit
+            if reg["section"]!="instruktioner":reg["section"]=law["section"]
+            stats["kopplad"]+=1
+        else:
+            reg.pop("anchor",None);stats["utan lag"]+=1
+    # Ordning: avdelningarna i lagbokens ordning; i varje avdelning lagarna (i nuvarande ordning) och därefter
+    # förordningar utan egen lag i bokstavsordning. Förordningar med lag ritas under lagen i appen.
+    order={s["id"]:i for i,s in enumerate(catalog["sections"])}
+    pos={id(l):i for i,l in enumerate(catalog["laws"])}
+    def key(l):
+        loose=l["type"]=="förordning" and not l.get("parent") and l["section"]!="balkar"
+        return (order.get(l["section"],99),loose,l["name"].lower() if loose else "",pos[id(l)])
+    catalog["laws"].sort(key=key)
+    CATALOG.write_text(json.dumps(catalog,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
+    print(dict(stats))
+STOP={"instruktion","vissa","sarskilda","bestammelser","annat","andra","svenska","sverige"}
+def stems(name):
+    fold=lambda t:t.lower().replace("å","a").replace("ä","a").replace("ö","o")
+    out=[]
+    for w in re.findall(r"[a-zåäö]{5,}",name.lower()):
+        w=re.sub(r"(?:förordningen|förordning|kungörelsen|lagen|balken)$","",w)
+        w=re.sub(r"s$","",w)
+        if len(w)>=5 and fold(w) not in STOP:out.append(w)
+    return out
+def sameStem(a,b):
+    x,y=stems(a),stems(b)
+    return any(u==v or (min(len(u),len(v))>=7 and (u.startswith(v) or v.startswith(u))) for u in x for v in y)
+def Counter_top(items):return collections.Counter(items).most_common(1)[0][0]
+
 if __name__=="__main__":
-    {"add":add,"place":place}[sys.argv[1] if len(sys.argv)>1 else "add"]()
+    cmd=sys.argv[1] if len(sys.argv)>1 else "add"
+    if cmd=="add":add(regs="--forordningar" in sys.argv)
+    else:{"place":place,"anchor":anchor}[cmd]()

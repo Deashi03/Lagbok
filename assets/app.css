@@ -483,3 +483,14 @@ html[data-pen="on"] .toast{bottom:calc(150px + env(safe-area-inset-bottom))}
 .coverage-row span{flex:1}.coverage-row b{font-weight:650;font-variant-numeric:tabular-nums}.coverage-row em{font-style:normal;color:var(--accent);font-weight:700;min-width:56px;text-align:right}
 .meter{height:6px;border-radius:3px;background:var(--soft);overflow:hidden;margin-top:6px}.meter span{display:block;height:100%;background:var(--accent);border-radius:3px}
 .paragraph-num.unnumbered{font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--secondary)}
+/* 1.1: versionsnummer uppe till höger och sökfält som följer med vid scroll */
+.top-version{font-size:11px;font-weight:650;color:var(--secondary);background:var(--soft);border-radius:999px;padding:3px 8px;margin-right:2px;font-variant-numeric:tabular-nums;letter-spacing:.02em}
+.page>.searchbar-wrap,.page .searchbar-wrap{position:sticky;top:0;z-index:5;background:var(--panel);margin-left:-4px;margin-right:-4px;padding:8px 4px;transition:box-shadow .2s ease}
+.searchbar-wrap.stuck{box-shadow:0 8px 14px -12px #10241766}
+.tree-row.deep{padding-left:44px}.tree-row.deep .tree-branch{left:24px}
+.tree-row.deep .tree-branch::before{border-left-style:dotted}
+.tree-row.deep .tree-title{font-size:13px;font-weight:500}
+.tree-row.deep{background:linear-gradient(var(--border),var(--border)) 6px 0/1.5px 100% no-repeat}.tree-row.deep.last{background-size:1.5px 50%}
+.tree-more>summary{list-style:none;cursor:pointer;color:var(--accent)}.tree-more>summary::-webkit-details-marker{display:none}
+.tree-more>summary .tree-title{font-weight:650;color:var(--accent)}
+.tree-more[open]>summary{display:none}
