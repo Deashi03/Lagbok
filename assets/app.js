@@ -19,7 +19,7 @@
   const highlights=window.LagbokHighlights;
   const fetchJson=(url)=>fetch(url).then(r=>{if(!r.ok)throw Error(url);return r.json();});
   const searchIndex=window.LagbokIndex?window.LagbokIndex.create(fetchJson):null;
-  const state = {navDir:'',newHighlight:null,version:'',sections:[],relations:{},pen:false,penAnchor:null,editingNote:null,searchFilter:'',marksFilter:'',marksQuery:'',status:{},upcoming:null,backlinks:new Map(),pendingHighlight:null,markTerms:null,returnStack:[],catalog:[],fap:[],laws:new Map(),loading:new Map(),query:'',searchEpoch:0,positions:{},current:null,previous:[],savedOnHome:false,focus:pref.focusReader==='on',visibleParagraph:null};
+  const state = {find:null,navDir:'',newHighlight:null,version:'',sections:[],relations:{},pen:false,penAnchor:null,editingNote:null,searchFilter:'',marksFilter:'',marksQuery:'',status:{},upcoming:null,backlinks:new Map(),pendingHighlight:null,markTerms:null,returnStack:[],catalog:[],fap:[],laws:new Map(),loading:new Map(),query:'',searchEpoch:0,positions:{},current:null,previous:[],savedOnHome:false,focus:pref.focusReader==='on',visibleParagraph:null};
   const source = 'https://data.riksdagen.se/dokument/sfs-';
   const html = (s) => String(s == null ? '' : s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const attr = html;
@@ -76,7 +76,7 @@
     toast.timer = setTimeout(() => {el.hidden=true;toast.undo=null;},undo?5000:2300);
   }
   function closeSheet() {
-    sheet.style.transform='';
+    sheet.style.translate='';if(sheet.classList.remove)sheet.classList.remove('dragging');
     sheet.hidden = true; scrim.hidden = true; sheet.dataset.kind=''; $('#menu-button').setAttribute('aria-expanded','false'); sheet.innerHTML = '';
   }
   function showSheet(markup,autoFocus=true) {
@@ -386,6 +386,74 @@
       return x.type==='same'?t:x.type==='del'?'<del class="diff-del">'+t+'</del>':'<ins class="diff-ins">'+t+'</ins>';
     }).join('');
   }
+  // ---------- 0.9: sök i författningen (som "Sök på sidan") ----------
+  function findBar(meta){
+    const f=state.find;if(!f||f.sfs!==meta.sfs)return '';
+    return '<form class="find-bar" id="find-form" role="search"><input id="find-input" type="search" enterkeyhint="search" autocomplete="off" spellcheck="false" '+
+      'placeholder="Sök i '+attr(meta.name)+'" value="'+attr(f.q)+'" aria-label="Sök i författningen">'+
+      '<span class="find-count" id="find-count" aria-live="polite">'+findCount()+'</span>'+
+      '<button type="button" class="find-step" data-action="find-prev" aria-label="Föregående träff">⌃</button>'+
+      '<button type="button" class="find-step" data-action="find-next" aria-label="Nästa träff">⌄</button>'+
+      '<button type="button" class="find-close" data-action="find-close">Klar</button></form>';
+  }
+  function findCount(){
+    const f=state.find;if(!f||!f.q.trim())return '';
+    if(!f.tokens.length)return '';
+    if(!f.hits.length)return 'Inga träffar';
+    return f.i>=0?(f.i+1)+' av '+f.hits.length:f.hits.length+(f.hits.length===1?' träff':' träffar');
+  }
+  function findTokens(q){return window.LagbokIndex?window.LagbokIndex.words(q):norm(q).split(' ').filter(x=>x.length>1);}
+  function runFind(q){
+    const f=state.find,doc=f&&state.laws.get(f.sfs);if(!doc)return;
+    f.q=q;f.tokens=findTokens(q);f.i=-1;f.hits=[];
+    if(f.tokens.length){
+      const fold=window.LagbokIndex?window.LagbokIndex.fold:norm;
+      const res=f.tokens.map(t=>new RegExp('(^|[^a-z0-9])'+t));
+      for(const ch of doc.chapters)for(const item of ch.items){
+        if(item.type!=='para'||item.repealed)continue;
+        const text=fold(lawModel.resolve(item).current.text+' '+(tocModel.curatedTitle(f.sfs,ch.number,item.number)||''));
+        if(res.every(r=>r.test(text)))f.hits.push({c:ch.number,p:String(item.number)});
+      }
+    }
+    const count=$('#find-count');if(count)count.textContent=findCount();
+    clearFindMarks();applyFindMarks();
+  }
+  function stepFind(dir){
+    const f=state.find;if(!f||!f.hits.length)return;
+    f.i=(f.i+dir+f.hits.length)%f.hits.length;
+    const h=f.hits[f.i],r=route();
+    const count=$('#find-count');if(count)count.textContent=findCount();
+    const input=$('#find-input');if(input)input.blur();
+    if(String(r.chapter)===String(h.c)){
+      const el=$('#p-'+CSS.escape(searchCore.paraKey(h.p)));
+      clearFindMarks();applyFindMarks();
+      if(el&&el.scrollIntoView)el.scrollIntoView({block:'start',behavior:'smooth'});
+    }else{state.navDir='none';navigate(urlFor(f.sfs,h.c,searchCore.paraKey(h.p)),true);}
+  }
+  function clearFindMarks(){
+    $$('mark.find-hit').forEach(m=>{const p=m.parentNode;while(m.firstChild)p.insertBefore(m.firstChild,m);m.remove();p.normalize&&p.normalize();});
+    $$('.paragraph.find-current').forEach(a=>a.classList.remove('find-current'));
+  }
+  // Markerar sökorden i de träffar som syns i det öppna kapitlet; aktuell träff får en tydligare ram.
+  function applyFindMarks(){
+    const f=state.find,r=route();
+    if(!f||!f.tokens.length||!f.hits.length||r.sfs!==f.sfs||typeof view.querySelector!=='function'||!highlights)return;
+    const fold=window.LagbokIndex.fold;
+    f.hits.forEach((h,i)=>{
+      if(String(h.c)!==String(r.chapter))return;
+      const article=$('#p-'+CSS.escape(searchCore.paraKey(h.p)));
+      const content=article&&article.querySelector(':scope > .paragraph-content');if(!content)return;
+      if(i===f.i)article.classList.add('find-current');
+      const folded=fold(content.textContent),ranges=[];
+      for(const t of f.tokens){const re=new RegExp('(^|[^a-z0-9])('+t+'[a-z0-9]*)','g');let x;while((x=re.exec(folded))){const st=x.index+x[1].length;ranges.push([st,st+x[2].length]);}}
+      ranges.sort((a,b)=>b[0]-a[0]).forEach(([st,en])=>highlights.wrap(content,st,en,()=>{const m=document.createElement('mark');m.className='find-hit';return m;}));
+    });
+  }
+  function openFind(){
+    const r=route();if(r.page!=='law'||!state.laws.get(r.sfs))return;
+    if(!state.find||state.find.sfs!==r.sfs)state.find={sfs:r.sfs,q:'',tokens:[],hits:[],i:-1};
+    renderKeep().then(()=>{const i=$('#find-input');if(i)i.focus();});
+  }
   function chapterReader(meta,data,capid){
     const ch=data.chapters.find(c=>String(c.number)===String(capid));
     if(!ch)return '<div class="page"><div class="empty">Kapitlet hittades inte.</div></div>';
@@ -402,10 +470,11 @@
     const index=data.chapters.indexOf(ch),next=data.chapters[index+1];
     return '<div class="reader-context">'+
       '<div class="reader-crumbs"><strong>'+html(short)+'</strong><span class="reader-current">'+html(ch.title||meta.name)+'</span></div>'+
+      '<button type="button" data-action="find-open" class="find-toggle'+(state.find&&state.find.sfs===meta.sfs?' on':'')+'" aria-label="Sök i författningen">⌕ Sök</button>'+
       '<button type="button" data-action="pen" class="pen-toggle'+(state.pen?' on':'')+'" aria-pressed="'+state.pen+'" aria-label="Penna för markeringar">✎ Penna</button>'+
       '<button type="button" data-action="toc" class="reader-toc-button" aria-label="Öppna innehållsförteckning">Innehåll <span aria-hidden="true">☷</span></button>'+
       (state.focus?'<button type="button" class="focus-return" data-action="toggle-focus">Avsluta läsläge</button>':'')+
-      '</div>'+
+      findBar(meta)+'</div>'+
       '<main class="law-reader reading-mode-'+html(pref.readingMode)+'">'+
       '<header class="reader-heading"><h1>'+html(ch.title||(ch.number==='0'?meta.name:'Kapitel '+ch.number))+'</h1>'+(hasRealChapters(data)?'':lawRelations(meta))+'</header>'+
       '<div class="statute-body">'+content+'</div>'+
@@ -728,7 +797,8 @@
     $('#in-law-search').hidden=false;
     const meta=lawById(r.sfs);
     $('#top-title').textContent = r.page==='law'?(meta?meta.name:'Lagbok'):({home:'Lagbok',catalog:'Lagbok',search:'Lagbok',saved:'Sparat',fap:r.sfs?'FAP':'Polisens FAP',settings:'Inställningar',about:'Om',collection:'Samling',upcoming:'Kommande ändringar'}[r.page]||'Lagbok');
-    if(r.page!=='law')state.returnStack=[];
+    if(r.page!=='law'){state.returnStack=[];}
+    if(state.find&&(r.page!=='law'||r.sfs!==state.find.sfs))state.find=null;
     else while(state.returnStack.length&&state.returnStack[state.returnStack.length-1].hash===location.hash)state.returnStack.pop();
     let markup;
     switch(r.page) {
@@ -756,7 +826,7 @@
     if(state.current!==r)return;
     view.innerHTML=markup+(r.page==='law'?returnChip():'');
     animateView(keep?'':state.navDir);state.navDir='';
-    applyHighlights();applySearchMarks();clearNewHighlight();
+    applyHighlights();applySearchMarks();applyFindMarks();clearNewHighlight();
     if(r.page==='law'&&meta)addRecent(meta.sfs+(r.chapter==null?'':'|'+r.chapter)+(r.paragraph?'|'+r.paragraph:''));
     if(keep){/* Omritning på plats: renderKeep återställer scrollposition. */}
     else if(r.page==='law'&&r.paragraph) {
@@ -1288,11 +1358,12 @@
     drag=handle&&e.touches.length===1?{y:e.touches[0].clientY,dy:0}:null;
   },{passive:true});
   sheet.addEventListener('touchmove',e=>{
-    if(!drag)return;drag.dy=Math.max(0,e.touches[0].clientY-drag.y);sheet.style.transform='translateY('+drag.dy+'px)';
+    if(!drag)return;drag.dy=Math.max(0,e.touches[0].clientY-drag.y);sheet.classList.add('dragging');sheet.style.translate='0 '+drag.dy+'px';
   },{passive:true});
   sheet.addEventListener('touchend',()=>{
     if(!drag)return;const close=drag.dy>90;drag=null;
-    if(close)closeSheet();else sheet.style.transform='';
+    sheet.classList.remove('dragging');
+    if(close)closeSheet();else sheet.style.translate='';
   },{passive:true});
   view.addEventListener('touchstart',e=>{
     if(route().page!=='law'||e.touches.length!==1||e.touches[0].clientX<30)return;
@@ -1305,6 +1376,7 @@
     if(dt<600&&Math.abs(dx)>90&&Math.abs(dy)<45&&(!sel||sel.isCollapsed))chapterStep(dx<0?1:-1);
   },{passive:true});
   view.addEventListener('input',e=>{
+    if(e.target.id==='find-input'){clearTimeout(runFind.t);const v=e.target.value;runFind.t=setTimeout(()=>runFind(v),180);return;}
     if(e.target.classList&&e.target.classList.contains('note-input')){
       const k=e.target.dataset.noteKey,v=e.target.value;clearTimeout(saveNote.t);saveNote.t=setTimeout(()=>saveNote(k,v,true),400);return;
     }
@@ -1312,6 +1384,11 @@
     if(e.target.id==='query'||e.target.id==='fap-query')onSearch(e.target.value);
   });
   view.addEventListener('submit',async e=>{
+    if(e.target.id==='find-form'){
+      e.preventDefault();const q=$('#find-input').value;if(!state.find)return;
+      if(q!==state.find.q)runFind(q);
+      stepFind(1);return;
+    }
     if(e.target.id!=='global-search')return;
     e.preventDefault();
     const field=$('#query');if(!field)return;
@@ -1386,6 +1463,10 @@
       if(field){const t=field.value.trim();if(t)pref.notes[k]=t;else delete pref.notes[k];savePrefs();closeSheet();const position=view.scrollTop;Promise.resolve(render(false)).then(()=>{view.scrollTop=position;});toast('Anteckning sparad');}
     }
     if(a==='toc')toc();
+    if(a==='find-open'){if(state.find&&state.find.sfs===route().sfs){const i=$('#find-input');if(i)i.focus();}else openFind();return;}
+    if(a==='find-next'){stepFind(1);return;}
+    if(a==='find-prev'){stepFind(-1);return;}
+    if(a==='find-close'){state.find=null;renderKeep();return;}
     if(a==='check-update'){if(navigator.serviceWorker&&navigator.serviceWorker.getRegistration)navigator.serviceWorker.getRegistration().then(r=>r&&r.update()).then(()=>toast('Du har den senaste versionen om inget meddelande visas')).catch(()=>{});else location.reload();return;}
     if(a==='toast-undo'){const fn=toast.undo;$('#toast').hidden=true;toast.undo=null;if(fn)fn();return;}
     if(a==='note-done'){const f=$('textarea.note-input');if(f)saveNote(k,f.value);state.editingNote=null;renderKeep();return;}

@@ -65,7 +65,7 @@ const sandbox={
  setTimeout:()=>0,clearTimeout(){},console
 };
 vm.runInNewContext(app,sandbox,{filename:'assets/app.js'});
-async function settle(){for(let i=0;i<10;i++)await Promise.resolve();}
+async function settle(){for(let i=0;i<30;i++)await Promise.resolve();}
 async function submit(q){
  el.query.value=q;
  await listeners['view.submit'][0]({target:{id:'global-search'},preventDefault(){}});

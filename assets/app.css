@@ -355,25 +355,26 @@ button.chip{cursor:pointer;font-family:inherit}
 #view.anim-forward>*{animation:view-forward .22s cubic-bezier(.2,.8,.2,1)}
 #view.anim-back>*{animation:view-back .22s cubic-bezier(.2,.8,.2,1)}
 #view.anim-fade>*{animation:view-fade .15s ease-out}
-@keyframes view-forward{from{transform:translateX(26px);opacity:.4}to{transform:none;opacity:1}}
-@keyframes view-back{from{transform:translateX(-26px);opacity:.4}to{transform:none;opacity:1}}
+@keyframes view-forward{from{translate:18px 0;opacity:.5}to{translate:0 0;opacity:1}}
+@keyframes view-back{from{translate:-18px 0;opacity:.5}to{translate:0 0;opacity:1}}
 @keyframes view-fade{from{opacity:.3}to{opacity:1}}
-.sheet:not([hidden]){animation:sheet-up .25s cubic-bezier(.2,.8,.2,1)}
+.sheet:not([hidden]){animation:sheet-up .28s cubic-bezier(.22,1,.36,1) both}
 .scrim:not([hidden]){animation:view-fade .25s ease-out}
-@keyframes sheet-up{from{transform:translateY(40%);opacity:.6}to{transform:none;opacity:1}}
-.sheet{transition:transform .18s ease-out}
+/* Menyn är centrerad med transform: animeringen använder därför egenskapen translate så att den inte skriver över centreringen. */
+@keyframes sheet-up{from{translate:0 100%}to{translate:0 0}}
+.sheet{transition:translate .2s cubic-bezier(.22,1,.36,1)}.sheet.dragging{transition:none}
 .sheet::before{content:"";display:block;width:38px;height:5px;border-radius:3px;background:var(--border);margin:-4px auto 8px}
 details[open]>:not(summary){animation:reveal .18s ease-out}
-@keyframes reveal{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+@keyframes reveal{from{opacity:0;translate:0 -4px}to{opacity:1;translate:0 0}}
 mark.hl.hl-new{background-size:0 100%;background-repeat:no-repeat;animation:marker .25s ease-out forwards}
 mark.hl-yellow.hl-new{background-color:transparent;background-image:linear-gradient(#F6E58D,#F6E58D)}
 mark.hl-green.hl-new{background-color:transparent;background-image:linear-gradient(#C8E6C9,#C8E6C9)}
 mark.hl-rose.hl-new{background-color:transparent;background-image:linear-gradient(#F5C6D0,#F5C6D0)}
 @keyframes marker{to{background-size:100% 100%}}
 .pop{animation:pop .15s ease-out}
-@keyframes pop{50%{transform:scale(1.15)}}
+@keyframes pop{50%{scale:1.15}}
 .toast:not([hidden]){animation:toast-in .18s ease-out}
-@keyframes toast-in{from{transform:translate(-50%,12px);opacity:0}}
+@keyframes toast-in{from{translate:0 12px;opacity:0}to{translate:0 0;opacity:1}}
 .skeleton{padding:24px 19px}.sk-title,.sk-line,.sk-num{display:block;border-radius:6px;background:linear-gradient(90deg,var(--soft) 0%,var(--border) 50%,var(--soft) 100%);background-size:200% 100%;animation:shimmer 1.2s linear infinite}
 .sk-title{height:24px;width:60%;margin-bottom:26px}.sk-para{margin-bottom:26px}.sk-num{height:22px;width:44px;margin-bottom:12px}.sk-line{height:13px;margin:9px 0}
 @keyframes shimmer{to{background-position:-200% 0}}
@@ -390,3 +391,20 @@ input[type=range]{width:100%;accent-color:var(--accent)}.range-value{float:right
 .font-preview{margin:8px 0 0;padding:10px 12px;border-radius:9px;background:var(--soft);font-size:calc(16px * var(--fontscale));line-height:var(--lineheight)}
 html[data-reader-font="serif"] .paragraph-content,html[data-reader-font="serif"] .font-preview{font-family:"Iowan Old Style","Charter",Georgia,serif;letter-spacing:0}
 .backup-notice{border-left-color:var(--wine)}
+/* 0.9 – sök i författningen */
+.reader-context{flex-wrap:wrap}
+.find-toggle{white-space:nowrap}.find-toggle.on{color:var(--wine)!important}
+.find-bar{flex-basis:100%;display:flex;align-items:center;gap:6px;padding:6px 0 2px}
+.find-bar input{flex:1;min-width:0;height:36px;border:1px solid var(--border);border-radius:10px;padding:0 10px;font-size:16px;background:var(--panel);color:var(--text)}
+.find-bar input:focus{outline:2px solid #96BDA6;outline-offset:0}
+.find-count{font-size:12px;color:var(--secondary);white-space:nowrap;min-width:58px;text-align:right}
+.find-step{width:34px;height:34px;border:1px solid var(--border)!important;border-radius:9px!important;background:var(--panel)!important;font-size:16px!important;line-height:1;padding:0!important}
+.find-close{font-weight:700}
+mark.find-hit{background:#F2D27A;color:inherit;border-radius:2px;padding:0 1px}
+html[data-theme="dark"] mark.find-hit{background:#7A6527}
+.paragraph.find-current .paragraph-num{color:var(--wine)}
+.paragraph.find-current mark.find-hit{background:#E9A23B;box-shadow:0 0 0 1px #C5811C}
+.find-bar .find-step{flex:0 0 36px;width:36px!important;min-width:0;height:36px}
+.find-bar .find-close{flex:0 0 auto;padding:6px 4px!important}
+.find-bar .find-count{flex:0 0 auto;min-width:0}
+.find-bar input{flex:1 1 auto;width:0}

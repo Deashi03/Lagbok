@@ -747,18 +747,6 @@
       "parent": "1942:740"
     },
     {
-      "sfs": "1995:1506",
-      "name": "Lagen om hantering av beslagtagen egendom m.m.",
-      "type": "lag",
-      "aliases": [
-        "beslagtagen egendom"
-      ],
-      "chaptered": false,
-      "check": "beslagtagen egendom",
-      "section": "balkar",
-      "parent": "1942:740"
-    },
-    {
       "sfs": "1981:774",
       "name": "Utsökningsbalken",
       "type": "lag",
@@ -977,7 +965,7 @@
       "section": "civil"
     },
     {
-      "sfs": "1936:83",
+      "sfs": "1936:81",
       "name": "Skuldebrevslagen",
       "type": "lag",
       "aliases": [
@@ -1366,17 +1354,6 @@
     },
     {
       "sfs": "2017:496",
-      "name": "Lagen om internationell polisiär samverkan",
-      "type": "lag",
-      "aliases": [
-        "polisiär samverkan"
-      ],
-      "chaptered": false,
-      "check": "polisiär samverkan",
-      "section": "polis"
-    },
-    {
-      "sfs": "2000:343",
       "name": "Lagen om internationellt polisiärt samarbete",
       "type": "lag",
       "aliases": [
