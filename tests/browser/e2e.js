@@ -9,6 +9,16 @@ const B=process.env.LAGBOK_URL||'http://localhost:8765/';
  const errors=[];page.on('pageerror',e=>errors.push(e.message));
  const wait=ms=>page.waitForTimeout(ms);
  // Katalog i lagbokens ordning, balkarna med anslutande författningar synliga
+ // Introduktion vid första starten: bläddra igenom, bekräfta, och den ska inte komma tillbaka
+ await page.goto(B+'#/catalog');await page.waitForSelector('#tutorial');
+ for(let i=0;i<20&&await page.locator('[data-tut="next"]').count();i++){await page.click('[data-tut="next"]');}
+ assert.match(await page.textContent('.tut-sign'),/Jonathan/);
+ await page.click('[data-tut="done"]');await wait(400);
+ assert.equal(await page.locator('#tutorial').count(),0);
+ await page.reload();await page.waitForSelector('.law-tree');await wait(400);
+ assert.equal(await page.locator('#tutorial').count(),0,'introduktionen visas bara en gång');
+ await page.goto(B+'#/settings');await wait(500);await page.click('[data-action="tutorial"]');await page.waitForSelector('#tutorial');
+ await page.click('[data-tut="skip"]');await page.click('[data-tut="done"]');await wait(300);
  await page.goto(B+'#/catalog');await page.waitForSelector('.law-tree');
  assert.equal(await page.locator('.cat-section .cat-name').first().textContent(),'Grundlagar');
  assert.equal(await page.locator('.cat-section[open]').count(),2,'grundlagar och balkar är öppna från början');
@@ -61,6 +71,6 @@ const B=process.env.LAGBOK_URL||'http://localhost:8765/';
  await page.goto(B+'#/nytt');await wait(800);
  assert.match(await page.textContent('#view h1'),/Nytt i lagen/);
  assert.deepEqual(errors,[]);
- console.log('Webbläsartest: katalog, kopplingar, meny, sök, penna, ångra, snabbhopp, Sparat, favoriter, lydelse vid datum och Nytt i lagen godkända');
+ console.log('Webbläsartest: katalog, kopplingar, meny, sök, penna, ångra, snabbhopp, Sparat, introduktion, favoriter, lydelse vid datum och Nytt i lagen godkända');
  await browser.close();
 })().catch(e=>{console.error(e);process.exitCode=1;});
