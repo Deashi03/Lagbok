@@ -28,10 +28,20 @@ fs.mkdirSync(path.join(out,'backlinks'),{recursive:true});
 const file=sfs=>path.join(root,'data/laws',sfs.replace(/[: ]/g,'-')+'.json');
 const laws=catalog.laws.filter(l=>fs.existsSync(file(l.sfs)));
 const docs=new Map(laws.map(l=>[l.sfs,JSON.parse(fs.readFileSync(file(l.sfs),'utf8'))]));
+for(const [sfs,doc] of docs)toc.registerDoc(sfs,doc);
 const key=search.paraKey;
 const known=new Map();
 for(const [sfs,doc] of docs)for(const ch of doc.chapters)known.set(sfs+'|'+ch.number,new Set(ch.items.filter(i=>i.type==='para').map(i=>key(i.number))));
 const exists=(sfs,chapter,para)=>{const s=known.get(sfs+'|'+chapter);return !!s&&(para==null||s.has(key(para)));};
+// Paragrafer och kapitel i ett intervall ("7–9 §§", "24–28 kap.") i lagtextens ordning.
+const order=new Map();
+for(const [sfs,doc] of docs)for(const ch of doc.chapters)order.set(sfs+'|'+ch.number,ch.items.filter(i=>i.type==='para').map(i=>key(i.number)));
+const between=(list,a,b)=>{const i=list.indexOf(a),j=list.indexOf(b);return i>=0&&j>=i?list.slice(i,j+1):null;};
+// Paragrafer ordnas efter nummer och bokstav, så att ett intervall fungerar även när en ändparagraf är upphävd.
+const rank=k=>{const m=/^(\d+)([a-z]*)$/.exec(k);return m?Number(m[1])*100+(m[2]?m[2].charCodeAt(0)-96:0):null;};
+const members=(sfs,chapter,a,b)=>{const lo=rank(key(a)),hi=rank(key(b));if(lo==null||hi==null||hi<lo)return null;
+  const list=(order.get(sfs+'|'+chapter)||[]).filter(k=>{const r=rank(k);return r!=null&&r>=lo&&r<=hi;});return list.length?list:null;};
+const chapters=(sfs,a,b)=>{const doc=docs.get(sfs);return doc?between(doc.chapters.map(c=>String(c.number)),String(a),String(b)):null;};
 const fold=s=>String(s||'').toLocaleLowerCase('sv').normalize('NFD').replace(/[̀-ͯ]/g,'');
 const words=s=>fold(s).match(/[a-z0-9]{2,}/g)||[];
 const paras=[],postings=new Map(),backlinks=new Map(),lawRefs=new Map();
@@ -64,7 +74,7 @@ laws.forEach((law,li)=>{
       const terms=new Set(words([...texts,title,heading,ch.title].join(' ')));
       for(const t of terms){if(!postings.has(t))postings.set(t,[]);postings.get(t).push(ordinal);}
       for(const text of texts){
-        for(const ref of links.parseRefs(text,{sfs:law.sfs,chapter:ch.number,exists,anchor:law.parent||law.anchor})){
+        for(const ref of links.parseRefs(text,{sfs:law.sfs,chapter:ch.number,exists,members,chapters,unit:doc.unit||'',anchor:law.parent||law.anchor})){
           if(ref.id===law.sfs&&ref.chapter===ch.number&&ref.numbers.includes(key(item.number)))continue;
           const target=typeOf.get(ref.id);
           const complements=law.type==='förordning'&&target==='lag'&&ref.id!==law.sfs;
@@ -200,7 +210,7 @@ function place(prefix,data){
 for(const [p,data] of byPrefix)place(p,data);
 for(const [name,data] of shards)fs.writeFileSync(path.join(out,'terms',name+'.json'),JSON.stringify(data));
 // Vikt per författning vid sökning: balkar och grundlagar först, sedan lagar, sist förordningar.
-const weight=l=>l.type!=='lag'?0.25:l.section==='balkar'&&!l.parent?1:l.section==='grundlagar'?0.8:l.parent?0.75:0.5;
+const weight=l=>l.type==='konvention'?((l.aliases||[]).length?0.8:0.3):l.type!=='lag'?0.25:l.section==='balkar'&&!l.parent?1:l.section==='grundlagar'?0.8:l.parent?0.75:0.5;
 fs.writeFileSync(path.join(out,'meta.json'),JSON.stringify({laws:laws.map(l=>l.sfs),names:laws.map(l=>fold(l.name)),weights:laws.map(weight),count:paras.length,chunk:CHUNK,shards:[...shards.keys()].sort()}));
 const bySfs=new Map();
 for(const [k,sources] of backlinks){

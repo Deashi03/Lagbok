@@ -1,0 +1,170 @@
+{
+ "sfs": "2014:834-K",
+ "title": "Konvention om social trygghet mellan Sverige och Sydkorea",
+ "officialTitle": "Bilaga till Lag (2014:834) om konvention om social trygghet mellan Sverige och Sydkorea",
+ "sourceUrl": "https://data.riksdagen.se/dokument/sfs-2014-834.html",
+ "parser": "KONVENTION",
+ "fetchedAt": "2026-10-26T14:42:09+00:00",
+ "unit": "artikel",
+ "treatyOf": "2014:834",
+ "chapters": [
+  {
+   "number": "0",
+   "title": "Konvention om social trygghet mellan Sverige och Sydkorea",
+   "items": [
+    {
+     "type": "heading",
+     "text": "Avdelning I – Allmänna bestämmelser",
+     "editorial": false
+    },
+    {
+     "type": "para",
+     "number": "1",
+     "text": "1. I denna konvention avses med:\n\na) medborgare: med avseende på Republiken Korea (nedan kallad Sydkorea), en sydkoreansk medborgare enligt definitionen i medborgarskapslagen och med avseende på Konungariket Sverige (nedan kallat Sverige), en person som är svensk medborgare,\n\nb) lagstiftning: de lagar och bestämmelser som anges i artikel 2 i denna konvention,\n\nc) behörig myndighet: med avseende på Sydkorea, ministern för hälso- och sjukvård samt välfärdsfrågor och med avseende på Sverige, regeringen eller den myndighet som regeringen bestämmer\n\nd) behörig institution: med avseende på Sydkorea, den nationella pensionstjänsten och med avseende på Sverige, den institution som ansvarar för tillämpningen av den lagstiftning som anges i artikel 2,\n\ne) försäkringsperiod: varje avgiftsperiod enligt lagstiftningen i en avtalsslutande stat och varje annan period som beaktas för att fastställa rätten till förmåner enligt den lagstiftningen,\n\nf) förmån: varje förmån som finns i den lagstiftning som anges i artikel 2 i denna konvention.\n\n2. Termer och uttryck som inte definieras i denna artikel ska ges den innebörd som de har i den tillämpliga lagstiftningen.",
+     "title": "Definitioner"
+    },
+    {
+     "type": "para",
+     "number": "2",
+     "text": "1. Denna konvention ska tillämpas på följande lagstiftning:\n\na) i fråga om Sydkorea: nationella lagen om pensioner,\n\nb) i fråga om Sverige:\n\ni) lagstiftningen om sjukersättning och aktivitetsersättning,\n\nii) lagstiftningen om inkomstgrundade ålderspensioner och garantipensioner, samt\n\niii) lagstiftningen om efterlevandepensioner och efterlevandestöd.\n\n2. Denna konvention ska också tillämpas på framtida lagstiftning som ändrar, utgör tillägg till, sammanför eller ersätter den lagstiftning som anges i punkt 1 i denna artikel.\n\n3. Oavsett vad som anges i punkt 2 i denna artikel ska denna konvention inte tilllämpas på de lagar och andra bestämmelser som utvidgar någon av de avtalsslutande staternas gällande lagstiftning till nya kategorier av förmånstagare, om den avtalsslutande statens behöriga myndighet, inom sex månader från den dag då sådana lagar och andra bestämmelser träder i kraft, skriftligen underrättar den andra avtalsslutande statens behöriga myndighet om att en sådan utvidgning av konventionen inte är avsedd. Denna konvention ska inte tillämpas på lagstiftning som inför en ny socialförsäkringsgren, såvida inte de behöriga myndigheterna kommer överens om en sådan tillämpning.",
+     "title": "Lagstiftning på vilken konventionen ska tillämpas"
+    },
+    {
+     "type": "para",
+     "number": "3",
+     "text": "Denna konvention ska tillämpas på varje person som omfattas av eller har omfattats av lagstiftningen i någon av de avtalsslutande staterna och andra personer i den mån de härleder rättigheter från en sådan person.",
+     "title": "Personer som omfattas av konventionen"
+    },
+    {
+     "type": "para",
+     "number": "4",
+     "text": "Om inte annat följer av denna konvention ska, vid tillämpning av en avtalsslutande stats lagstiftning, de personer som avses i artikel 3 likställas med den avtalsslutande statens egna medborgare.",
+     "title": "Likabehandling"
+    },
+    {
+     "type": "para",
+     "number": "5",
+     "text": "1. Om inte annat följer av denna konvention ska förmåner enligt en avtalsslutande stats lagstiftning inte minskas, ändras, dras in, återkallas eller förklaras förverkade av det skälet att förmånstagaren är bosatt eller vistas inom den andra avtalsslutande statens territorium, och förmånerna ska kunna betalas ut inom den andra avtalsslutande statens territorium.\n\n2. En förmån som betalas ut med stöd av denna konvention ska också betalas ut utanför de avtalsslutande staternas territorier på samma villkor som gäller när den betalas ut till de avtalsslutande staternas egna medborgare när de är bosatta utanför de avtalsslutande staternas territorier.\n\n3. Bestämmelserna i punkterna 1 och 2 i denna artikel ska inte tillämpas på följande förmåner med avseende på Sverige:\n\na) sjukersättning i form av garantiersättning eller aktivitetsersättning i form av garantiersättning,\n\nb) garantipensioner och efterlevandestöd.",
+     "title": "Export av förmåner"
+    },
+    {
+     "type": "heading",
+     "text": "Avdelning II – Bestämmelser om tillämplig lagstiftning",
+     "editorial": false
+    },
+    {
+     "type": "para",
+     "number": "6",
+     "text": "1. Om inte annat följer av denna avdelning ska en anställd eller en egenföretagare som arbetar inom en av de avtalsslutande staternas territorium, när det gäller det arbetet, enbart omfattas av lagstiftningen i denna avtalsslutande stat.\n\n2. En egenföretagare som normalt är bosatt inom en avtalsslutande stats territorium och som arbetar inom båda avtalsslutande staternas territorier ska, när det gäller arbetet, enbart omfattas av lagstiftningen i den avtalsslutande stat där personen är bosatt.",
+     "title": "Allmänna bestämmelser"
+    },
+    {
+     "type": "para",
+     "number": "7",
+     "text": "1. När en person, som normalt arbetar inom en avtalsslutande stats territorium för en arbetsgivare som har sin verksamhet inom den avtalsslutande statens territorium, sänds ut av arbetsgivaren för att arbeta för dennes räkning inom den andra avtalsslutande statens territorium, ska denna person fortfarande omfattas enbart av den förstnämnda avtalsslutande statens lagstiftning, som om personen utförde arbete inom det territoriet, förutsatt att perioden för arbetet inom den andra avtalsslutande statens territorium inte förväntas överstiga 24 kalendermånader.\n\n2. Om utsändningen fortsätter efter den period som anges i punkt 1 i denna artikel, ska lagstiftningen i den förstnämnda avtalsslutande stat som avses i den punkten fortsätta att gälla under ytterligare en period av 36 kalendermånader, förutsatt att de behöriga myndigheterna i båda de avtalsslutande staterna eller de behöriga institutionerna som staterna har utsett samtycker till arbetstagarens och arbetsgivarens gemensamma begäran.\n\n3. Punkterna 1 och 2 i denna artikel ska även tilllämpas på en arbetstagare som är utsänd av sin arbetsgivare inom den ena avtalsslutande statens territorium till arbetsgivarens filial eller dotterbolag inom den andra avtalsslutande statens territorium.",
+     "title": "Utsändning"
+    },
+    {
+     "type": "para",
+     "number": "8",
+     "text": "En person som, om det inte vore för denna konvention, skulle omfattas av båda de avtalsslutande staternas lagstiftning på grund av sin anställning som befäl eller besättningsman på ett fartyg, ska omfattas enbart av sydkoreansk lagstiftning om personen normalt är bosatt i Sydkorea och i övriga fall av svensk lagstiftning.",
+     "title": "Sjömän"
+    },
+    {
+     "type": "para",
+     "number": "9",
+     "text": "1. Denna konvention ska inte påverka bestämmelserna i Wienkonventionen om diplomatiska förbindelser av den 18 april 1961 eller bestämmelserna i Wienkonventionen om konsulära förbindelser av den 24 april 1963.\n\n2. En statligt anställd person som inte omfattas av punkt 1 i denna artikel och som är utsänd för att arbeta inom den andra avtalsslutande statens territorium, ska omfattas av lagstiftningen i den förstnämnda avtalsslutande staten som om personen utför arbete inom dess territorium.",
+     "title": "Personal vid diplomatiska beskickningar och konsulära myndigheter samt statligt anställda"
+    },
+    {
+     "type": "para",
+     "number": "10",
+     "text": "En medföljande make och barn under 18 år till en person som arbetar inom en avtalsslutande stats territorium och som omfattas av lagstiftningen i den andra avtalsslutande staten i enlighet med artikel 7 eller artikel 9.2 ska omfattas av den sistnämnda statens lagstiftning, såvida de inte själva förvärvsarbetar inom den förstnämnda avtalsslutande statens territorium.",
+     "title": "Medföljande make och barn"
+    },
+    {
+     "type": "para",
+     "number": "11",
+     "text": "De avtalsslutande staternas behöriga myndigheter eller de behöriga institutioner som de har utsett får komma överens om undantag från bestämmelserna i denna avdelning för vissa personer eller grupper av personer, förutsatt att de berörda personerna omfattas av lagstiftningen i någon av de avtalsslutande staterna.",
+     "title": "Undantag från bestämmelserna om tillämplig lagstiftning"
+    },
+    {
+     "type": "heading",
+     "text": "Avdelning III – Bestämmelser om förmåner",
+     "editorial": false
+    },
+    {
+     "type": "para",
+     "number": "12",
+     "text": "1. När försäkringsperioder har fullgjorts enligt lagstiftningen i de båda avtalsslutande staterna ska de behöriga institutionerna i var och en av de avtalsslutande staterna, i samband med fastställandet av rätten till en förmån enligt den lagstiftning som den tillämpar, vid behov beakta försäkringsperioder enligt den andra avtalsslutande statens lagstiftning, förutsatt att dessa perioder inte sammanfaller med försäkringsperioder enligt dess egen lagstiftning.\n\n2. Om det enligt den ena avtalsslutande statens lagstiftning krävs att försäkringsperioder måste fullgöras inom en viss yrkesverksamhet för att vissa förmåner ska beviljas, ska enbart försäkringsperioder som har fullgjorts eller erkänts som likvärdiga inom samma yrkesverksamhet enligt den andra avtalsslutande statens lagstiftning sammanläggas för rätt till dessa förmåner.\n\n3. Om en person efter sammanläggning av försäkringsperioder enligt punkterna 1 och 2 i denna artikel inte är berättigad till en förmån enligt en avtalsslutande stats lagstiftning, ska denna persons rätt till förmån bestämmas genom sammanläggning av dessa perioder och sådana försäkringsperioder som har fullgjorts enligt lagstiftningen i ett tredje land med vilket båda de avtalsslutande staterna har en gällande konvention om social trygghet, eller motsvarande samordningsinstrument för social trygghet, som medger sammanläggning av försäkringsperioder.\n\n4. Beräkningen av förmånen ska bestämmas av tillämplig lagstiftning i respektive avtalsslutande stat om inte annat följer av denna konvention.",
+     "title": "Sammanläggning av försäkringsperioder och beräkning av förmåner"
+    },
+    {
+     "type": "para",
+     "number": "13",
+     "text": "1. För att få en invaliditetsförmån eller efterlevandeförmån ska den sydkoreanska lagstiftningens krav om att en person ska vara försäkrad när försäkringsfallet inträffar anses vara uppfyllt om personen är försäkrad för en förmån enligt svensk lagstiftning vid tidpunkten då försäkringsfallet inträffar enligt sydkoreansk lagstiftning.\n\n2. När försäkringsperioder enligt svensk lagstiftning beaktas för att fastställa rätten till förmåner enligt sydkoreansk lagstiftning, i enlighet med artikel 12.1 och punkt 1 i denna artikel, ska förmånen bestämmas på följande sätt:\n\na) Den behöriga institutionen i Sydkorea ska först räkna ut ett pensionsbelopp som motsvarar det belopp som skulle ha betalats ut\n\ntill personen om alla försäkringsperioder som beaktas enligt lagstiftningen i de båda avtalsslutande staterna hade fullgjorts enligt sydkoreansk lagstiftning. För att bestämma pensionsbeloppet ska den behöriga institutionen i Sydkorea beakta personens genomsnittliga månadsinkomst under den tid då personen var försäkrad enligt sydkoreansk lagstiftning.\n\nb) Den behöriga institutionen i Sydkorea ska räkna ut hur stor del av förmånen som ska betalas ut i enlighet med sydkoreansk lagstiftning, grundat på det pensionsbelopp som beräknades i enlighet med a med utgångspunkt i förhållandet mellan försäkringsperiodernas längd, enligt den egna lagstiftningen, och försäkringsperiodernas totala längd enligt lagstiftningen i båda de avtalsslutande staterna.\n\n3. Den behöriga institutionen i Sydkorea ska, i den mening som avses i artikel 12 och i denna artikel, enbart beakta försäkringsperioderna med undantag för bosättningsperioder enligt svensk lagstiftning, när den fastställer rätten till förmåner enligt sydkoreansk lagstiftning.\n\n4. Oavsett vad som anges i artikel 4 ska återbetalning av engångsbelopp bestämmas i enlighet med sydkoreansk lagstiftning.\n\n5. Bestämmelser i sydkoreansk lagstiftning som begränsar rätten till invaliditetsförmåner eller efterlevandeförmåner på grund av obetalda avgifter vid den tidpunkt då personen i övrigt kvalificerade sig för förmånen, ska endast vara tillämpliga på den period som omfattas av sydkoreansk lagstiftning.",
+     "title": "Särskilda bestämmelser avseende Sydkorea"
+    },
+    {
+     "type": "para",
+     "number": "14",
+     "text": "1. Bestämmelserna om sammanläggning i artikel 12 ska inte tillämpas på grundkravet på tre års bosättning i Sverige för rätt till garantipension, sjukersättning i form av garantiersättning eller aktivitetsersättning i form av garantiersättning.\n\n2. Vid fastställande av rätten till sjukersättning eller aktivitetsersättning ska försäkring enligt sydkoreansk lagstiftning anses som försäkring enligt svensk lagstiftning.\n\n3. Vid beräkning av inkomstrelaterad sjukersättning eller inkomstrelaterad aktivitetsersättning ska endast inkomst intjänad under den tid då svensk lagstiftning var tillämplig beaktas.\n\n4. Vid beräkning av den inkomstgrundade ålderspensionen i form av tillläggspension som ska betalas ut i enlighet med artikel 12, ska enbart försäkringsperioder som har fullgjorts enligt svensk lagstiftning beaktas.",
+     "title": "Särskilda bestämmelser avseende Sverige"
+    },
+    {
+     "type": "heading",
+     "text": "Avdelning IV – Övriga bestämmelser",
+     "editorial": false
+    },
+    {
+     "type": "para",
+     "number": "15",
+     "text": "1. De avtalsslutande staternas behöriga myndigheter ska ingå en tillämpningsöverenskommelse i vilken de åtgärder som är nödvändiga för att tillämpa denna konvention fastställs.\n\n2. Förbindelseorganen i var och en av de avtalsslutande staterna ska anges i tillämpningsöverenskommelsen.",
+     "title": "Tillämpningsöverenskommelse"
+    },
+    {
+     "type": "para",
+     "number": "16",
+     "text": "1. De avtalsslutande staternas behöriga myndigheter och behöriga institutioner ska, inom ramen för sina respektive ansvarsområden:\n\na) i den utsträckning det är tillåtet enligt tillämplig lagstiftning, ge varandra all information som är nödvändig för att tillämpa denna konvention,\n\nb) bistå varandra i fråga om fastställandet av rätten till, eller utbetalning av, varje förmån som omfattas av denna konvention, eller den lagstiftning som denna konvention är tillämplig på, som om ärendet hade gällt tillämpningen av den egna lagstiftningen,\n\nc) så snart som möjligt informera varandra om vilka åtgärder som har vidtagits för att tillämpa denna konvention och om ändringar i respektive stats lagstiftning som kan påverka tillämpningen av denna konvention.\n\n2. Det bistånd som avses i punkt 1 b i denna artikel ska ges utan kostnad, såvida staterna inte kommer överens om några undantag i den tillämpningsöverenskommelse som ska ingås i enlighet med artikel 15.1.\n\n3. De behöriga institutionerna ska årligen utbyta statistik, vilken ska specificeras i tillämpningsöverenskommelsen.",
+     "title": "Informationsutbyte och ömsesidigt bistånd"
+    },
+    {
+     "type": "para",
+     "number": "17",
+     "text": "Om inget annat föreskrivs i den nationella lagstiftningen i en avtalsslutande stat ska uppgifter om en enskild person, som i enlighet med denna konvention vidarebefordras till den behöriga myndigheten eller de behöriga institutionerna i denna stat av den behöriga myndigheten eller de behöriga institutionerna i den andra staten, uteslutande användas för att tilllämpa denna konvention och den lagstiftning som denna konvention är tilllämplig på. De uppgifter som tas emot av en behörig myndighet eller en behörig institution i en avtalsslutande stat ska behandlas i enlighet med den avtalsslutande statens nationella lagstiftning om skydd och sekretess av personuppgifter.",
+     "title": "Skydd av personuppgifter"
+    },
+    {
+     "type": "para",
+     "number": "18",
+     "text": "1. I de fall det enligt lagstiftningen i en av de avtalsslutande staterna föreskrivs att varje handling som ges in till den behöriga myndigheten eller den behöriga institutionen i denna stat ska befrias, helt eller delvis, från avgifter eller kostnader, inbegripet konsulära och administrativa avgifter, ska detta också gälla motsvarande handling som ges in till den behöriga myndigheten eller den behöriga institutionen i den andra avtalsslutande staten vid tillämpningen av denna konvention eller av lagstiftningen i den andra avtalsslutande staten.\n\n2. Handlingar och intyg som visas upp av den behöriga myndigheten eller den behöriga institutionen i endera avtalsslutande staten i samband med tillämpningen av denna konvention eller av lagstiftningen i den andra avtalsslutande staten ska undantas från kraven om bestyrkande av diplomatiska eller konsulära myndigheter eller liknande formaliteter.\n\n3. Kopior av handlingar som är bestyrkta som exakta och med originalen överensstämmande kopior av den behöriga myndigheten eller den behöriga institutionen i en avtalsslutande stat ska godtas som exakta och med originalen överensstämmande kopior av den andra avtalsslutande statens behöriga myndighet eller behöriga institution, utan ytterligare bestyrkande.",
+     "title": "Befrielse från avgifter och intygande av handling"
+    },
+    {
+     "type": "para",
+     "number": "19",
+     "text": "1. De avtalsslutande staternas behöriga myndigheter och behöriga institutioner får meddela sig direkt med varandra och med varje person, oavsett var vederbörande är bosatt, när det är nödvändigt för att tillämpa denna konvention eller den lagstiftning som denna konvention är tillämplig på. Detta får ske på svenska, koreanska eller engelska.\n\n2. En ansökan eller handling får inte avslås eller avvisas av en behörig myndighet eller behörig institution i en avtalsslutande stat enbart på den grunden att den är skriven på svenska, koreanska eller engelska.",
+     "title": "Språk"
+    },
+    {
+     "type": "para",
+     "number": "20",
+     "text": "1. Ansökningar, meddelanden och överklaganden som avser fastställandet eller utbetalningen av en förmån enligt en avtalsslutande stats lagstiftning, som enligt den lagstiftningen skulle ha kommit in till en behörig myndighet eller en behörig institution i den avtalsslutande staten inom en föreskriven tid, men som under den föreskrivna tiden i stället kom in till en behörig myndighet eller en behörig institution i den andra avtalsslutande staten, ska anses ha kommit in i rätt tid till den behöriga myndigheten eller den behöriga institutionen i den förstnämnda avtalsslutande staten.\n\n2. Om en person, efter att denna konvention har trätt i kraft, ger in en skriftlig ansökan om förmåner till den behöriga institutionen i en avtalsslutande stat enligt lagstiftningen i den avtalsslutande staten och om den personen inte uttryckligen har begärt att ansökan ska begränsas till förmåner enligt den lagstiftningen ska ansökan också anses utgöra en ansökan från den personen om motsvarande förmåner enligt lagstiftningen i den andra avtalsslutande staten, förutsatt att personen vid tidpunkten för ansökan:\n\na) på grund av ålder har en laglig rätt, att göra anspråk på en förmån i den andra avtalsslutande staten och\n\nb) lämnar information som visar att försäkringsperioder har fullgjorts enligt lagstiftningen i den andra avtalsslutande staten.\n\n3. I de fall som punkterna 1 och 2 i denna artikel är tilllämpliga ska den behöriga myndigheten eller den behöriga institutionen till vilken ansökan, meddelandet eller överklagandet har getts in ange datum för mottagandet av handlingen och utan dröjsmål vidarebefordra den till den behöriga myndigheten eller den behöriga institutionen i den andra avtalsslutande staten.",
+     "title": "Ansökningar, meddelanden och överklaganden"
+    },
+    {
+     "type": "para",
+     "number": "21",
+     "text": "1. Den behöriga institutionen i en avtalsslutande stat ska betala ut förmånerna i enlighet med denna konvention direkt till förmånstagarna utan avdrag för administrativa kostnader. Förmånerna får betalas ut i denna stats valuta.\n\n2. Om en avtalsslutande stat inför valutakontroll eller vidtar andra liknande åtgärder som begränsar betalningar, remitteringar eller överföringar av medel eller finansiella instrument till personer som befinner sig utanför dess territorium, ska den avtalsslutande staten utan dröjsmål vidta lämpliga åtgärder för att säkerställa att de belopp, som i enlighet med denna konvention ska betalas ut till de i artikel 3 angivna personerna, betalas ut.",
+     "title": "Utbetalning av förmåner"
+    },
+    {
+     "type": "para",
+     "number": "22",
+     "text": "1. De avtalsslutande staternas behöriga myndigheter och behöriga institutioner ska i möjligaste mån lösa meningsskiljaktigheter, som kan uppstå i tillämpningen av denna fråga om tolkningen eller konvention, i enlighet med dess anda och grundläggande principer.\n\n2. De avtalsslutande staterna ska på begäran av endera staten skyndsamt samråda i frågor som inte har lösts av de behöriga myndigheterna eller de behöriga institutionerna i enlighet med punkt 1 i denna artikel.\n\n3. Om en sådan meningsskiljaktighet inte kan lösas genom samråd får tvisten, på begäran av endera staten, hänskjutas till en skiljedomstol för avgörande, vars sammansättning och förfarande de avtalsslutande staterna ska komma överens om.\n\n4. Var och en av de avtalsslutande staterna är skyldig att följa och verkställa skiljedomstolens beslut.",
+     "title": "Tvistlösning"
+    }
+   ]
+  }
+ ]
+}

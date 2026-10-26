@@ -38,7 +38,7 @@ ORGAN={"Finansdepartementet":"skatt","Justitiedepartementet":"civil","Socialdepa
        "Klimat-":"miljo","Miljö-":"miljo","Arbetsmarknadsdepartementet":"arbete","Försvarsdepartementet":"forsvar","Utrikesdepartementet":"forsvar",
        "Utbildningsdepartementet":"utbildning","Kulturdepartementet":"utbildning","Näringsdepartementet":"foretag","Närings-":"foretag",
        "Kommunikationsdepartementet":"trafik","Jordbruksdepartementet":"jordbruk","Infrastrukturdepartementet":"trafik"}
-SECTIONS=[("grundlagar","Grundlagar"),("balkar","Balkarna med anslutande författningar"),("process","Rättsväsende, straff och process"),
+SECTIONS=[("grundlagar","Grundlagar"),("internationellt","Internationella konventioner och avtal"),("balkar","Balkarna med anslutande författningar"),("process","Rättsväsende, straff och process"),
  ("polis","Polis, ordning och säkerhet"),("forvaltning","Stat, kommun, förvaltning och utlänningar"),("civil","Civilrätt, familj och fastighet"),
  ("foretag","Bolag, bank, försäkring och finans"),("marknad","Konsument, konkurrens och immaterialrätt"),("arbete","Arbetsrätt"),
  ("vard","Socialrätt, vård och socialförsäkring"),("utbildning","Utbildning, kultur, medier och trossamfund"),("skatt","Skatt, tull och avgifter"),

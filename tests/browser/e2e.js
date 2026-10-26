@@ -90,6 +90,23 @@ const B=process.env.LAGBOK_URL||'http://localhost:8765/';
  // Om Lagboken
  await page.goto(B+'#/about');await wait(600);
  assert.match(await page.textContent('#view'),/Svensk författningssamling/);
+ // 1.6: intervall öppnar en meny, PL + Enter, stjärna i okapitlad lag, Europakonventionen
+ await page.goto(B+'#/law/1962%3A700/3/10');await wait(1000);
+ await page.click('#p-10 a.law-range');await wait(700);
+ assert.equal(await page.locator('#sheet .list-row').count(),3,'7–9 §§ ger tre val');
+ await page.click('#sheet .list-row:nth-child(2)');await wait(900);
+ assert.equal(await page.evaluate(()=>location.hash),'#/law/1962%3A700/3/8');
+ await page.goto(B+'#/catalog');await wait(800);
+ await page.fill('#query','PL');await page.press('#query','Enter');await wait(1000);
+ assert.equal(await page.evaluate(()=>location.hash),'#/law/1984%3A387','PL + Enter öppnar polislagen');
+ assert.equal(await page.locator('.reader-heading .fav-star').count(),1,'stjärna även utan kapitel');
+ await page.goto(B+'#/catalog');await wait(800);
+ await page.fill('#query','EKMR 8');await page.press('#query','Enter');await wait(1200);
+ assert.match(await page.textContent('#p-8'),/Artikel 8[\s\S]*privat- och familjeliv/);
+ await page.goto(B+'#/law/1974%3A152');await wait(1000);
+ await page.click('#find-button');await wait(400);
+ assert.equal(await page.locator('#find-input').count(),1,'sökraden finns på lagens startsida');
+ await page.click('#find-button');await wait(300);
  // Lydelse vid datum
  await page.goto(B+'#/law/1949%3A381/2/10');await wait(900);
  await page.evaluate(()=>{const b=document.querySelector('#p-10 [data-action="para-menu"]');b&&b.click();});await wait(400);
@@ -101,6 +118,6 @@ const B=process.env.LAGBOK_URL||'http://localhost:8765/';
  await page.goto(B+'#/nytt');await wait(800);
  assert.match(await page.textContent('#view h1'),/Nytt i lagen/);
  assert.deepEqual(errors,[]);
- console.log('Webbläsartest: katalog, kopplingar, meny, sök, penna, ångra, snabbhopp, Sparat, introduktion, favoriter, anslutande förordningar, Om Lagboken, lydelse vid datum och Nytt i lagen godkända');
+ console.log('Webbläsartest: katalog, kopplingar, meny, sök, penna, ångra, snabbhopp, Sparat, introduktion, favoriter, anslutande förordningar, Om Lagboken, intervall, snabbkoder, konventioner, lydelse vid datum och Nytt i lagen godkända');
  await browser.close();
 })().catch(e=>{console.error(e);process.exitCode=1;});
