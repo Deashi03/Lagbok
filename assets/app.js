@@ -282,7 +282,7 @@
     const chips=(label,list)=>list.length?'<div class="relation-line"><span>'+label+'</span>'+list.map(s=>lawById(s)).filter(Boolean)
       .map(l=>'<a class="chip" data-link="1" href="'+attr(urlFor(l.sfs))+'">'+html(l.name)+'</a>').join('')+'</div>':'';
     return '<div class="relations">'+chips('Anslutande förordningar',r.kompletteras||[])+chips('Kompletterar',r.kompletterar||[])+
-      (parent&&!(r.kompletterar||[]).includes(parent.sfs)?chips('Ansluter till',[parent.sfs]):'')+'</div>';
+      (parent&&!(r.kompletterar||[]).length?chips('Ansluter till',[parent.sfs]):'')+'</div>';
   }
   function transitionsHtml(meta,data){
     const list=data.transitions||[];if(!list.length)return '';
@@ -341,7 +341,7 @@
   function paraHtml(meta,ch,item){
     const key=meta.sfs+'|'+ch.number+'|'+item.number;
     const anchor=' id="p-'+attr(searchCore.paraKey(item.number))+'" data-paragraph="'+attr(item.number)+'"';
-    if(item.repealed)return '<article class="paragraph reader-block repealed"'+anchor+'><span class="paragraph-num">'+html(item.number)+' §</span>'+
+    if(item.repealed)return '<article class="paragraph reader-block repealed"'+anchor+' aria-label="'+attr(item.number+' § upphävd')+'"><span class="paragraph-num">'+html(item.number)+' §</span>'+
       '<span class="repealed-text">'+html(item.text)+'</span></article>';
     const resolved=lawModel.resolve(item),current=resolved.current;
     const title=tocModel.curatedTitle(meta.sfs,ch.number,item.number);
@@ -353,7 +353,7 @@
         '<details class="plain-version"><summary>Visa ny lydelse utan markeringar</summary><div class="paragraph-content">'+textHtml(v.text,meta,ch)+'</div></details>':
         '<div class="paragraph-content">'+textHtml(v.text,meta,ch)+'</div>')+amended(v)+'</details>').join('');
     const back=(state.backlinks.get(meta.sfs)||{})[ch.number+'|'+searchCore.paraKey(item.number)]||[];
-    return '<article class="paragraph reader-block" data-key="'+attr(key)+'"'+anchor+'>'+
+    return '<article class="paragraph reader-block" data-key="'+attr(key)+'"'+anchor+' aria-label="'+attr(item.number+' §'+(title?' '+title:''))+'">'+
       '<header class="paragraph-header">'+
       '<button type="button" class="paragraph-heading-button" data-action="para-menu" data-key="'+attr(key)+'" aria-label="'+attr(item.number)+' § – meny">'+
       '<span class="paragraph-num">'+html(item.number)+' §</span>'+(title?'<span class="paragraph-title">'+html(title)+'</span>':'')+'</button>'+
@@ -407,7 +407,7 @@
       (state.focus?'<button type="button" class="focus-return" data-action="toggle-focus">Avsluta läsläge</button>':'')+
       '</div>'+
       '<main class="law-reader reading-mode-'+html(pref.readingMode)+'">'+
-      '<header class="reader-heading"><h1>'+html(ch.title||(ch.number==='0'?meta.name:'Kapitel '+ch.number))+'</h1></header>'+
+      '<header class="reader-heading"><h1>'+html(ch.title||(ch.number==='0'?meta.name:'Kapitel '+ch.number))+'</h1>'+(hasRealChapters(data)?'':lawRelations(meta))+'</header>'+
       '<div class="statute-body">'+content+'</div>'+
       '<footer class="reader-end"><span class="small muted">Slut på '+html(short)+'.</span>'+
       (next?'<a class="reader-next" data-link="1" href="'+attr(urlFor(meta.sfs,next.number))+'"><span class="small muted">Nästa kapitel</span>'+

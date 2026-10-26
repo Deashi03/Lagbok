@@ -1,6 +1,6 @@
 {
   "version": "0.8",
-  "generated": "2026-10-25T23:40:58+00:00",
+  "generated": "2026-10-26T00:21:18+00:00",
   "source": "Sveriges riksdag, Riksdagens öppna data",
   "laws": [
     {
@@ -654,7 +654,7 @@
         "arresteringsorder",
         "EAW"
       ],
-      "chaptered": false,
+      "chaptered": true,
       "check": "arresteringsorder",
       "section": "balkar",
       "parent": "1942:740"
@@ -667,7 +667,7 @@
         "rättslig hjälp",
         "LIRB"
       ],
-      "chaptered": false,
+      "chaptered": true,
       "check": "rättslig hjälp i brottmål",
       "section": "balkar",
       "parent": "1942:740"
@@ -693,7 +693,7 @@
         "KL",
         "konkurs"
       ],
-      "chaptered": false,
+      "chaptered": true,
       "check": "konkurslag",
       "section": "balkar",
       "parent": "1981:774"
@@ -779,7 +779,7 @@
         "KköpL",
         "konsumentköp"
       ],
-      "chaptered": false,
+      "chaptered": true,
       "check": "konsumentköplag",
       "section": "civil"
     },
@@ -813,7 +813,7 @@
         "BRL",
         "bostadsrätt"
       ],
-      "chaptered": false,
+      "chaptered": true,
       "check": "bostadsrättslag",
       "section": "civil"
     },
@@ -825,7 +825,7 @@
         "ABL",
         "aktiebolag"
       ],
-      "chaptered": false,
+      "chaptered": true,
       "check": "aktiebolagslag",
       "section": "civil"
     },
@@ -837,7 +837,7 @@
         "URL",
         "upphovsrätt"
       ],
-      "chaptered": false,
+      "chaptered": true,
       "check": "upphovsrätt",
       "section": "civil"
     },
@@ -849,7 +849,7 @@
         "AML",
         "arbetsmiljö"
       ],
-      "chaptered": false,
+      "chaptered": true,
       "check": "arbetsmiljölag",
       "section": "civil"
     },
@@ -873,7 +873,7 @@
         "DL",
         "diskriminering"
       ],
-      "chaptered": false,
+      "chaptered": true,
       "check": "diskrimineringslag",
       "section": "civil"
     },
@@ -1073,7 +1073,7 @@
       "aliases": [
         "FSO"
       ],
-      "chaptered": false,
+      "chaptered": true,
       "check": "skydd mot olyckor",
       "section": "polis"
     },
@@ -1095,7 +1095,7 @@
       "aliases": [
         "säkerhetsskydd"
       ],
-      "chaptered": false,
+      "chaptered": true,
       "check": "säkerhetsskyddslag",
       "section": "polis"
     },
@@ -1107,7 +1107,7 @@
         "DjSL",
         "djurskydd"
       ],
-      "chaptered": false,
+      "chaptered": true,
       "check": "djurskyddslag",
       "section": "polis"
     },
@@ -1211,7 +1211,7 @@
       "aliases": [
         "fordonsförordning"
       ],
-      "chaptered": false,
+      "chaptered": true,
       "check": "fordonsförordning",
       "section": "trafik"
     },
@@ -1386,7 +1386,7 @@
         "KL",
         "kommun"
       ],
-      "chaptered": false,
+      "chaptered": true,
       "check": "kommunallag",
       "section": "forvaltning"
     },
@@ -1398,7 +1398,7 @@
         "PBL",
         "bygglov"
       ],
-      "chaptered": false,
+      "chaptered": true,
       "check": "plan- och bygglag",
       "section": "forvaltning"
     },
@@ -1410,7 +1410,7 @@
         "dataskydd",
         "GDPR"
       ],
-      "chaptered": false,
+      "chaptered": true,
       "check": "dataskyddsförordning",
       "section": "forvaltning"
     },
@@ -1421,7 +1421,7 @@
       "aliases": [
         "LEK"
       ],
-      "chaptered": false,
+      "chaptered": true,
       "check": "elektronisk kommunikation",
       "section": "forvaltning"
     },
@@ -1432,7 +1432,7 @@
       "aliases": [
         "skollag"
       ],
-      "chaptered": false,
+      "chaptered": true,
       "check": "skollag",
       "section": "forvaltning"
     },
@@ -1477,7 +1477,7 @@
       "aliases": [
         "val"
       ],
-      "chaptered": false,
+      "chaptered": true,
       "check": "vallag",
       "section": "forvaltning"
     },
@@ -1489,7 +1489,7 @@
         "tobakslagen",
         "tobak"
       ],
-      "chaptered": false,
+      "chaptered": true,
       "check": "tobak",
       "section": "forvaltning"
     },
@@ -1500,7 +1500,7 @@
       "aliases": [
         "spel"
       ],
-      "chaptered": false,
+      "chaptered": true,
       "check": "spellag",
       "section": "forvaltning"
     },

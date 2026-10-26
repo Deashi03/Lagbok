@@ -93,10 +93,27 @@ for(const rel of curated.kompletterar){
 }
 // En förordning ansluter till en lag när den hänvisar dit ofta: minst fem gånger och minst 30 % av
 // hänvisningarna till den mest hänvisade lagen. Enstaka hänvisningar ger ingen koppling på lagnivå.
+// Nämner förordningen en lag i sina första paragrafer ("… med stöd av lagen (1998:620) …") är det den
+// lag förordningen ansluter till, oavsett hur ofta andra lagar nämns längre ned.
+const anchors=new Map();
+for(const law of laws){
+  if(law.type!=='förordning')continue;
+  const first=docs.get(law.sfs).chapters.flatMap(c=>c.items.filter(i=>i.type==='para')).slice(0,2).map(i=>i.text).join(' ');
+  const named=[...new Set([...first.matchAll(/\((\d{4}:\d+)\)/g)].map(m=>m[1]))].filter(s=>s!==law.sfs&&typeOf.get(s)==='lag');
+  // Flera lagar nämns: välj den vars namn liknar förordningens (t.ex. "kontroll av narkotika").
+  const words=n=>new Set(String(n).toLowerCase().match(/[a-zåäö]{5,}/g)||[]);
+  const own=words(law.name),nameOf=s=>(laws.find(l=>l.sfs===s)||{}).name||'';
+  const overlap=s=>[...words(nameOf(s))].filter(w=>own.has(w)||[...own].some(o=>o.slice(0,6)===w.slice(0,6))).length;
+  const hit=named.slice().sort((a,b)=>overlap(b)-overlap(a))[0];
+  if(hit)anchors.set(law.sfs,hit);
+}
 const relations={},top=new Map();
 for(const [pair,count] of lawRefs){const f=pair.split('>')[0];top.set(f,Math.max(top.get(f)||0,count));}
+for(const [f,l] of anchors)if(!lawRefs.has(f+'>'+l))lawRefs.set(f+'>'+l,5);
 for(const [pair,count] of [...lawRefs].sort()){
-  if(count<5||count<0.3*top.get(pair.split('>')[0]))continue;
+  const [f0,l0]=pair.split('>');
+  if(anchors.has(f0)){if(anchors.get(f0)!==l0)continue;}
+  else if(count<5||count<0.3*top.get(f0))continue;
   const [f,l]=pair.split('>');
   (relations[f]=relations[f]||{kompletterar:[],kompletteras:[]}).kompletterar.push(l);
   (relations[l]=relations[l]||{kompletterar:[],kompletteras:[]}).kompletteras.push(f);

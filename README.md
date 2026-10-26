@@ -63,3 +63,11 @@ Läsaren har en enda innehållsknapp, utan föregående/nästa länkar eller ver
 - **Jämför lydelser:** kommande lydelse visas med struken och ny text.
 - **Fortsätt läsa**, **snabbhopp** (⌕ överallt, t.ex. ”rb 23 8b”), **sökfilter** (BrB m.fl., RB m.fl., Polis, Mina samlingar), synonymer (”LOB”, ”rattfylla”) och samlingar som text eller PDF.
 - Texten ”Redaktionell rubrik” är borttagen. Kvalitetskontroller vid import: minskat antal paragrafer, tappade kapitel och ovanligt långa paragrafer flaggas i rapporten; `tests/test_data_quality.js` körs i CI.
+
+## Version 0.8
+- **130 författningar** (tidigare 91): bl.a. utlämningslagen, lagen om europeisk arresteringsorder, lagen om internationell rättslig hjälp i brottmål, lagen om alkoholutandningsprov, djurskydds-, jakt- och säkerhetsskyddslagen, delgivnings-, rättshjälps-, belastningsregister-, narkotikakontroll-, fordons- och passförordningen samt en ny avdelning för civilrätt, arbete och näringsliv (avtalslagen, köplagen, konsumentköplagen, preskriptionslagen, aktiebolagslagen, LAS, arbetsmiljölagen m.fl.).
+- **Kopplingar på lagnivå:** en förordning kopplas till den lag den själv nämner i sina första paragrafer (t.ex. belastningsregisterförordningen → lagen om belastningsregister).
+- **Ny appikon** (präglat ”LAG” i guld på grön pärm). Ta bort appen från hemskärmen och lägg till den igen för att se den.
+- **Uppdateringar direkt:** appen hämtar alltid senaste versionen när det finns internet och visar ”Ny version – tryck för att uppdatera”. Version och datum för lagdata står under *Inställningar*.
+- **Animationer:** ingen grön blinkning längre. Korta övergångar mellan vyer, menyer som glider upp och kan dras ned, utfällning, märkpennedrag vid markering, platshållare vid laddning. Allt stängs av med iPhones *Reducera rörelse*.
+- **Svep från vänsterkanten** för att gå tillbaka, **textstorlek med reglage**, val av **typsnitt** (rakt eller bok), **Mina genvägar** på startsidan, påminnelse om **säkerhetskopia**, förhandsvisning vid delning av länk och bättre stöd för VoiceOver.
