@@ -1,6 +1,6 @@
 {
   "version": "0.9",
-  "generated": "2026-10-26T00:46:51+00:00",
+  "generated": "2026-10-26T08:39:08+00:00",
   "source": "Sveriges riksdag, Riksdagens öppna data",
   "laws": [
     {
@@ -52,6 +52,16 @@
       "section": "grundlagar"
     },
     {
+      "sfs": "1810:0926",
+      "name": "Successionsordning;",
+      "type": "lag",
+      "aliases": [],
+      "chaptered": false,
+      "check": "successionsordning",
+      "section": "grundlagar",
+      "available": false
+    },
+    {
       "sfs": "1987:230",
       "name": "Äktenskapsbalken",
       "type": "lag",
@@ -98,6 +108,18 @@
       ],
       "chaptered": false,
       "check": "särskild företrädare för barn",
+      "section": "balkar",
+      "parent": "1949:381"
+    },
+    {
+      "sfs": "2005:429",
+      "name": "Lagen om god man för ensamkommande barn",
+      "type": "lag",
+      "aliases": [
+        "god man"
+      ],
+      "chaptered": false,
+      "check": "lag om god man för ensamkommande barn",
       "section": "balkar",
       "parent": "1949:381"
     },
@@ -431,6 +453,133 @@
       "parent": "1962:700"
     },
     {
+      "sfs": "2014:406",
+      "name": "Lagen om straff för vissa internationella brott",
+      "type": "lag",
+      "aliases": [
+        "folkrättsbrott"
+      ],
+      "chaptered": false,
+      "check": "lag om straff för vissa internationella brott",
+      "section": "balkar",
+      "parent": "1962:700"
+    },
+    {
+      "sfs": "1971:69",
+      "name": "Skattebrottslagen",
+      "type": "lag",
+      "aliases": [
+        "skattebrott"
+      ],
+      "chaptered": false,
+      "check": "skattebrottslag",
+      "section": "balkar",
+      "parent": "1962:700"
+    },
+    {
+      "sfs": "2005:900",
+      "name": "Lagen om förbud mot maskering i vissa fall",
+      "type": "lag",
+      "aliases": [],
+      "chaptered": false,
+      "check": "lag om förbud mot maskering i vissa fall",
+      "section": "balkar",
+      "parent": "1962:700",
+      "available": false
+    },
+    {
+      "sfs": "1998:112",
+      "name": "Lagen om ansvar för elektroniska anslagstavlor",
+      "type": "lag",
+      "aliases": [],
+      "chaptered": false,
+      "check": "lag om ansvar för elektroniska anslagstavlor",
+      "section": "balkar",
+      "parent": "1962:700"
+    },
+    {
+      "sfs": "2016:1307",
+      "name": "Lagen om straff för marknadsmissbruk på värdepappersmarknaden",
+      "type": "lag",
+      "aliases": [],
+      "chaptered": true,
+      "check": "lag om straff för marknadsmissbruk på värdepappersmarknaden",
+      "section": "balkar",
+      "parent": "1962:700"
+    },
+    {
+      "sfs": "1999:58",
+      "name": "Förordningen om förbud mot vissa hälsofarliga varor",
+      "type": "förordning",
+      "aliases": [],
+      "chaptered": false,
+      "check": "förordning om förbud mot vissa hälsofarliga varor",
+      "section": "balkar",
+      "parent": "1962:700"
+    },
+    {
+      "sfs": "2017:630",
+      "name": "Lagen om åtgärder mot penningtvätt och finansiering av terrorism",
+      "type": "lag",
+      "aliases": [
+        "penningtvättslagen"
+      ],
+      "chaptered": true,
+      "check": "lag om åtgärder mot penningtvätt och finansiering av terrorism",
+      "section": "balkar",
+      "parent": "1962:700"
+    },
+    {
+      "sfs": "2009:92",
+      "name": "Förordningen om åtgärder mot penningtvätt och finansiering av terrorism",
+      "type": "förordning",
+      "aliases": [],
+      "chaptered": false,
+      "check": "förordning om åtgärder mot penningtvätt och finansiering av terrorism",
+      "section": "balkar",
+      "parent": "1962:700"
+    },
+    {
+      "sfs": "2016:1201",
+      "name": "Förordningen med instruktion för Brottsförebyggande rådet",
+      "type": "förordning",
+      "aliases": [],
+      "chaptered": false,
+      "check": "förordning med instruktion för brottsförebyggande rådet",
+      "section": "balkar",
+      "parent": "1962:700"
+    },
+    {
+      "sfs": "2007:1171",
+      "name": "Förordningen med instruktion för Brottsoffermyndigheten",
+      "type": "förordning",
+      "aliases": [],
+      "chaptered": false,
+      "check": "förordning med instruktion för brottsoffermyndigheten",
+      "section": "balkar",
+      "parent": "1962:700"
+    },
+    {
+      "sfs": "2014:327",
+      "name": "Brottsskadeförordningen",
+      "type": "förordning",
+      "aliases": [],
+      "chaptered": false,
+      "check": "brottsskadeförordning",
+      "section": "balkar",
+      "parent": "1962:700"
+    },
+    {
+      "sfs": "1998:642",
+      "name": "Förordningen om verkställighet av frivårdspåföljder",
+      "type": "förordning",
+      "aliases": [],
+      "chaptered": true,
+      "check": "förordning om verkställighet av frivårdspåföljder",
+      "section": "balkar",
+      "parent": "1962:700"
+    },
+    {
       "sfs": "1942:740",
       "name": "Rättegångsbalken",
       "type": "lag",
@@ -747,6 +896,226 @@
       "parent": "1942:740"
     },
     {
+      "sfs": "1996:271",
+      "name": "Förordningen om mål och ärenden i allmän domstol",
+      "type": "förordning",
+      "aliases": [],
+      "chaptered": false,
+      "check": "förordning om mål och ärenden i allmän domstol",
+      "section": "balkar",
+      "parent": "1942:740"
+    },
+    {
+      "sfs": "1996:379",
+      "name": "Förordningen med hovrättsinstruktion",
+      "type": "förordning",
+      "aliases": [],
+      "chaptered": false,
+      "check": "förordning med hovrättsinstruktion",
+      "section": "balkar",
+      "parent": "1942:740"
+    },
+    {
+      "sfs": "2007:1073",
+      "name": "Förordningen med instruktion för Domstolsverket",
+      "type": "förordning",
+      "aliases": [],
+      "chaptered": false,
+      "check": "förordning med instruktion för domstolsverket",
+      "section": "balkar",
+      "parent": "1942:740"
+    },
+    {
+      "sfs": "1996:382",
+      "name": "Förordningen med förvaltningsrättsinstruktion",
+      "type": "förordning",
+      "aliases": [],
+      "chaptered": false,
+      "check": "förordning med förvaltningsrättsinstruktion",
+      "section": "balkar",
+      "parent": "1942:740"
+    },
+    {
+      "sfs": "1996:380",
+      "name": "Förordningen med kammarrättsinstruktion",
+      "type": "förordning",
+      "aliases": [],
+      "chaptered": false,
+      "check": "förordning med kammarrättsinstruktion",
+      "section": "balkar",
+      "parent": "1942:740"
+    },
+    {
+      "sfs": "1996:377",
+      "name": "Förordningen med instruktion för Högsta domstolen",
+      "type": "förordning",
+      "aliases": [],
+      "chaptered": false,
+      "check": "förordning med instruktion för högsta domstolen",
+      "section": "balkar",
+      "parent": "1942:740"
+    },
+    {
+      "sfs": "1998:714",
+      "name": "Lagen om ersättning vid frihetsberövanden och andra tvångsåtgärder",
+      "type": "lag",
+      "aliases": [],
+      "chaptered": false,
+      "check": "lag om ersättning vid frihetsberövanden och andra tvångsåtgärder",
+      "section": "balkar",
+      "parent": "1942:740"
+    },
+    {
+      "sfs": "1997:405",
+      "name": "Förordningen om offentligt biträde",
+      "type": "förordning",
+      "aliases": [],
+      "chaptered": false,
+      "check": "förordning om offentligt biträde",
+      "section": "balkar",
+      "parent": "1942:740"
+    },
+    {
+      "sfs": "2000:704",
+      "name": "Förordningen om internationell rättslig hjälp i brottmål",
+      "type": "förordning",
+      "aliases": [],
+      "chaptered": false,
+      "check": "förordning om internationell rättslig hjälp i brottmål",
+      "section": "balkar",
+      "parent": "1942:740"
+    },
+    {
+      "sfs": "2011:1165",
+      "name": "Lagen om överlämnande från Sverige enligt en nordisk arresteringsorder",
+      "type": "lag",
+      "aliases": [],
+      "chaptered": true,
+      "check": "lag om överlämnande från sverige enligt en nordisk arresteringsorder",
+      "section": "balkar",
+      "parent": "1942:740"
+    },
+    {
+      "sfs": "2015:96",
+      "name": "Lagen om erkännande och verkställighet av frihetsberövande påföljder inom Europeiska unionen",
+      "type": "lag",
+      "aliases": [],
+      "chaptered": true,
+      "check": "lag om erkännande och verkställighet av frihetsberövande påföljder inom europeiska unionen",
+      "section": "balkar",
+      "parent": "1942:740"
+    },
+    {
+      "sfs": "2002:599",
+      "name": "Lagen om grupprättegång",
+      "type": "lag",
+      "aliases": [],
+      "chaptered": false,
+      "check": "lag om grupprättegång",
+      "section": "balkar",
+      "parent": "1942:740"
+    },
+    {
+      "sfs": "1999:116",
+      "name": "Lagen om skiljeförfarande",
+      "type": "lag",
+      "aliases": [],
+      "chaptered": false,
+      "check": "lag om skiljeförfarande",
+      "section": "balkar",
+      "parent": "1942:740"
+    },
+    {
+      "sfs": "2018:1699",
+      "name": "Lagen om kriminalvårdens behandling av personuppgifter inom brottsdatalagens område",
+      "type": "lag",
+      "aliases": [],
+      "chaptered": true,
+      "check": "lag om kriminalvårdens behandling av personuppgifter inom brottsdatalagens område",
+      "section": "balkar",
+      "parent": "1942:740"
+    },
+    {
+      "sfs": "2023:797",
+      "name": "Förordningen med instruktion för Kriminalvården",
+      "type": "förordning",
+      "aliases": [],
+      "chaptered": false,
+      "check": "förordning med instruktion för kriminalvården",
+      "section": "balkar",
+      "parent": "1942:740"
+    },
+    {
+      "sfs": "2007:978",
+      "name": "Lagen om hemlig rumsavlyssning",
+      "type": "lag",
+      "aliases": [],
+      "chaptered": false,
+      "check": "lag om hemlig rumsavlyssning",
+      "section": "balkar",
+      "parent": "1942:740"
+    },
+    {
+      "sfs": "1994:831",
+      "name": "Lagen om rättegången i vissa hyresmål i Svea hovrätt",
+      "type": "lag",
+      "aliases": [],
+      "chaptered": false,
+      "check": "lag om rättegången i vissa hyresmål i svea hovrätt",
+      "section": "balkar",
+      "parent": "1942:740"
+    },
+    {
+      "sfs": "1982:306",
+      "name": "Förordningen om utlämning för brott",
+      "type": "förordning",
+      "aliases": [],
+      "chaptered": false,
+      "check": "förordning om utlämning för brott",
+      "section": "balkar",
+      "parent": "1942:740"
+    },
+    {
+      "sfs": "2004:1265",
+      "name": "Åklagarförordningen",
+      "type": "förordning",
+      "aliases": [],
+      "chaptered": false,
+      "check": "åklagarförordning",
+      "section": "balkar",
+      "parent": "1942:740"
+    },
+    {
+      "sfs": "2015:744",
+      "name": "Förordningen med instruktion för Ekobrottsmyndigheten",
+      "type": "förordning",
+      "aliases": [],
+      "chaptered": false,
+      "check": "förordning med instruktion för ekobrottsmyndigheten",
+      "section": "balkar",
+      "parent": "1942:740"
+    },
+    {
+      "sfs": "2018:1697",
+      "name": "Lagen om åklagarväsendets behandling av personuppgifter inom brottsdatalagens område",
+      "type": "lag",
+      "aliases": [],
+      "chaptered": true,
+      "check": "lag om åklagarväsendets behandling av personuppgifter inom brottsdatalagens område",
+      "section": "balkar",
+      "parent": "1942:740"
+    },
+    {
+      "sfs": "2018:1698",
+      "name": "Lagen om domstolarnas behandling av personuppgifter inom brottsdatalagens område",
+      "type": "lag",
+      "aliases": [],
+      "chaptered": false,
+      "check": "lag om domstolarnas behandling av personuppgifter inom brottsdatalagens område",
+      "section": "balkar",
+      "parent": "1942:740"
+    },
+    {
       "sfs": "1981:774",
       "name": "Utsökningsbalken",
       "type": "lag",
@@ -794,6 +1163,36 @@
       ],
       "chaptered": false,
       "check": "betalningsföreläggande",
+      "section": "balkar",
+      "parent": "1981:774"
+    },
+    {
+      "sfs": "1981:981",
+      "name": "Utsökningsförordningen",
+      "type": "förordning",
+      "aliases": [],
+      "chaptered": true,
+      "check": "utsökningsförordning",
+      "section": "balkar",
+      "parent": "1981:774"
+    },
+    {
+      "sfs": "1987:916",
+      "name": "Konkursförordningen",
+      "type": "förordning",
+      "aliases": [],
+      "chaptered": false,
+      "check": "konkursförordning",
+      "section": "balkar",
+      "parent": "1981:774"
+    },
+    {
+      "sfs": "1970:979",
+      "name": "Förmånsrättslagen",
+      "type": "lag",
+      "aliases": [],
+      "chaptered": false,
+      "check": "förmånsrättslag",
       "section": "balkar",
       "parent": "1981:774"
     },
@@ -1096,6 +1495,123 @@
       "section": "civil"
     },
     {
+      "sfs": "1936:83",
+      "name": "Lagen angående vissa utfästelser om gåva",
+      "type": "lag",
+      "aliases": [],
+      "chaptered": false,
+      "check": "lag angående vissa utfästelser om gåva",
+      "section": "civil"
+    },
+    {
+      "sfs": "1980:1102",
+      "name": "Lagen om handelsbolag och enkla bolag",
+      "type": "lag",
+      "aliases": [],
+      "chaptered": true,
+      "check": "lag om handelsbolag och enkla bolag",
+      "section": "civil"
+    },
+    {
+      "sfs": "2018:672",
+      "name": "Lagen om ekonomiska föreningar",
+      "type": "lag",
+      "aliases": [],
+      "chaptered": true,
+      "check": "lag om ekonomiska föreningar",
+      "section": "civil"
+    },
+    {
+      "sfs": "2009:865",
+      "name": "Kommissionslagen",
+      "type": "lag",
+      "aliases": [],
+      "chaptered": false,
+      "check": "kommissionslag",
+      "section": "civil"
+    },
+    {
+      "sfs": "2026:1011",
+      "name": "Konsumentkreditlagen",
+      "type": "lag",
+      "aliases": [],
+      "chaptered": true,
+      "check": "konsumentkreditlag",
+      "section": "civil"
+    },
+    {
+      "sfs": "2005:59",
+      "name": "Lagen om distansavtal och avtal utanför affärslokaler",
+      "type": "lag",
+      "aliases": [],
+      "chaptered": true,
+      "check": "lag om distansavtal och avtal utanför affärslokaler",
+      "section": "civil"
+    },
+    {
+      "sfs": "2010:1877",
+      "name": "Varumärkeslagen",
+      "type": "lag",
+      "aliases": [],
+      "chaptered": true,
+      "check": "varumärkeslag",
+      "section": "civil"
+    },
+    {
+      "sfs": "2024:945",
+      "name": "Patentlagen",
+      "type": "lag",
+      "aliases": [],
+      "chaptered": true,
+      "check": "patentlag",
+      "section": "civil"
+    },
+    {
+      "sfs": "2018:558",
+      "name": "Lagen om företagshemligheter",
+      "type": "lag",
+      "aliases": [],
+      "chaptered": false,
+      "check": "lag om företagshemligheter",
+      "section": "civil"
+    },
+    {
+      "sfs": "1999:1078",
+      "name": "Bokföringslagen",
+      "type": "lag",
+      "aliases": [],
+      "chaptered": true,
+      "check": "bokföringslag",
+      "section": "civil"
+    },
+    {
+      "sfs": "2011:1244",
+      "name": "Skatteförfarandelagen",
+      "type": "lag",
+      "aliases": [],
+      "chaptered": true,
+      "check": "skatteförfarandelag",
+      "section": "civil"
+    },
+    {
+      "sfs": "1974:358",
+      "name": "Lagen om facklig förtroendemans ställning på arbetsplatsen",
+      "type": "lag",
+      "aliases": [],
+      "chaptered": false,
+      "check": "lag om facklig förtroendemans ställning på arbetsplatsen",
+      "section": "civil"
+    },
+    {
+      "sfs": "1975:1410",
+      "name": "Trafikskadelagen",
+      "type": "lag",
+      "aliases": [],
+      "chaptered": false,
+      "check": "trafikskadelag",
+      "section": "civil"
+    },
+    {
       "sfs": "1984:387",
       "name": "Polislagen",
       "type": "lag",
@@ -1364,6 +1880,239 @@
       "section": "polis"
     },
     {
+      "sfs": "2022:1719",
+      "name": "Förordningen med instruktion för Säkerhetspolisen",
+      "type": "förordning",
+      "aliases": [
+        "Säpo"
+      ],
+      "chaptered": false,
+      "check": "förordning med instruktion för säkerhetspolisen",
+      "section": "polis"
+    },
+    {
+      "sfs": "2019:1182",
+      "name": "Lagen om Säkerhetspolisens behandling av personuppgifter",
+      "type": "lag",
+      "aliases": [],
+      "chaptered": true,
+      "check": "lag om säkerhetspolisens behandling av personuppgifter",
+      "section": "polis"
+    },
+    {
+      "sfs": "2023:422",
+      "name": "Förordningen om ordningsvakter",
+      "type": "förordning",
+      "aliases": [
+        "ordningsvaktsförordningen"
+      ],
+      "chaptered": false,
+      "check": "förordning om ordningsvakter",
+      "section": "polis"
+    },
+    {
+      "sfs": "2016:253",
+      "name": "Tullagen",
+      "type": "lag",
+      "aliases": [
+        "TL"
+      ],
+      "chaptered": true,
+      "check": "tullag",
+      "section": "polis"
+    },
+    {
+      "sfs": "2016:287",
+      "name": "Tullförordningen",
+      "type": "förordning",
+      "aliases": [
+        "TF tull"
+      ],
+      "chaptered": true,
+      "check": "tullförordning",
+      "section": "polis"
+    },
+    {
+      "sfs": "2016:1332",
+      "name": "Förordningen med instruktion för Tullverket",
+      "type": "förordning",
+      "aliases": [],
+      "chaptered": false,
+      "check": "förordning med instruktion för tullverket",
+      "section": "polis"
+    },
+    {
+      "sfs": "2018:1694",
+      "name": "Lagen om Tullverkets behandling av personuppgifter inom brottsdatalagens område",
+      "type": "lag",
+      "aliases": [],
+      "chaptered": true,
+      "check": "lag om tullverkets behandling av personuppgifter inom brottsdatalagens område",
+      "section": "polis"
+    },
+    {
+      "sfs": "2019:83",
+      "name": "Kustbevakningsförordningen",
+      "type": "förordning",
+      "aliases": [],
+      "chaptered": false,
+      "check": "kustbevakningsförordning",
+      "section": "polis"
+    },
+    {
+      "sfs": "2018:1695",
+      "name": "Lagen om Kustbevakningens behandling av personuppgifter inom brottsdatalagens område",
+      "type": "lag",
+      "aliases": [],
+      "chaptered": true,
+      "check": "lag om kustbevakningens behandling av personuppgifter inom brottsdatalagens område",
+      "section": "polis"
+    },
+    {
+      "sfs": "2018:1942",
+      "name": "Förordningen om polisens behandling av personuppgifter inom brottsdatalagens område",
+      "type": "förordning",
+      "aliases": [],
+      "chaptered": false,
+      "check": "förordning om polisens behandling av personuppgifter inom brottsdatalagens område",
+      "section": "polis"
+    },
+    {
+      "sfs": "2018:1202",
+      "name": "Brottsdataförordningen",
+      "type": "förordning",
+      "aliases": [],
+      "chaptered": true,
+      "check": "brottsdataförordning",
+      "section": "polis"
+    },
+    {
+      "sfs": "2010:305",
+      "name": "Skyddslagen",
+      "type": "lag",
+      "aliases": [],
+      "chaptered": false,
+      "check": "skyddslag",
+      "section": "polis"
+    },
+    {
+      "sfs": "2021:955",
+      "name": "Säkerhetsskyddsförordningen",
+      "type": "förordning",
+      "aliases": [],
+      "chaptered": true,
+      "check": "säkerhetsskyddsförordning",
+      "section": "polis"
+    },
+    {
+      "sfs": "2010:500",
+      "name": "Luftfartslagen",
+      "type": "lag",
+      "aliases": [],
+      "chaptered": true,
+      "check": "luftfartslag",
+      "section": "polis"
+    },
+    {
+      "sfs": "2010:770",
+      "name": "Luftfartsförordningen",
+      "type": "förordning",
+      "aliases": [],
+      "chaptered": true,
+      "check": "luftfartsförordning",
+      "section": "polis"
+    },
+    {
+      "sfs": "2004:1100",
+      "name": "Lagen om luftfartsskydd",
+      "type": "lag",
+      "aliases": [],
+      "chaptered": false,
+      "check": "lag om luftfartsskydd",
+      "section": "polis"
+    },
+    {
+      "sfs": "2004:487",
+      "name": "Lagen om sjöfartsskydd",
+      "type": "lag",
+      "aliases": [],
+      "chaptered": false,
+      "check": "lag om sjöfartsskydd",
+      "section": "polis"
+    },
+    {
+      "sfs": "2019:66",
+      "name": "Djurskyddsförordningen",
+      "type": "förordning",
+      "aliases": [],
+      "chaptered": true,
+      "check": "djurskyddsförordning",
+      "section": "polis"
+    },
+    {
+      "sfs": "1987:905",
+      "name": "Jaktförordningen",
+      "type": "förordning",
+      "aliases": [],
+      "chaptered": false,
+      "check": "jaktförordning",
+      "section": "polis"
+    },
+    {
+      "sfs": "2007:1240",
+      "name": "Förordningen om tillsyn över hundar och katter",
+      "type": "förordning",
+      "aliases": [],
+      "chaptered": false,
+      "check": "förordning om tillsyn över hundar och katter",
+      "section": "polis"
+    },
+    {
+      "sfs": "2018:1475",
+      "name": "Spelförordningen",
+      "type": "förordning",
+      "aliases": [],
+      "chaptered": true,
+      "check": "spelförordning",
+      "section": "polis"
+    },
+    {
+      "sfs": "2019:223",
+      "name": "Förordningen om tobak och liknande produkter",
+      "type": "förordning",
+      "aliases": [],
+      "chaptered": true,
+      "check": "förordning om tobak och liknande produkter",
+      "section": "polis"
+    },
+    {
+      "sfs": "2022:1257",
+      "name": "Lagen om tobaksfria nikotinprodukter",
+      "type": "lag",
+      "aliases": [],
+      "chaptered": false,
+      "check": "lag om tobaksfria nikotinprodukter",
+      "section": "polis"
+    },
+    {
+      "sfs": "2022:1718",
+      "name": "Förordningen med instruktion för Polismyndigheten",
+      "type": "förordning",
+      "aliases": [],
+      "chaptered": false,
+      "check": "förordning med instruktion för polismyndigheten",
+      "section": "polis"
+    },
+    {
+      "sfs": "1992:1300",
+      "name": "Lagen om krigsmateriel",
+      "type": "lag",
+      "aliases": [],
+      "chaptered": false,
+      "check": "lag om krigsmateriel",
+      "section": "polis"
+    },
+    {
       "sfs": "1998:1276",
       "name": "Trafikförordningen",
       "type": "förordning",
@@ -1453,6 +2202,107 @@
       ],
       "chaptered": false,
       "check": "vägtrafikdefinitioner",
+      "section": "trafik"
+    },
+    {
+      "sfs": "1976:206",
+      "name": "Lagen om felparkeringsavgift",
+      "type": "lag",
+      "aliases": [
+        "felparkering"
+      ],
+      "chaptered": false,
+      "check": "lag om felparkeringsavgift",
+      "section": "trafik"
+    },
+    {
+      "sfs": "1976:1128",
+      "name": "Förordningen om felparkeringsavgift",
+      "type": "förordning",
+      "aliases": [],
+      "chaptered": false,
+      "check": "förordning om felparkeringsavgift",
+      "section": "trafik"
+    },
+    {
+      "sfs": "2012:210",
+      "name": "Yrkestrafiklagen",
+      "type": "lag",
+      "aliases": [],
+      "chaptered": true,
+      "check": "yrkestrafiklag",
+      "section": "trafik"
+    },
+    {
+      "sfs": "2012:237",
+      "name": "Yrkestrafikförordningen",
+      "type": "förordning",
+      "aliases": [],
+      "chaptered": true,
+      "check": "yrkestrafikförordning",
+      "section": "trafik"
+    },
+    {
+      "sfs": "2012:211",
+      "name": "Taxitrafiklagen",
+      "type": "lag",
+      "aliases": [],
+      "chaptered": true,
+      "check": "taxitrafiklag",
+      "section": "trafik"
+    },
+    {
+      "sfs": "2012:238",
+      "name": "Taxitrafikförordningen",
+      "type": "förordning",
+      "aliases": [],
+      "chaptered": true,
+      "check": "taxitrafikförordning",
+      "section": "trafik"
+    },
+    {
+      "sfs": "1971:948",
+      "name": "Väglagen",
+      "type": "lag",
+      "aliases": [],
+      "chaptered": false,
+      "check": "väglag",
+      "section": "trafik"
+    },
+    {
+      "sfs": "1994:1009",
+      "name": "Sjölagen",
+      "type": "lag",
+      "aliases": [],
+      "chaptered": true,
+      "check": "sjölag",
+      "section": "trafik"
+    },
+    {
+      "sfs": "1986:300",
+      "name": "Sjötrafikförordningen",
+      "type": "förordning",
+      "aliases": [],
+      "chaptered": true,
+      "check": "sjötrafikförordning",
+      "section": "trafik"
+    },
+    {
+      "sfs": "2003:364",
+      "name": "Fartygssäkerhetslagen",
+      "type": "lag",
+      "aliases": [],
+      "chaptered": true,
+      "check": "fartygssäkerhetslag",
+      "section": "trafik"
+    },
+    {
+      "sfs": "2004:629",
+      "name": "Lagen om trängselskatt",
+      "type": "lag",
+      "aliases": [],
+      "chaptered": false,
+      "check": "lag om trängselskatt",
       "section": "trafik"
     },
     {
@@ -1746,6 +2596,152 @@
       "section": "forvaltning"
     },
     {
+      "sfs": "1994:1219",
+      "name": "Lagen om den europeiska konventionen angående skydd för de mänskliga rättigheterna och de grundläggande friheterna",
+      "type": "lag",
+      "aliases": [
+        "Europakonventionen",
+        "EKMR"
+      ],
+      "chaptered": false,
+      "check": "lag om den europeiska konventionen angående skydd för de mänskliga rättigheterna och de grundläggande friheterna",
+      "section": "forvaltning",
+      "available": false
+    },
+    {
+      "sfs": "2018:1197",
+      "name": "Lagen om Förenta nationernas konvention om barnets rättigheter",
+      "type": "lag",
+      "aliases": [
+        "barnkonventionen"
+      ],
+      "chaptered": false,
+      "check": "lag om förenta nationernas konvention om barnets rättigheter",
+      "section": "forvaltning",
+      "available": false
+    },
+    {
+      "sfs": "2009:724",
+      "name": "Lagen om nationella minoriteter och minoritetsspråk",
+      "type": "lag",
+      "aliases": [
+        "minoritetslagen"
+      ],
+      "chaptered": false,
+      "check": "lag om nationella minoriteter och minoritetsspråk",
+      "section": "forvaltning"
+    },
+    {
+      "sfs": "1975:1339",
+      "name": "Lagen om justitiekanslerns tillsyn",
+      "type": "lag",
+      "aliases": [
+        "JK"
+      ],
+      "chaptered": false,
+      "check": "lag om justitiekanslerns tillsyn",
+      "section": "forvaltning"
+    },
+    {
+      "sfs": "1975:1345",
+      "name": "Förordningen med instruktion för Justitiekanslern",
+      "type": "förordning",
+      "aliases": [],
+      "chaptered": false,
+      "check": "förordning med instruktion för justitiekanslern",
+      "section": "forvaltning"
+    },
+    {
+      "sfs": "1995:1301",
+      "name": "Förordningen om handläggning av skadeståndsanspråk mot staten",
+      "type": "förordning",
+      "aliases": [],
+      "chaptered": false,
+      "check": "förordning om handläggning av skadeståndsanspråk mot staten",
+      "section": "forvaltning"
+    },
+    {
+      "sfs": "1990:782",
+      "name": "Arkivlagen",
+      "type": "lag",
+      "aliases": [],
+      "chaptered": false,
+      "check": "arkivlag",
+      "section": "forvaltning"
+    },
+    {
+      "sfs": "1991:446",
+      "name": "Arkivförordningen",
+      "type": "förordning",
+      "aliases": [],
+      "chaptered": false,
+      "check": "arkivförordning",
+      "section": "forvaltning"
+    },
+    {
+      "sfs": "2018:219",
+      "name": "Förordningen med kompletterande bestämmelser till EU:s dataskyddsförordning",
+      "type": "förordning",
+      "aliases": [],
+      "chaptered": false,
+      "check": "förordning med kompletterande bestämmelser till eu s dataskyddsförordning",
+      "section": "forvaltning"
+    },
+    {
+      "sfs": "2007:975",
+      "name": "Förordningen med instruktion för Integritetsskyddsmyndigheten",
+      "type": "förordning",
+      "aliases": [],
+      "chaptered": false,
+      "check": "förordning med instruktion för integritetsskyddsmyndigheten",
+      "section": "forvaltning"
+    },
+    {
+      "sfs": "2016:27",
+      "name": "Utlänningsdatalagen",
+      "type": "lag",
+      "aliases": [],
+      "chaptered": false,
+      "check": "utlänningsdatalag",
+      "section": "forvaltning"
+    },
+    {
+      "sfs": "2001:218",
+      "name": "Medborgarskapsförordningen",
+      "type": "förordning",
+      "aliases": [],
+      "chaptered": false,
+      "check": "medborgarskapsförordning",
+      "section": "forvaltning"
+    },
+    {
+      "sfs": "2015:899",
+      "name": "Lagen om identitetskort för folkbokförda i Sverige",
+      "type": "lag",
+      "aliases": [],
+      "chaptered": false,
+      "check": "lag om identitetskort för folkbokförda i sverige",
+      "section": "forvaltning"
+    },
+    {
+      "sfs": "1991:749",
+      "name": "Folkbokföringsförordningen",
+      "type": "förordning",
+      "aliases": [],
+      "chaptered": false,
+      "check": "folkbokföringsförordning",
+      "section": "forvaltning"
+    },
+    {
+      "sfs": "2019:502",
+      "name": "Förordningen med instruktion för Migrationsverket",
+      "type": "förordning",
+      "aliases": [],
+      "chaptered": false,
+      "check": "förordning med instruktion för migrationsverket",
+      "section": "forvaltning"
+    },
+    {
       "sfs": "1990:52",
       "name": "Lagen med särskilda bestämmelser om vård av unga",
       "type": "lag",
@@ -1862,6 +2858,88 @@
       ],
       "chaptered": true,
       "check": "smittskyddslag",
+      "section": "vard"
+    },
+    {
+      "sfs": "2025:468",
+      "name": "Socialtjänstförordningen",
+      "type": "förordning",
+      "aliases": [],
+      "chaptered": true,
+      "check": "socialtjänstförordning",
+      "section": "vard"
+    },
+    {
+      "sfs": "1991:1472",
+      "name": "Förordningen om psykiatrisk tvångsvård och rättspsykiatrisk vård",
+      "type": "förordning",
+      "aliases": [],
+      "chaptered": false,
+      "check": "förordning om psykiatrisk tvångsvård och rättspsykiatrisk vård",
+      "section": "vard"
+    },
+    {
+      "sfs": "2017:80",
+      "name": "Hälso- och sjukvårdsförordning",
+      "type": "förordning",
+      "aliases": [],
+      "chaptered": true,
+      "check": "hälso- och sjukvårdsförordning",
+      "section": "vard"
+    },
+    {
+      "sfs": "2004:255",
+      "name": "Smittskyddsförordningen",
+      "type": "förordning",
+      "aliases": [],
+      "chaptered": false,
+      "check": "smittskyddsförordning",
+      "section": "vard"
+    },
+    {
+      "sfs": "1990:1144",
+      "name": "Begravningslagen",
+      "type": "lag",
+      "aliases": [],
+      "chaptered": true,
+      "check": "begravningslag",
+      "section": "vard"
+    },
+    {
+      "sfs": "1987:269",
+      "name": "Lagen om kriterier för \nbestämmande av människans död",
+      "type": "lag",
+      "aliases": [],
+      "chaptered": false,
+      "check": "lag om kriterier för bestämmande av människans död",
+      "section": "vard",
+      "available": false
+    },
+    {
+      "sfs": "1995:832",
+      "name": "Lagen om obduktion m.m.",
+      "type": "lag",
+      "aliases": [],
+      "chaptered": false,
+      "check": "lag om obduktion m m",
+      "section": "vard"
+    },
+    {
+      "sfs": "1995:831",
+      "name": "Lagen om transplantation m.m.",
+      "type": "lag",
+      "aliases": [],
+      "chaptered": false,
+      "check": "lag om transplantation m m",
+      "section": "vard"
+    },
+    {
+      "sfs": "1993:1090",
+      "name": "Förordningen om stöd och service till vissa funktionshindrade",
+      "type": "förordning",
+      "aliases": [],
+      "chaptered": false,
+      "check": "förordning om stöd och service till vissa funktionshindrade",
       "section": "vard"
     }
   ],
