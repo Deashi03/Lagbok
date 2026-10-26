@@ -95,6 +95,14 @@ for(const rel of curated.kompletterar){
 // hänvisningarna till den mest hänvisade lagen. Enstaka hänvisningar ger ingen koppling på lagnivå.
 // Nämner förordningen en lag i sina första paragrafer ("… med stöd av lagen (1998:620) …") är det den
 // lag förordningen ansluter till, oavsett hur ofta andra lagar nämns längre ned.
+const STOP=new Set(['instruktion','vissa','sarskilda','bestammelser','annat','andra','svenska','sverige']);
+function stems(name){
+  return (fold(name).match(/[a-z]{5,}/g)||[]).map(w=>w.replace(/(?:forordningen|kungorelsen|lagen|balken)$/,'').replace(/s$/,'')).filter(w=>w.length>=5&&!STOP.has(w));
+}
+function sameStem(a,b){
+  const x=stems(a),y=stems(b);
+  return x.some(u=>y.some(v=>u===v||(Math.min(u.length,v.length)>=7&&(u.startsWith(v)||v.startsWith(u)))));
+}
 const anchors=new Map();
 for(const law of laws){
   if(law.type!=='förordning')continue;
@@ -105,7 +113,11 @@ for(const law of laws){
   const own=words(law.name),nameOf=s=>(laws.find(l=>l.sfs===s)||{}).name||'';
   const overlap=s=>[...words(nameOf(s))].filter(w=>own.has(w)||[...own].some(o=>o.slice(0,6)===w.slice(0,6))).length;
   const hit=named.slice().sort((a,b)=>overlap(b)-overlap(a))[0];
-  if(hit)anchors.set(law.sfs,hit);
+  if(hit){anchors.set(law.sfs,hit);continue;}
+  // Annars: en lag med samma namnstam som förordningen ("Brottsskadeförordningen" – "Brottsskadelagen")
+  // som förordningen hänvisar till minst en gång.
+  const kin=[...lawRefs.keys()].filter(p=>p.startsWith(law.sfs+'>')).map(p=>p.split('>')[1]).filter(s=>sameStem(law.name,nameOf(s)));
+  if(kin.length===1)anchors.set(law.sfs,kin[0]);
 }
 const relations={},top=new Map();
 for(const [pair,count] of lawRefs){const f=pair.split('>')[0];top.set(f,Math.max(top.get(f)||0,count));}
@@ -117,6 +129,28 @@ for(const [pair,count] of [...lawRefs].sort()){
   const [f,l]=pair.split('>');
   (relations[f]=relations[f]||{kompletterar:[],kompletteras:[]}).kompletterar.push(l);
   (relations[l]=relations[l]||{kompletterar:[],kompletteras:[]}).kompletteras.push(f);
+}
+// Förordningar som följer lagens disposition ("Vanlig delgivning", "Kungörelsedelgivning"): paragrafer utan
+// egen hänvisning kopplas till avsnittet med samma rubrik i lagen förordningen ansluter till.
+const linked=(sfs,ch,num)=>{const m=backlinks.get(sfs+'#'+ch+'|'+key(num));return !!m&&[...m.values()].some(e=>e[3]==='kompletterar');};
+const headingKey=t=>fold(t).replace(/[^a-z0-9 ]/g,'').replace(/\s+/g,' ').trim();
+for(const [f,rel] of Object.entries(relations)){
+  if(rel.kompletterar.length!==1)continue;
+  const lawSfs=rel.kompletterar[0],sections=new Map();
+  for(const ch of docs.get(lawSfs).chapters)for(const item of ch.items){
+    if(item.type==='heading'&&item.nextPara&&!sections.has(headingKey(item.text)))sections.set(headingKey(item.text),[ch.number,String(item.nextPara)]);
+  }
+  for(const ch of docs.get(f).chapters){
+    let section=null;
+    for(const item of ch.items){
+      if(item.type==='heading'){const k=headingKey(item.text);section=k.length>3&&!/^(?:inledande|allmanna|ovriga|overklagande|bemyndigande)/.test(k)?sections.get(k)||null:null;continue;}
+      if(item.type!=='para'||item.repealed||!section||linked(f,ch.number,item.number))continue;
+      const [lc,lp]=section;
+      if(!exists(lawSfs,lc,lp))continue;
+      addLink(f,ch.number,item.number,[lawSfs,lc,displayNumber(lawSfs,lc,lp),'kompletterar']);
+      addLink(lawSfs,lc,lp,[f,ch.number,String(item.number),'föreskrift']);
+    }
+  }
 }
 fs.writeFileSync(path.join(out,'relations.json'),JSON.stringify(relations));
 fs.writeFileSync(path.join(out,'paras.json'),JSON.stringify({laws:laws.map(l=>l.sfs),p:paras}));
