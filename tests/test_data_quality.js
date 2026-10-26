@@ -24,3 +24,18 @@ for(const law of catalog.laws){
  assert.ok(keys.size>0,law.sfs+' saknar paragrafer');
 }
 console.log('Datakvalitet: '+laws+' författningar och '+paras+' paragrafer kontrollerade');
+// Förkortningar: vedertagna förkortningar finns och är unika (snabbkoder som "SkolL 7:2" måste vara entydiga).
+const ABBR=/^[A-ZÅÄÖ][A-Za-zÅÄÖåäö]{1,5}$/;const abbrSeen=new Map();
+for(const law of catalog.laws)for(const a of law.aliases||[]){
+ if(!ABBR.test(a))continue;const k=a.toLowerCase();
+ assert.ok(!abbrSeen.has(k)||abbrSeen.get(k)===law.sfs,'förkortningen '+a+' används av både '+abbrSeen.get(k)+' och '+law.sfs);abbrSeen.set(k,law.sfs);
+}
+const curated=require('../data/abbreviations.json');
+for(const [sfs,a] of Object.entries(curated)){
+ const law=catalog.laws.find(l=>l.sfs===sfs);
+ if(law)assert.ok(law.aliases.includes(a),law.name+' saknar förkortningen '+a);
+}
+for(const [name,a] of [['Skollagen','SkolL'],['Vapenlagen','VL'],['Delgivningsförordningen','DelgF'],['Delgivningslagen','DelgL'],['Inkomstskattelagen','IL'],['Handelsbalken','HB']]){
+ const law=catalog.laws.find(l=>l.name===name);assert.ok(law&&law.aliases.includes(a),name+' ska ha förkortningen '+a);
+}
+console.log('Förkortningar: '+abbrSeen.size+' unika');

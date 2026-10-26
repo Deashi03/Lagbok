@@ -63,7 +63,7 @@ laws.forEach((law,li)=>{
       const terms=new Set(words([...texts,title,heading,ch.title].join(' ')));
       for(const t of terms){if(!postings.has(t))postings.set(t,[]);postings.get(t).push(ordinal);}
       for(const text of texts){
-        for(const ref of links.parseRefs(text,{sfs:law.sfs,chapter:ch.number,exists})){
+        for(const ref of links.parseRefs(text,{sfs:law.sfs,chapter:ch.number,exists,anchor:law.parent})){
           if(ref.id===law.sfs&&ref.chapter===ch.number&&ref.numbers.includes(key(item.number)))continue;
           const target=typeOf.get(ref.id);
           const complements=law.type==='förordning'&&target==='lag'&&ref.id!==law.sfs;

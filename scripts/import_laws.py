@@ -9,6 +9,9 @@ import re
 import sys
 import time
 from urllib.request import Request,urlopen
+from urllib.error import HTTPError
+import urllib.parse
+from concurrent.futures import ThreadPoolExecutor
 
 ROOT=Path(__file__).resolve().parents[1]
 CATALOG=ROOT/"data/catalog.json"
@@ -45,6 +48,12 @@ def when(label):
     label=re.sub(r"\s+genom\s+(?:lag|förordning)\s*\(\d{4}:\d+\)\.?$","",label.strip(),flags=re.I).rstrip(".")
     m=DATE.search(label)
     return {"date":m[0] if m else None,"label":label}
+ANNEX=re.compile(r"\n\s*(?:Bilaga\b[^\n]{0,80}|(?:AVTAL|Avtal|KONVENTION|Konvention|PROTOKOLL|Protokoll)\b[^\n]{0,200}|(?:Art\.|Artikel|ARTIKEL)\s*\d+\.?)\s*\n")
+def annex_start(text):
+    """Var en lång bilaga (t.ex. barnkonventionen eller ett skatteavtal som gäller som lag) börjar, eller None."""
+    if len(text)<=LONG_PARAGRAPH:return None
+    m=re.search(r"\n\s*Bilaga\s*\n",text) or ANNEX.search(text,40)
+    return m.start() if m else None
 def version(raw):
     """En lydelse: ren text, ändringsförfattning och eventuellt ikraftträdande/upphörande."""
     text=tidy(raw);out={}
@@ -52,9 +61,9 @@ def version(raw):
     if cut:
         out["_transitions"]=text[cut.end()-1:].strip();text=text[:max(0,cut.start()-1)].rstrip()
     # Långa bilagor (t.ex. barnkonventionens text) läggs i en egen del i stället för i paragrafen.
-    annex=re.search(r"\n\s*Bilaga\s*\n",text)
-    if annex and len(text)>LONG_PARAGRAPH:
-        out["_appendix"]=text[annex.end():].strip();text=text[:annex.start()].rstrip()
+    while (cut:=annex_start(text)) is not None:
+        rest=re.sub(r"^\s*Bilaga\s*\n","",text[cut:].strip()).strip()
+        out["_appendix"]=rest+("\n\n"+out["_appendix"] if "_appendix" in out else "");text=text[:cut].rstrip()
     while True:
         m=MARK.match(text)
         if not m:break
@@ -181,6 +190,33 @@ def parse_text(raw):
         elif len(line)<110 and not re.match(r"^\d+\s",line):
             cur["items"].append({"type":"heading","text":line,"editorial":False})
     return finish(chapters)
+def parse_plain(source):
+    """Författningar utan "1 §": äldre lagar med "§ 1." (successionsordningen) delas på dessa, och lagar som
+    bara består av en text (t.ex. "Avtalet ska gälla som lag här i landet" med avtalet som bilaga) blir en
+    enda onumrerad paragraf."""
+    match=re.search(r"<hr\b[^>]*>",source,re.I)
+    source=source[match.end():] if match else source
+    source=re.sub(r'<div\s+class="sfstoc"[^>]*>.*?</div>',"",source,flags=re.S|re.I)
+    body=re.sub(r"^\s*Innehåll:\s*(?:Övergångsbestämmelser\s*)?","",clear(source))
+    if len(body)<20:return []
+    chs=parse_text(body)
+    if count(chs):return chs
+    parts=list(re.finditer(r"(?m)^§\s*(\d+\s*[a-z]?)\.?\s",body))
+    cur={"number":"0","title":"","items":[]}
+    if len(parts)>=2:
+        head=body[:parts[0].start()].strip()
+        for i,m in enumerate(parts):
+            end=parts[i+1].start() if i+1<len(parts) else len(body)
+            add(cur,num(m[1]),body[m.end():end].strip())
+        chs=finish([cur])
+        if head and chs:chs[0]["items"].insert(0,{"type":"heading","text":head[:140],"editorial":False})
+        return chs
+    add(cur,"1",body)
+    chs=finish([cur])
+    for c in chs:
+        for p in c["items"]:
+            if p["type"]=="para":p["unnumbered"]=True
+    return chs
 def count(chs):return sum(x["type"]=="para" for c in chs for x in c["items"])
 def validate(chs,id):
     if count(chs)<MIN.get(id,1):raise ValueError("insufficient sections "+str(count(chs)))
@@ -208,6 +244,8 @@ def check_in_force(doc,today=None):
     hr=re.search(r"<hr\b",head,re.I)
     head=head[:hr.start()] if hr else head[:3000]
     m=REPEALED_HEADER.search(head) or REPEALED_HEADER.search((doc.get("text") or "")[:1500])
+    gone=re.search(r"Utgår genom\s+(?:SFS\s*)?(\d{4}:\d+)",re.sub(r"<[^>]+>"," ",head))
+    if gone and not m:raise Repealed("utgår genom SFS "+gone[1])
     if not m:return None
     today=today or dt.date.today().isoformat()
     if m[1]<=today:raise Repealed("upphävd författning ("+m[1]+")")
@@ -223,7 +261,12 @@ def document(id,name,method,chs,official=None):
     appendix=[p.pop("_appendix") for c in chs for p in c["items"] if "_appendix" in p]
     out={"sfs":id,"title":name,"officialTitle":official,"sourceUrl":"https://data.riksdagen.se/dokument/sfs-"+slug(id)+".html","parser":method,
             "fetchedAt":dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds"),"latestAmendment":latest_amendment(chs),"chapters":chs}
-    if transitions:out["transitions"]=transitions
+    # Avtalstext som följer efter övergångsbestämmelserna ("Bilaga") hör till bilagan, inte till övergångsbestämmelserna.
+    for t in transitions:
+        annex=re.search(r"\n\s*Bilaga\b[^\n]{0,80}\n",t["text"])
+        if annex and len(t["text"])>LONG_PARAGRAPH and not appendix:
+            appendix=[t["text"][annex.start():].strip()];t["text"]=t["text"][:annex.start()].strip()
+    if transitions:out["transitions"]=[t for t in transitions if t["text"]]
     if appendix:out["appendix"]=appendix[0]
     return out
 def quality_warnings(old,new):
@@ -262,20 +305,36 @@ def write_report(report,fail,repealed=()):
     print(text)
     if target:Path(target).write_text(text+"\n",encoding="utf-8")
 def fetch(sfs):
-    url="https://data.riksdagen.se/dokument/sfs-"+slug(sfs)+".json"
-    req=Request(url,headers={"User-Agent":"LagbokenImporter/0.1","Accept":"application/json"})
-    for attempt in range(3):
-        try:
-            with urlopen(req,timeout=50) as f:return json.load(f)
-        except Exception:
-            if attempt==2:raise
-            time.sleep(attempt+1)
+    # Äldre författningar ("1736:0123 2", "1898:64 s.10") har mellanslag i Riksdagens dokument-id.
+    ids=["sfs-"+slug(sfs)]
+    if " " in sfs:ids.append("sfs-"+sfs.replace(":","-"))
+    for n,doc_id in enumerate(ids):
+        url="https://data.riksdagen.se/dokument/"+urllib.parse.quote(doc_id)+".json"
+        req=Request(url,headers={"User-Agent":"LagbokenImporter/0.1","Accept":"application/json"})
+        for attempt in range(3):
+            try:
+                with urlopen(req,timeout=50) as f:return json.load(f)
+            except HTTPError as ex:
+                if ex.code==404 and n<len(ids)-1:break
+                if attempt==2:raise
+                time.sleep(attempt+1)
+            except Exception:
+                if attempt==2:raise
+                time.sleep(attempt+1)
 def run():
     catalog=json.loads(CATALOG.read_text(encoding="utf-8"));changed=False;fail=[];report=[];repealed=[]
-    for meta in catalog["laws"]:
+    # ONLY=new hämtar bara författningar som ännu saknar lagtext; ONLY=2010:1932,2011:154 bara de angivna.
+    only=os.environ.get("ONLY","").strip()
+    metas=catalog["laws"]
+    if only=="new":metas=[m for m in metas if not (OUT/(slug(m["sfs"])+".json")).exists()]
+    elif only:metas=[m for m in metas if m["sfs"] in set(x.strip() for x in only.split(","))]
+    # Hämtningen sker parallellt; tolkningen sker i katalogens ordning.
+    with ThreadPoolExecutor(max_workers=int(os.environ.get("WORKERS","6"))) as pool:
+        futures={m["sfs"]:pool.submit(fetch,m["sfs"]) for m in metas}
+    for meta in metas:
         id=meta["sfs"]
         try:
-            doc=fetch(id).get("dokumentstatus",{}).get("dokument",{})
+            doc=futures[id].result().get("dokumentstatus",{}).get("dokument",{})
             official=doc.get("titel")
             check_title(meta,official)
             repeal_at=check_in_force(doc)
@@ -283,6 +342,8 @@ def run():
             method="HTML"
             if count(chs)<MIN.get(id,5):
                 chs=parse_text(doc.get("text") or "");method="TEXT"
+            if count(chs)==0:
+                chs=parse_plain(doc.get("html") or "");method="PLAIN"
             validate(chs,id)
             editorial(chs,id)
             output=document(id,meta["name"],method,chs,official)

@@ -62,6 +62,8 @@
     if(/^denna\s+(?:lag|balk|förordning|kungörelse)/.test(lower))return {id:context.sfs,explicit:true};
     // "samma balk", "den lagen": senast namngivna författning i samma text.
     if(/^(?:samma|den)\s+(?:lag|balk|förordning|kungörelse)(?:en)?\b/.test(lower))return last?{id:last,explicit:true}:null;
+    // "balken", "nya balken" i en lag som ansluter till en balk (t.ex. promulgationslagen) avser den balken.
+    if(/^(?:nya\s+)?balken\b/.test(lower))return context.anchor?{id:context.anchor,explicit:true}:null;
     const found=titles.find(([name])=>lower.startsWith(name)&&!/[\p{L}]/u.test(lower.charAt(name.length)));
     if(found){
       // "lagen (2025:1062) om …" med okänt nummer ska inte länkas via ett kortare namn.
@@ -83,7 +85,22 @@
     let last=null,prev=null;
     for(const m of s.matchAll(pattern)){
       const body=m[0],start=m.index,after=s.slice(start+body.length,start+body.length+260);
-      const target=targetLaw(after,context,last);
+      let target=targetLaw(after,context,last);
+      // Uppräkningar som avslutas med "…, allt jordabalken" avser den namngivna lagen.
+      if(target&&!target.explicit){
+        const tail=s.slice(start+body.length,start+body.length+1500);
+        const all=/^[^;]*?,\s*allt\s+(?=\S)/.exec(tail);
+        if(all&&!/\n\s*\d+\s*[a-z]?\.\s/.test(all[0])){const t=targetLaw(tail.slice(all[0].length),context,last);if(t&&t.explicit)target=t;}
+        // Lång uppräkning där paragrafen inte finns i den egna lagen ("… 5 kap. 1 §, 7 kap. 1 § … lagen (2018:1200)"):
+        // den första författning som namnges längre fram i samma uppräkning avses.
+        const firstNum=(m[2].match(numberIn)||[''])[0];
+        if(!target.explicit&&!exists(context,context.sfs,m[1]||(context.chapter||'0'),key(firstNum))){
+          const stop=tail.search(/;|\n\s*\d+\s*[a-z]?\.\s|\.\s+[A-ZÅÄÖ]/);
+          const span=stop<0?tail:tail.slice(0,stop);
+          const nm=/(?<![\p{L}])(?:[\p{L}-]*(?:lagen|balken|förordningen|kungörelsen|ordningen)|lagen|förordningen)(?![\p{L}])/u.exec(span);
+          if(nm){const t=targetLaw(span.slice(nm.index)+tail.slice(span.length,span.length+40),context,last);if(t&&t.explicit)target=t;}
+        }
+      }
       // Följer hänvisningen direkt på en annan i en uppräkning ärver den dess kapitel.
       const between=prev?s.slice(prev.end,start):null;
       const inChain=between!=null&&new RegExp('^(?:'+qualifier.source.slice(1)+')?'+SEP+'$','iu').test(between);

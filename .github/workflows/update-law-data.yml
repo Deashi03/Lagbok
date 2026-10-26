@@ -27,10 +27,23 @@ jobs:
           python-version: '3.12'
       - name: Parser tests
         run: python -m unittest discover -s tests -v
+      - name: Find new laws in SFS
+        # Nya gällande lagar läggs in i den avdelning titeln visar; placeringen granskas i förslaget.
+        if: github.event_name != 'push'
+        continue-on-error: true
+        run: python scripts/discover_all.py add
       - name: Fetch statutes
         env:
           CHANGE_REPORT: data/import-report.md
+          WORKERS: '6'
         run: python scripts/import_laws.py
+      - name: Add new laws to report
+        if: github.event_name != 'push'
+        continue-on-error: true
+        run: |
+          if [ -f data/discovery-report.md ] && grep -q "Tillagda lagar: [1-9]" data/discovery-report.md; then
+            printf '\n\n' >> data/import-report.md; cat data/discovery-report.md >> data/import-report.md
+          fi
       - name: Check editorial headings against new text
         # Fel här ska synas i granskningen men inte hindra att förslaget skapas.
         continue-on-error: true

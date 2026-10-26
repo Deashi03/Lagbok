@@ -25,13 +25,13 @@ const external=/^[^.;]{0,160}?(?:lagen|förordningen|balken|kungörelsen|ordning
 for(const [sfs,doc] of laws)for(const ch of doc.chapters)for(const item of ch.items){
  if(item.type!=='para'||item.repealed)continue;
  for(const v of item.versions||[item]){
-  const text=v.text,refs=links.parseRefs(text,{sfs,chapter:ch.number,exists});
+  const anchor=(catalog.laws.find(l=>l.sfs===sfs)||{}).parent,text=v.text,refs=links.parseRefs(text,{sfs,chapter:ch.number,exists,anchor});
   for(const m of text.matchAll(/§/g)){
    if(text[m.index-1]==='§')continue;
    const after=text.slice(m.index+1,m.index+200).replace(/^§/,'');
    const ext=external.exec(after);
    if(ext&&ext[1]&&!laws.has(ext[1]))continue;
-   if(!links.targetLaw(after,{sfs,chapter:ch.number},null))continue; // annan författning som inte finns i appen
+   if(!links.targetLaw(after,{sfs,chapter:ch.number,anchor},null))continue; // annan författning som inte finns i appen
    total++;
    if(refs.some(r=>m.index>=r.start&&m.index<r.end))linked++;
    else misses.push(sfs+' '+ch.number+':'+item.number+' … '+text.slice(Math.max(0,m.index-40),m.index+50).replace(/\s+/g,' '));
