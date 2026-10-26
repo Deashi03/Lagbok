@@ -1,5 +1,5 @@
 {
-  "version": "0.7",
+  "version": "0.8",
   "generated": "2026-10-25T23:40:58+00:00",
   "source": "Sveriges riksdag, Riksdagens öppna data",
   "laws": [
@@ -138,55 +138,6 @@
       ],
       "chaptered": true,
       "check": "miljöbalk",
-      "section": "balkar"
-    },
-    {
-      "sfs": "1915:218",
-      "name": "Avtalslagen",
-      "type": "lag",
-      "aliases": [
-        "AvtL",
-        "avtalslag"
-      ],
-      "chaptered": true,
-      "check": "avtal",
-      "section": "balkar"
-    },
-    {
-      "sfs": "1990:931",
-      "name": "Köplagen",
-      "type": "lag",
-      "aliases": [
-        "KöpL",
-        "köplag"
-      ],
-      "chaptered": false,
-      "check": "köplag",
-      "section": "balkar"
-    },
-    {
-      "sfs": "1972:207",
-      "name": "Skadeståndslagen",
-      "type": "lag",
-      "aliases": [
-        "SkL",
-        "skadeståndslag",
-        "skadestånd"
-      ],
-      "chaptered": true,
-      "check": "skadeståndslag",
-      "section": "balkar"
-    },
-    {
-      "sfs": "2014:322",
-      "name": "Brottsskadelagen",
-      "type": "lag",
-      "aliases": [
-        "brottsskadelag",
-        "brottsskadeersättning"
-      ],
-      "chaptered": false,
-      "check": "brottsskadelag",
       "section": "balkar"
     },
     {
@@ -403,6 +354,30 @@
       ],
       "chaptered": false,
       "check": "belastningsregister",
+      "section": "balkar",
+      "parent": "1962:700"
+    },
+    {
+      "sfs": "1999:1134",
+      "name": "Förordningen om belastningsregister",
+      "type": "förordning",
+      "aliases": [
+        "belastningsregisterförordningen"
+      ],
+      "chaptered": false,
+      "check": "belastningsregister",
+      "section": "balkar",
+      "parent": "1962:700"
+    },
+    {
+      "sfs": "1992:1554",
+      "name": "Förordningen om kontroll av narkotika",
+      "type": "förordning",
+      "aliases": [
+        "narkotikaförordningen"
+      ],
+      "chaptered": false,
+      "check": "kontroll av narkotika",
       "section": "balkar",
       "parent": "1962:700"
     },
@@ -636,6 +611,68 @@
       "parent": "1942:740"
     },
     {
+      "sfs": "2011:154",
+      "name": "Delgivningsförordningen",
+      "type": "förordning",
+      "aliases": [
+        "delgivningsförordning"
+      ],
+      "chaptered": false,
+      "check": "delgivningsförordning",
+      "section": "balkar",
+      "parent": "1942:740"
+    },
+    {
+      "sfs": "1997:404",
+      "name": "Rättshjälpsförordningen",
+      "type": "förordning",
+      "aliases": [
+        "rättshjälpsförordning"
+      ],
+      "chaptered": false,
+      "check": "rättshjälpsförordning",
+      "section": "balkar",
+      "parent": "1942:740"
+    },
+    {
+      "sfs": "1957:668",
+      "name": "Utlämningslagen",
+      "type": "lag",
+      "aliases": [
+        "utlämning"
+      ],
+      "chaptered": false,
+      "check": "utlämning",
+      "section": "balkar",
+      "parent": "1942:740"
+    },
+    {
+      "sfs": "2003:1156",
+      "name": "Lagen om överlämnande från Sverige enligt en europeisk arresteringsorder",
+      "type": "lag",
+      "aliases": [
+        "arresteringsorder",
+        "EAW"
+      ],
+      "chaptered": false,
+      "check": "arresteringsorder",
+      "section": "balkar",
+      "parent": "1942:740"
+    },
+    {
+      "sfs": "2000:562",
+      "name": "Lagen om internationell rättslig hjälp i brottmål",
+      "type": "lag",
+      "aliases": [
+        "rättslig hjälp",
+        "LIRB"
+      ],
+      "chaptered": false,
+      "check": "rättslig hjälp i brottmål",
+      "section": "balkar",
+      "parent": "1942:740"
+    },
+    {
       "sfs": "1981:774",
       "name": "Utsökningsbalken",
       "type": "lag",
@@ -649,6 +686,31 @@
       "section": "balkar"
     },
     {
+      "sfs": "1987:672",
+      "name": "Konkurslagen",
+      "type": "lag",
+      "aliases": [
+        "KL",
+        "konkurs"
+      ],
+      "chaptered": false,
+      "check": "konkurslag",
+      "section": "balkar",
+      "parent": "1981:774"
+    },
+    {
+      "sfs": "2016:675",
+      "name": "Skuldsaneringslagen",
+      "type": "lag",
+      "aliases": [
+        "skuldsanering"
+      ],
+      "chaptered": false,
+      "check": "skuldsaneringslag",
+      "section": "balkar",
+      "parent": "1981:774"
+    },
+    {
       "sfs": "2010:110",
       "name": "Socialförsäkringsbalken",
       "type": "lag",
@@ -659,6 +721,161 @@
       "chaptered": true,
       "check": "socialförsäkringsbalk",
       "section": "balkar"
+    },
+    {
+      "sfs": "1915:218",
+      "name": "Avtalslagen",
+      "type": "lag",
+      "aliases": [
+        "AvtL",
+        "avtalslag"
+      ],
+      "chaptered": true,
+      "check": "avtal",
+      "section": "civil"
+    },
+    {
+      "sfs": "1990:931",
+      "name": "Köplagen",
+      "type": "lag",
+      "aliases": [
+        "KöpL",
+        "köplag"
+      ],
+      "chaptered": false,
+      "check": "köplag",
+      "section": "civil"
+    },
+    {
+      "sfs": "1972:207",
+      "name": "Skadeståndslagen",
+      "type": "lag",
+      "aliases": [
+        "SkL",
+        "skadeståndslag",
+        "skadestånd"
+      ],
+      "chaptered": true,
+      "check": "skadeståndslag",
+      "section": "civil"
+    },
+    {
+      "sfs": "2014:322",
+      "name": "Brottsskadelagen",
+      "type": "lag",
+      "aliases": [
+        "brottsskadelag",
+        "brottsskadeersättning"
+      ],
+      "chaptered": false,
+      "check": "brottsskadelag",
+      "section": "civil"
+    },
+    {
+      "sfs": "2022:260",
+      "name": "Konsumentköplagen",
+      "type": "lag",
+      "aliases": [
+        "KköpL",
+        "konsumentköp"
+      ],
+      "chaptered": false,
+      "check": "konsumentköplag",
+      "section": "civil"
+    },
+    {
+      "sfs": "1981:130",
+      "name": "Preskriptionslagen",
+      "type": "lag",
+      "aliases": [
+        "preskription"
+      ],
+      "chaptered": false,
+      "check": "preskriptionslag",
+      "section": "civil"
+    },
+    {
+      "sfs": "1975:635",
+      "name": "Räntelagen",
+      "type": "lag",
+      "aliases": [
+        "ränta"
+      ],
+      "chaptered": false,
+      "check": "räntelag",
+      "section": "civil"
+    },
+    {
+      "sfs": "1991:614",
+      "name": "Bostadsrättslagen",
+      "type": "lag",
+      "aliases": [
+        "BRL",
+        "bostadsrätt"
+      ],
+      "chaptered": false,
+      "check": "bostadsrättslag",
+      "section": "civil"
+    },
+    {
+      "sfs": "2005:551",
+      "name": "Aktiebolagslagen",
+      "type": "lag",
+      "aliases": [
+        "ABL",
+        "aktiebolag"
+      ],
+      "chaptered": false,
+      "check": "aktiebolagslag",
+      "section": "civil"
+    },
+    {
+      "sfs": "1960:729",
+      "name": "Upphovsrättslagen",
+      "type": "lag",
+      "aliases": [
+        "URL",
+        "upphovsrätt"
+      ],
+      "chaptered": false,
+      "check": "upphovsrätt",
+      "section": "civil"
+    },
+    {
+      "sfs": "1977:1160",
+      "name": "Arbetsmiljölagen",
+      "type": "lag",
+      "aliases": [
+        "AML",
+        "arbetsmiljö"
+      ],
+      "chaptered": false,
+      "check": "arbetsmiljölag",
+      "section": "civil"
+    },
+    {
+      "sfs": "1982:80",
+      "name": "Lagen om anställningsskydd",
+      "type": "lag",
+      "aliases": [
+        "LAS",
+        "anställningsskydd"
+      ],
+      "chaptered": false,
+      "check": "anställningsskydd",
+      "section": "civil"
+    },
+    {
+      "sfs": "2008:567",
+      "name": "Diskrimineringslagen",
+      "type": "lag",
+      "aliases": [
+        "DL",
+        "diskriminering"
+      ],
+      "chaptered": false,
+      "check": "diskrimineringslag",
+      "section": "civil"
     },
     {
       "sfs": "1984:387",
@@ -850,6 +1067,74 @@
       "section": "polis"
     },
     {
+      "sfs": "2003:789",
+      "name": "Förordningen om skydd mot olyckor",
+      "type": "förordning",
+      "aliases": [
+        "FSO"
+      ],
+      "chaptered": false,
+      "check": "skydd mot olyckor",
+      "section": "polis"
+    },
+    {
+      "sfs": "2010:1075",
+      "name": "Förordningen om brandfarliga och explosiva varor",
+      "type": "förordning",
+      "aliases": [
+        "FBE"
+      ],
+      "chaptered": false,
+      "check": "brandfarliga och explosiva",
+      "section": "polis"
+    },
+    {
+      "sfs": "2018:585",
+      "name": "Säkerhetsskyddslagen",
+      "type": "lag",
+      "aliases": [
+        "säkerhetsskydd"
+      ],
+      "chaptered": false,
+      "check": "säkerhetsskyddslag",
+      "section": "polis"
+    },
+    {
+      "sfs": "2018:1192",
+      "name": "Djurskyddslagen",
+      "type": "lag",
+      "aliases": [
+        "DjSL",
+        "djurskydd"
+      ],
+      "chaptered": false,
+      "check": "djurskyddslag",
+      "section": "polis"
+    },
+    {
+      "sfs": "1987:259",
+      "name": "Jaktlagen",
+      "type": "lag",
+      "aliases": [
+        "jakt"
+      ],
+      "chaptered": false,
+      "check": "jaktlag",
+      "section": "polis"
+    },
+    {
+      "sfs": "2007:1150",
+      "name": "Lagen om tillsyn över hundar och katter",
+      "type": "lag",
+      "aliases": [
+        "hundlagen",
+        "hundar"
+      ],
+      "chaptered": false,
+      "check": "tillsyn över hundar",
+      "section": "polis"
+    },
+    {
       "sfs": "1998:1276",
       "name": "Trafikförordningen",
       "type": "förordning",
@@ -902,6 +1187,40 @@
       "type": "lag",
       "aliases": [
         "vägtrafikdefinitioner"
+      ],
+      "chaptered": false,
+      "check": "vägtrafikdefinitioner",
+      "section": "trafik"
+    },
+    {
+      "sfs": "1976:1090",
+      "name": "Lagen om alkoholutandningsprov",
+      "type": "lag",
+      "aliases": [
+        "utandningsprov",
+        "sållningsprov"
+      ],
+      "chaptered": false,
+      "check": "alkoholutandningsprov",
+      "section": "trafik"
+    },
+    {
+      "sfs": "2009:211",
+      "name": "Fordonsförordningen",
+      "type": "förordning",
+      "aliases": [
+        "fordonsförordning"
+      ],
+      "chaptered": false,
+      "check": "fordonsförordning",
+      "section": "trafik"
+    },
+    {
+      "sfs": "2001:651",
+      "name": "Förordningen om vägtrafikdefinitioner",
+      "type": "förordning",
+      "aliases": [
+        "vägtrafikdefinitionsförordningen"
       ],
       "chaptered": false,
       "check": "vägtrafikdefinitioner",
@@ -1046,6 +1365,143 @@
       ],
       "chaptered": false,
       "check": "alkoholförordning",
+      "section": "forvaltning"
+    },
+    {
+      "sfs": "1979:664",
+      "name": "Passförordningen",
+      "type": "förordning",
+      "aliases": [
+        "passförordning"
+      ],
+      "chaptered": false,
+      "check": "passförordning",
+      "section": "forvaltning"
+    },
+    {
+      "sfs": "2017:725",
+      "name": "Kommunallagen",
+      "type": "lag",
+      "aliases": [
+        "KL",
+        "kommun"
+      ],
+      "chaptered": false,
+      "check": "kommunallag",
+      "section": "forvaltning"
+    },
+    {
+      "sfs": "2010:900",
+      "name": "Plan- och bygglagen",
+      "type": "lag",
+      "aliases": [
+        "PBL",
+        "bygglov"
+      ],
+      "chaptered": false,
+      "check": "plan- och bygglag",
+      "section": "forvaltning"
+    },
+    {
+      "sfs": "2018:218",
+      "name": "Dataskyddslagen",
+      "type": "lag",
+      "aliases": [
+        "dataskydd",
+        "GDPR"
+      ],
+      "chaptered": false,
+      "check": "dataskyddsförordning",
+      "section": "forvaltning"
+    },
+    {
+      "sfs": "2022:482",
+      "name": "Lagen om elektronisk kommunikation",
+      "type": "lag",
+      "aliases": [
+        "LEK"
+      ],
+      "chaptered": false,
+      "check": "elektronisk kommunikation",
+      "section": "forvaltning"
+    },
+    {
+      "sfs": "2010:800",
+      "name": "Skollagen",
+      "type": "lag",
+      "aliases": [
+        "skollag"
+      ],
+      "chaptered": false,
+      "check": "skollag",
+      "section": "forvaltning"
+    },
+    {
+      "sfs": "1991:481",
+      "name": "Folkbokföringslagen",
+      "type": "lag",
+      "aliases": [
+        "folkbokföring"
+      ],
+      "chaptered": false,
+      "check": "folkbokföringslag",
+      "section": "forvaltning"
+    },
+    {
+      "sfs": "2001:82",
+      "name": "Medborgarskapslagen",
+      "type": "lag",
+      "aliases": [
+        "medborgarskap"
+      ],
+      "chaptered": false,
+      "check": "medborgarskap",
+      "section": "forvaltning"
+    },
+    {
+      "sfs": "2016:1013",
+      "name": "Lagen om personnamn",
+      "type": "lag",
+      "aliases": [
+        "namnlagen",
+        "personnamn"
+      ],
+      "chaptered": false,
+      "check": "personnamn",
+      "section": "forvaltning"
+    },
+    {
+      "sfs": "2005:837",
+      "name": "Vallagen",
+      "type": "lag",
+      "aliases": [
+        "val"
+      ],
+      "chaptered": false,
+      "check": "vallag",
+      "section": "forvaltning"
+    },
+    {
+      "sfs": "2018:2088",
+      "name": "Lagen om tobak och liknande produkter",
+      "type": "lag",
+      "aliases": [
+        "tobakslagen",
+        "tobak"
+      ],
+      "chaptered": false,
+      "check": "tobak",
+      "section": "forvaltning"
+    },
+    {
+      "sfs": "2018:1138",
+      "name": "Spellagen",
+      "type": "lag",
+      "aliases": [
+        "spel"
+      ],
+      "chaptered": false,
+      "check": "spellag",
       "section": "forvaltning"
     },
     {
@@ -1292,6 +1748,10 @@
     {
       "id": "balkar",
       "name": "Balkarna med anslutande författningar"
+    },
+    {
+      "id": "civil",
+      "name": "Civilrätt, arbete och näringsliv"
     },
     {
       "id": "polis",
