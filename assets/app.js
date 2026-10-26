@@ -1,7 +1,7 @@
 /* Lagboken: snabb offlinevänlig juridisk läsapp utan externa JavaScript-beroenden. */
 (function () {
   'use strict';
-  const APP_VERSION='1.5.1';
+  const APP_VERSION='1.5.2';
   const $ = (sel, root=document) => root.querySelector(sel);
   const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
   const view = $('#view');
@@ -231,7 +231,7 @@
     const count=id=>state.catalog.filter(l=>!id||l.section===id).length;
     const open=new Set(pref.openSections||[]);
     // Överst: dina favoriter, registret och Nytt i lagen. Avdelningarna finns i listan nedanför.
-    const news=(state.changes||[]).length?'<a class="chip" href="#/nytt" data-link="1">Nytt i lagen'+(unseenNews()?' <span class="dot" aria-label="nytt"></span>':'')+'</a>':'';
+    const news='<a class="chip" href="#/nytt" data-link="1">Nytt i lagen'+(unseenNews()?' <span class="dot" aria-label="nytt"></span>':'')+'</a>';
     return favChips()+'<nav class="section-index" aria-label="Genvägar"><a class="chip" href="#/register" data-link="1">Register A–Ö</a>'+news+'</nav>'+
       (pref.favourites.length?'':'<p class="fav-hint small muted">Tryck ☆ vid en lag eller ett kapitel så hamnar den här överst.</p>')+
       sections.map(sec=>sectionBlock(sec,count,open)).join('');
@@ -257,7 +257,7 @@
     return '<nav class="fav-row'+(edit?' editing':'')+'" aria-label="Favoriter">'+favs.map((t,i)=>edit?
         '<span class="chip fav-chip"><button type="button" class="fav-move" data-action="fav-move" data-key="'+attr(t)+'" aria-label="Flytta fram"'+(i?'':' disabled')+'>‹</button>'+
         '<span>'+html(favLabel(t))+'</span><button type="button" class="fav-remove" data-action="fav" data-key="'+attr(t)+'" aria-label="Ta bort '+attr(favLabel(t))+'">×</button></span>':
-        '<a class="chip fav-chip" href="'+attr(favRoute(t))+'" data-link="1" title="'+attr(favTitle(t))+'">'+html(favLabel(t))+'</a>').join('')+
+        '<a class="chip fav-chip" href="'+attr(favRoute(t))+'" data-link="1" title="'+attr(favTitle(t))+'"><span class="fav-star-mini" aria-hidden="true">★</span>'+html(favLabel(t))+'</a>').join('')+
       '<button type="button" class="chip chip-quiet" data-action="fav-edit">'+(edit?'Klar':'Ordna')+'</button></nav>';
   }
   function fillSection(details){

@@ -576,3 +576,9 @@ html[data-theme="dark"] .topbar .law-tool.on{color:#0F1813}
 .reader-context .find-all-results a{font-weight:inherit;color:var(--text)}
 .find-all-results .row-title{font-weight:650}
 .find-all-results .row-sub{color:var(--secondary)}
+/* 1.5.2: favoriterna är fyllda gröna knappar med en liten stjärna, så de syns bland övriga knappar utan att ta mer plats. */
+.fav-row .fav-chip{background:var(--accent);color:var(--panel);border-color:var(--accent);font-weight:700;letter-spacing:.01em}
+.fav-row .fav-chip:active{background:var(--accent-strong)}
+.fav-star-mini{font-size:.85em;color:#E9D9A8;margin-right:1px}
+html[data-theme="dark"] .fav-star-mini{color:#264D39}
+.fav-row.editing .fav-chip{background:var(--soft);color:var(--accent);border-color:var(--border)}

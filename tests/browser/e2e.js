@@ -77,10 +77,10 @@ const B=process.env.LAGBOK_URL||'http://localhost:8765/';
  await page.goto(B+'#/law/1942%3A740/24');await wait(900);
  await page.click('.reader-heading .fav-star');await wait(300);
  await page.goto(B+'#/catalog');await wait(700);
- const chips=await page.locator('.fav-row .fav-chip').allTextContents();
+ const chips=(await page.locator('.fav-row .fav-chip').allTextContents()).map(t=>t.replace('★','').trim());
  assert.ok(chips.includes('BrB')&&chips.includes('RB 24 kap.'),'favoriterna ska synas som genvägar: '+chips.join(', '));
  const top=await page.locator('.section-index .chip').allTextContents();
- assert.ok(top.length>=1&&top.length<=2&&top[0].includes('Register A–Ö'),'överst finns bara A–Ö och Nytt i lagen: '+top.join(', '));
+ assert.ok(top.length===2&&top[0].includes('Register A–Ö')&&top[1].includes('Nytt i lagen'),'överst finns A–Ö och Nytt i lagen: '+top.join(', '));
  // Anslutande förordningar samlas på en rad som öppnar en lista
  await page.goto(B+'#/law/1984%3A387');await wait(900);
  assert.match(await page.textContent('.relation-row'),/anslutande förordning/);

@@ -145,3 +145,7 @@ Läsaren har en enda innehållsknapp, utan föregående/nästa länkar eller ver
 - **I hela lagboken stannar i lagen:** växeln i sökraden visar träffarna från hela lagboken i en lista direkt under sökfältet, utan att lämna lagen du läser. Tryck på *I Polislagen* för att gå tillbaka till sökningen i lagen.
 - **Lugnare lagtext:** "Kompletteras av" och "Kompletterar" har samma gröna färg som övriga knappar i stället för vinrött, och "hänvisningar hit" har ingen ikon längre.
 
+## Version 1.5.2
+- **Nytt i lagen syns alltid** överst bredvid *Register A–Ö*, även innan första månadsimporten har gett några ändringar. Sidan visar då vad som träder i kraft det närmaste året.
+- **Tydligare favoriter:** favoriterna är fyllda gröna knappar med en liten stjärna, lika låga som övriga knappar, så de syns tydligt även när man har många.
+
