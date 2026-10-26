@@ -1,6 +1,6 @@
 {
   "version": "0.9",
-  "generated": "2026-10-26T08:44:50+00:00",
+  "generated": "2026-10-26T08:49:36+00:00",
   "source": "Sveriges riksdag, Riksdagens öppna data",
   "laws": [
     {
@@ -138,6 +138,46 @@
       "chaptered": true,
       "check": "jordabalk",
       "section": "balkar"
+    },
+    {
+      "sfs": "1970:988",
+      "name": "Fastighetsbildningslagen",
+      "type": "lag",
+      "aliases": [],
+      "chaptered": true,
+      "check": "fastighetsbildningslag",
+      "section": "balkar",
+      "parent": "1970:994"
+    },
+    {
+      "sfs": "1972:719",
+      "name": "Expropriationslagen",
+      "type": "lag",
+      "aliases": [],
+      "chaptered": true,
+      "check": "expropriationslag",
+      "section": "balkar",
+      "parent": "1970:994"
+    },
+    {
+      "sfs": "1973:1144",
+      "name": "Ledningsrättslagen",
+      "type": "lag",
+      "aliases": [],
+      "chaptered": false,
+      "check": "ledningsrättslag",
+      "section": "balkar",
+      "parent": "1970:994"
+    },
+    {
+      "sfs": "2021:516",
+      "name": "Fastighetsmäklarlagen",
+      "type": "lag",
+      "aliases": [],
+      "chaptered": true,
+      "check": "fastighetsmäklarlag",
+      "section": "balkar",
+      "parent": "1970:994"
     },
     {
       "sfs": "1998:808",
@@ -604,6 +644,46 @@
       "aliases": [],
       "chaptered": false,
       "check": "lag om verkställighet av ungdomsövervakning",
+      "section": "balkar",
+      "parent": "1962:700"
+    },
+    {
+      "sfs": "2025:1053",
+      "name": "Lagen om verkställighet av fängelsestraff med elektronisk övervakning",
+      "type": "lag",
+      "aliases": [],
+      "chaptered": true,
+      "check": "lag om verkställighet av fängelsestraff med elektronisk övervakning",
+      "section": "balkar",
+      "parent": "1962:700"
+    },
+    {
+      "sfs": "2025:1323",
+      "name": "Förordningen om verkställighet av fängelsestraff med elektronisk övervakning",
+      "type": "förordning",
+      "aliases": [],
+      "chaptered": true,
+      "check": "förordning om verkställighet av fängelsestraff med elektronisk övervakning",
+      "section": "balkar",
+      "parent": "1962:700"
+    },
+    {
+      "sfs": "2026:266",
+      "name": "Förordningen om verkställighet av säkerhetsförvaring",
+      "type": "förordning",
+      "aliases": [],
+      "chaptered": false,
+      "check": "förordning om verkställighet av säkerhetsförvaring",
+      "section": "balkar",
+      "parent": "1962:700"
+    },
+    {
+      "sfs": "2014:799",
+      "name": "Lagen om sprängämnesprekursorer",
+      "type": "lag",
+      "aliases": [],
+      "chaptered": false,
+      "check": "lag om sprängämnesprekursorer",
       "section": "balkar",
       "parent": "1962:700"
     },
@@ -1191,6 +1271,46 @@
       "parent": "1942:740"
     },
     {
+      "sfs": "2010:1390",
+      "name": "Lagen om utnämning av ordinarie domare",
+      "type": "lag",
+      "aliases": [],
+      "chaptered": false,
+      "check": "lag om utnämning av ordinarie domare",
+      "section": "balkar",
+      "parent": "1942:740"
+    },
+    {
+      "sfs": "2010:1793",
+      "name": "Förordningen med instruktion för Domarnämnden",
+      "type": "förordning",
+      "aliases": [],
+      "chaptered": false,
+      "check": "förordning med instruktion för domarnämnden",
+      "section": "balkar",
+      "parent": "1942:740"
+    },
+    {
+      "sfs": "2007:976",
+      "name": "Förordningen med instruktion för Rättsmedicinalverket",
+      "type": "förordning",
+      "aliases": [],
+      "chaptered": false,
+      "check": "förordning med instruktion för rättsmedicinalverket",
+      "section": "balkar",
+      "parent": "1942:740"
+    },
+    {
+      "sfs": "2007:1132",
+      "name": "Förordningen med instruktion för Statens institutionsstyrelse",
+      "type": "förordning",
+      "aliases": [],
+      "chaptered": false,
+      "check": "förordning med instruktion för statens institutionsstyrelse",
+      "section": "balkar",
+      "parent": "1942:740"
+    },
+    {
       "sfs": "1981:774",
       "name": "Utsökningsbalken",
       "type": "lag",
@@ -1278,6 +1398,26 @@
       "aliases": [],
       "chaptered": false,
       "check": "lag om verkställighet av vissa utländska beslut om rättegångskostnader",
+      "section": "balkar",
+      "parent": "1981:774"
+    },
+    {
+      "sfs": "1974:182",
+      "name": "Inkassolagen",
+      "type": "lag",
+      "aliases": [],
+      "chaptered": false,
+      "check": "inkassolag",
+      "section": "balkar",
+      "parent": "1981:774"
+    },
+    {
+      "sfs": "1973:1173",
+      "name": "Kreditupplysningslagen",
+      "type": "lag",
+      "aliases": [],
+      "chaptered": false,
+      "check": "kreditupplysningslag",
       "section": "balkar",
       "parent": "1981:774"
     },
@@ -2212,6 +2352,42 @@
       "section": "polis"
     },
     {
+      "sfs": "2019:84",
+      "name": "Förordningen med instruktion för Kustbevakningen",
+      "type": "förordning",
+      "aliases": [],
+      "chaptered": false,
+      "check": "förordning med instruktion för kustbevakningen",
+      "section": "polis"
+    },
+    {
+      "sfs": "2017:154",
+      "name": "Förordningen med instruktion för Skatteverket",
+      "type": "förordning",
+      "aliases": [],
+      "chaptered": false,
+      "check": "förordning med instruktion för skatteverket",
+      "section": "polis"
+    },
+    {
+      "sfs": "1974:191",
+      "name": "Lagen om bevakningsföretag",
+      "type": "lag",
+      "aliases": [],
+      "chaptered": false,
+      "check": "lag om bevakningsföretag",
+      "section": "polis"
+    },
+    {
+      "sfs": "1995:1000",
+      "name": "Pantbankslagen",
+      "type": "lag",
+      "aliases": [],
+      "chaptered": false,
+      "check": "pantbankslag",
+      "section": "polis"
+    },
+    {
       "sfs": "1998:1276",
       "name": "Trafikförordningen",
       "type": "förordning",
@@ -2438,6 +2614,24 @@
       "aliases": [],
       "chaptered": false,
       "check": "lag om elektroniska vägtullssystem",
+      "section": "trafik"
+    },
+    {
+      "sfs": "2006:227",
+      "name": "Vägtrafikskattelagen",
+      "type": "lag",
+      "aliases": [],
+      "chaptered": true,
+      "check": "vägtrafikskattelag",
+      "section": "trafik"
+    },
+    {
+      "sfs": "1976:359",
+      "name": "Trafikförsäkringsförordningen",
+      "type": "förordning",
+      "aliases": [],
+      "chaptered": false,
+      "check": "trafikförsäkringsförordning",
       "section": "trafik"
     },
     {
@@ -2901,6 +3095,34 @@
       "aliases": [],
       "chaptered": false,
       "check": "lag om statlig ersättning vid ideell skada m m",
+      "section": "forvaltning"
+    },
+    {
+      "sfs": "2008:344",
+      "name": "Lagen om hälso- och sjukvård åt asylsökande m.fl.",
+      "type": "lag",
+      "aliases": [],
+      "chaptered": false,
+      "check": "lag om hälso- och sjukvård åt asylsökande m fl",
+      "section": "forvaltning"
+    },
+    {
+      "sfs": "1944:181",
+      "name": "Lagen om redovisningsmedel",
+      "type": "lag",
+      "aliases": [],
+      "chaptered": false,
+      "check": "lag om redovisningsmedel",
+      "section": "forvaltning",
+      "available": false
+    },
+    {
+      "sfs": "2003:862",
+      "name": "Lagen om finansiell rådgivning till konsumenter",
+      "type": "lag",
+      "aliases": [],
+      "chaptered": false,
+      "check": "lag om finansiell rådgivning till konsumenter",
       "section": "forvaltning"
     },
     {
