@@ -64,7 +64,7 @@ def run(apply):
         if c["sfs"] in have:skipped.append((w,c));continue
         try:
             doc=get("https://data.riksdagen.se/dokument/sfs-"+il.slug(c["sfs"])+".json").get("dokumentstatus",{}).get("dokument",{})
-            il.check_in_force(doc)
+            il.check_in_force(doc)  # stoppar bara redan upphävda
         except Exception as ex:missing.append((w,c["sfs"]+": "+str(ex)[:80]));continue
         accepted.append((w,c));have.add(c["sfs"])
         time.sleep(.2)

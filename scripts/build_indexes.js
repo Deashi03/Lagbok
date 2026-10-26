@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 /* Bygger sökindex och register över hänvisningar ur data/laws.
-   data/index/paras.json          – alla paragrafer: [lag, kapitel, paragraf, rubrik]
-   data/index/terms/<xx>.json     – ord -> paragrafnummer (deltakodade), uppdelat på ordets två första tecken
+   data/index/meta.json           – lagarnas ordning, antal paragrafer, blockstorlek och orddelarnas namn
+   data/index/paras/<n>.json      – paragrafer i block: [lag, kapitel, paragraf, rubrik]
+   data/index/terms/<xx>.json     – ord -> paragrafnummer (deltakodade), uppdelat på ordets två (eller tre) första tecken
    data/index/backlinks/<sfs>.json – "kapitel|paragraf" -> kopplingar [lag, kapitel, paragraf, typ] där typ är
                                     "ref" (hänvisar hit), "föreskrift" (förordning som kompletterar) eller
                                     "kompletterar" (lagparagraf som förordningsparagrafen kompletterar)
@@ -95,6 +96,14 @@ for(const rel of curated.kompletterar){
 // hänvisningarna till den mest hänvisade lagen. Enstaka hänvisningar ger ingen koppling på lagnivå.
 // Nämner förordningen en lag i sina första paragrafer ("… med stöd av lagen (1998:620) …") är det den
 // lag förordningen ansluter till, oavsett hur ofta andra lagar nämns längre ned.
+const STOP=new Set(['instruktion','vissa','sarskilda','bestammelser','annat','andra','svenska','sverige']);
+function stems(name){
+  return (fold(name).match(/[a-z]{5,}/g)||[]).map(w=>w.replace(/(?:forordningen|kungorelsen|lagen|balken)$/,'').replace(/s$/,'')).filter(w=>w.length>=5&&!STOP.has(w));
+}
+function sameStem(a,b){
+  const x=stems(a),y=stems(b);
+  return x.some(u=>y.some(v=>u===v||(Math.min(u.length,v.length)>=7&&(u.startsWith(v)||v.startsWith(u)))));
+}
 const anchors=new Map();
 for(const law of laws){
   if(law.type!=='förordning')continue;
@@ -105,7 +114,11 @@ for(const law of laws){
   const own=words(law.name),nameOf=s=>(laws.find(l=>l.sfs===s)||{}).name||'';
   const overlap=s=>[...words(nameOf(s))].filter(w=>own.has(w)||[...own].some(o=>o.slice(0,6)===w.slice(0,6))).length;
   const hit=named.slice().sort((a,b)=>overlap(b)-overlap(a))[0];
-  if(hit)anchors.set(law.sfs,hit);
+  if(hit){anchors.set(law.sfs,hit);continue;}
+  // Annars: en lag med samma namnstam som förordningen ("Brottsskadeförordningen" – "Brottsskadelagen")
+  // som förordningen hänvisar till minst en gång.
+  const kin=[...lawRefs.keys()].filter(p=>p.startsWith(law.sfs+'>')).map(p=>p.split('>')[1]).filter(s=>sameStem(law.name,nameOf(s)));
+  if(kin.length===1)anchors.set(law.sfs,kin[0]);
 }
 const relations={},top=new Map();
 for(const [pair,count] of lawRefs){const f=pair.split('>')[0];top.set(f,Math.max(top.get(f)||0,count));}
@@ -118,16 +131,56 @@ for(const [pair,count] of [...lawRefs].sort()){
   (relations[f]=relations[f]||{kompletterar:[],kompletteras:[]}).kompletterar.push(l);
   (relations[l]=relations[l]||{kompletterar:[],kompletteras:[]}).kompletteras.push(f);
 }
-fs.writeFileSync(path.join(out,'relations.json'),JSON.stringify(relations));
-fs.writeFileSync(path.join(out,'paras.json'),JSON.stringify({laws:laws.map(l=>l.sfs),p:paras}));
-const shards=new Map();
-for(const [term,list] of [...postings].sort((a,b)=>a[0]<b[0]?-1:1)){
-  const shard=term.slice(0,2);
-  if(!shards.has(shard))shards.set(shard,{});
-  let prev=0;shards.get(shard)[term]=list.map(n=>{const d=n-prev;prev=n;return d;});
+// Förordningar som följer lagens disposition ("Vanlig delgivning", "Kungörelsedelgivning"): paragrafer utan
+// egen hänvisning kopplas till avsnittet med samma rubrik i lagen förordningen ansluter till.
+const linked=(sfs,ch,num)=>{const m=backlinks.get(sfs+'#'+ch+'|'+key(num));return !!m&&[...m.values()].some(e=>e[3]==='kompletterar');};
+const headingKey=t=>fold(t).replace(/[^a-z0-9 ]/g,'').replace(/\s+/g,' ').trim();
+for(const [f,rel] of Object.entries(relations)){
+  if(rel.kompletterar.length!==1)continue;
+  const lawSfs=rel.kompletterar[0],sections=new Map();
+  for(const ch of docs.get(lawSfs).chapters)for(const item of ch.items){
+    if(item.type==='heading'&&item.nextPara&&!sections.has(headingKey(item.text)))sections.set(headingKey(item.text),[ch.number,String(item.nextPara)]);
+  }
+  for(const ch of docs.get(f).chapters){
+    let section=null;
+    for(const item of ch.items){
+      if(item.type==='heading'){const k=headingKey(item.text);section=k.length>3&&!/^(?:inledande|allmanna|ovriga|overklagande|bemyndigande)/.test(k)?sections.get(k)||null:null;continue;}
+      if(item.type!=='para'||item.repealed||!section||linked(f,ch.number,item.number))continue;
+      const [lc,lp]=section;
+      if(!exists(lawSfs,lc,lp))continue;
+      addLink(f,ch.number,item.number,[lawSfs,lc,displayNumber(lawSfs,lc,lp),'kompletterar']);
+      addLink(lawSfs,lc,lp,[f,ch.number,String(item.number),'föreskrift']);
+    }
+  }
 }
+fs.writeFileSync(path.join(out,'relations.json'),JSON.stringify(relations));
+// Paragrafregistret delas i block om CHUNK paragrafer som hämtas när en sökträff finns i blocket.
+// Orddelar som blir större än SPLIT byte delas vidare ett tecken i taget ("fo" -> "for", "fos", "fo_"),
+// så att varje fil förblir liten även när hela Sveriges Rikes Lag finns i appen.
+const CHUNK=2000,SPLIT=60000;
+fs.mkdirSync(path.join(out,'paras'),{recursive:true});
+for(let c=0;c*CHUNK<paras.length;c++)fs.writeFileSync(path.join(out,'paras',c+'.json'),JSON.stringify(paras.slice(c*CHUNK,(c+1)*CHUNK)));
+const encode=list=>{let prev=0;return list.map(n=>{const d=n-prev;prev=n;return d;});};
+const byPrefix=new Map();
+for(const [term,list] of [...postings].sort((a,b)=>a[0]<b[0]?-1:1)){
+  const p=term.slice(0,2);
+  if(!byPrefix.has(p))byPrefix.set(p,{});
+  byPrefix.get(p)[term]=encode(list);
+}
+const shards=new Map();
+function place(prefix,data){
+  if(JSON.stringify(data).length<=SPLIT||prefix.length>=6){shards.set(prefix,data);return;}
+  const parts=new Map();
+  for(const [term,list] of Object.entries(data)){
+    const name=term.length>prefix.length?term.slice(0,prefix.length+1):prefix+'_';
+    if(!parts.has(name))parts.set(name,{});
+    parts.get(name)[term]=list;
+  }
+  for(const [name,part] of parts)name.endsWith('_')?shards.set(name,part):place(name,part);
+}
+for(const [p,data] of byPrefix)place(p,data);
 for(const [name,data] of shards)fs.writeFileSync(path.join(out,'terms',name+'.json'),JSON.stringify(data));
-fs.writeFileSync(path.join(out,'shards.json'),JSON.stringify([...shards.keys()]));
+fs.writeFileSync(path.join(out,'meta.json'),JSON.stringify({laws:laws.map(l=>l.sfs),count:paras.length,chunk:CHUNK,shards:[...shards.keys()].sort()}));
 const bySfs=new Map();
 for(const [k,sources] of backlinks){
   const [sfs,target]=k.split('#');

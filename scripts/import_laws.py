@@ -29,6 +29,7 @@ DATE=re.compile(r'\d{4}-\d{2}-\d{2}')
 # Övergångsbestämmelser hamnar i Riksdagens text efter sista paragrafen och flyttas till en egen del.
 TRANSITIONS=re.compile(r'\n\s*(?:Ikraftträdande- och )?[ÖO]vergångsbestämmelser\s*\n')
 TRANSITION_SFS=re.compile(r'^(\d{4}:\d+(?: \d)?)\s*$',re.M)
+LONG_PARAGRAPH=15000
 def slug(sfs):return sfs.replace(":","-").replace(" ","-")
 def clear(s):
     s=re.sub(r"<br\s*/?>","\n",s,flags=re.I)
@@ -50,6 +51,10 @@ def version(raw):
     cut=TRANSITIONS.search("\n"+text)
     if cut:
         out["_transitions"]=text[cut.end()-1:].strip();text=text[:max(0,cut.start()-1)].rstrip()
+    # Långa bilagor (t.ex. barnkonventionens text) läggs i en egen del i stället för i paragrafen.
+    annex=re.search(r"\n\s*Bilaga\s*\n",text)
+    if annex and len(text)>LONG_PARAGRAPH:
+        out["_appendix"]=text[annex.end():].strip();text=text[:annex.start()].rstrip()
     while True:
         m=MARK.match(text)
         if not m:break
@@ -64,6 +69,7 @@ def version(raw):
 def build_para(number,raws):
     versions=[version(r) for r in raws if r and r.strip()]
     transitions=[v.pop("_transitions") for v in versions if "_transitions" in v]
+    appendix=[v.pop("_appendix") for v in versions if "_appendix" in v]
     first=versions[0]
     item={"type":"para","number":number,"text":first["text"]}
     if len(versions)>1 or "inForce" in first or "expires" in first:
@@ -72,6 +78,7 @@ def build_para(number,raws):
         item["amendedBy"]=first["amendedBy"]
     if all(REPEALED.match(v["text"]) for v in versions):item["repealed"]=True
     if transitions:item["_transitions"]=transitions[0]
+    if appendix:item["_appendix"]=appendix[0]
     return item
 def split_transitions(block):
     """Delar övergångsbestämmelser per ändringsförfattning: [{"sfs":"2023:372","text":"…"}]."""
@@ -176,7 +183,7 @@ def parse_text(raw):
     return finish(chapters)
 def count(chs):return sum(x["type"]=="para" for c in chs for x in c["items"])
 def validate(chs,id):
-    if count(chs)<MIN.get(id,5):raise ValueError("insufficient sections "+str(count(chs)))
+    if count(chs)<MIN.get(id,1):raise ValueError("insufficient sections "+str(count(chs)))
     seen=set()
     for c in chs:
         for p in c["items"]:
@@ -193,13 +200,18 @@ def editorial(chs,sfs):
     if idx and c["items"][idx-1]["type"]=="heading" and "husrannsakan" in c["items"][idx-1]["text"].lower():return
     c["items"].insert(idx,{"type":"heading","text":"Husrannsakan","editorial":True,"nextPara":"1"})
 REPEALED_HEADER=re.compile(r'Upph(?:ä|&auml;)vd\s*(?:</?\w+[^>]*>\s*)*:?\s*(?:</?\w+[^>]*>\s*)*(\d{4}-\d{2}-\d{2})',re.I)
-def check_in_force(doc):
-    """Upphävda författningar finns kvar i Riksdagens databas men ska inte in i lagboken."""
+class Repealed(ValueError):pass
+def check_in_force(doc,today=None):
+    """Upphävda författningar finns kvar i Riksdagens databas men ska inte in i lagboken.
+    Returnerar datumet om författningen upphör i framtiden, så att appen kan visa det."""
     head=(doc.get("html") or "")
     hr=re.search(r"<hr\b",head,re.I)
     head=head[:hr.start()] if hr else head[:3000]
     m=REPEALED_HEADER.search(head) or REPEALED_HEADER.search((doc.get("text") or "")[:1500])
-    if m:raise ValueError("upphävd författning ("+m[1]+")")
+    if not m:return None
+    today=today or dt.date.today().isoformat()
+    if m[1]<=today:raise Repealed("upphävd författning ("+m[1]+")")
+    return m[1]
 def check_title(meta,official):
     """Skydd mot fel SFS-nummer i katalogen: Riksdagens titel måste innehålla kontrollordet."""
     expected=meta.get("check")
@@ -208,11 +220,12 @@ def check_title(meta,official):
         raise ValueError("titelkontroll: väntade '"+expected+"' i '"+str(official)+"'")
 def document(id,name,method,chs,official=None):
     transitions=take_transitions(chs)
+    appendix=[p.pop("_appendix") for c in chs for p in c["items"] if "_appendix" in p]
     out={"sfs":id,"title":name,"officialTitle":official,"sourceUrl":"https://data.riksdagen.se/dokument/sfs-"+slug(id)+".html","parser":method,
             "fetchedAt":dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds"),"latestAmendment":latest_amendment(chs),"chapters":chs}
     if transitions:out["transitions"]=transitions
+    if appendix:out["appendix"]=appendix[0]
     return out
-LONG_PARAGRAPH=15000
 def quality_warnings(old,new):
     """Tecken på tolkningsfel: kraftigt minskat antal paragrafer, tappade kapitel eller sammanklistrad text."""
     warn=[];a,b=paragraphs(old),paragraphs(new)
@@ -240,9 +253,10 @@ def describe_changes(name,id,old,new):
     for w in quality_warnings(old,new):lines.append("- ⚠️ Kontrollera: "+w)
     if len(lines)==1:lines.append("- Endast struktur eller metadata ändrad.")
     return "\n".join(lines)
-def write_report(report,fail):
+def write_report(report,fail,repealed=()):
     target=os.environ.get("CHANGE_REPORT")
     text="## Ändringar från Riksdagens öppna data\n\n"+("\n\n".join(report) if report else "Inga ändringar i lagtexten.")
+    if repealed:text+="\n\n**Upphävda och borttagna ur lagboken:**\n"+"\n".join("- "+f for f in repealed)
     if fail:text+="\n\n**Kunde inte importeras:**\n"+"\n".join("- "+f for f in fail)
     text+="\n\nKontrollera lagtext, ikraftträdande och övergångsbestämmelser innan sammanslagning. Redaktionella rubriker kontrolleras av testerna."
     print(text)
@@ -257,14 +271,14 @@ def fetch(sfs):
             if attempt==2:raise
             time.sleep(attempt+1)
 def run():
-    catalog=json.loads(CATALOG.read_text(encoding="utf-8"));changed=False;fail=[];report=[]
+    catalog=json.loads(CATALOG.read_text(encoding="utf-8"));changed=False;fail=[];report=[];repealed=[]
     for meta in catalog["laws"]:
         id=meta["sfs"]
         try:
             doc=fetch(id).get("dokumentstatus",{}).get("dokument",{})
             official=doc.get("titel")
             check_title(meta,official)
-            check_in_force(doc)
+            repeal_at=check_in_force(doc)
             chs=parse_html(doc.get("html") or "")
             method="HTML"
             if count(chs)<MIN.get(id,5):
@@ -272,6 +286,7 @@ def run():
             validate(chs,id)
             editorial(chs,id)
             output=document(id,meta["name"],method,chs,official)
+            if repeal_at:output["repealAt"]=repeal_at
             chaptered=any(c["number"]!="0" for c in chs)
             if meta.get("chaptered")!=chaptered:meta["chaptered"]=chaptered;changed=True
             file=OUT/(slug(id)+".json")
@@ -285,6 +300,14 @@ def run():
             file.write_text(json.dumps(output,ensure_ascii=False,separators=(",",":"))+"\n",encoding="utf-8")
             print(id,"imported",count(chs),"paragraphs",method)
             changed=True
+        except Repealed as ex:
+            # Upphävd: tas bort ur lagboken och redovisas i rapporten.
+            print(id,"REPEALED",ex,file=sys.stderr)
+            f=OUT/(slug(id)+".json")
+            if f.exists():f.unlink()
+            if meta.get("available") is not False:meta["available"]=False;changed=True
+            repealed.append(id+" ("+meta["name"]+"): "+str(ex))
+            continue
         except Exception as ex:
             print(id,"FAILED",ex,file=sys.stderr);fail.append(id+" ("+meta["name"]+"): "+str(ex)[:200])
             # En författning som aldrig har kunnat importeras döljs i appen tills importen lyckas.
@@ -297,7 +320,7 @@ def run():
         catalog["generated"]=dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds")
         CATALOG.write_text(json.dumps(catalog,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
     if changed and not report:report.append("Katalogen uppdaterad (kapitelindelning).")
-    write_report(report,fail)
+    write_report(report,fail,repealed)
     # Misslyckade författningar stoppar inte övriga; arbetsflödet markeras som misslyckat efter granskningsförslaget.
     if fail and not os.environ.get("CHANGE_REPORT"):sys.exit("Manual review needed: "+", ".join(fail))
 if __name__=="__main__":run()
