@@ -29,6 +29,7 @@ class ParserTests(unittest.TestCase):
  def test_validation(self):
   with self.assertRaises(ValueError):
    validate([{"number":"0","items":[{"type":"para","number":"1","text":"Text"}]}],"1984:387")
+  validate([{"number":"0","items":[{"type":"para","number":"1","text":"Ensam paragraf"}]}],"1994:1219")
  def test_editorial(self):
   chs=[{"number":"28","title":"","items":[{"type":"para","number":"1","text":"Text"}]}]
   editorial(chs,"1942:740")
@@ -82,5 +83,6 @@ class ParserTests(unittest.TestCase):
  def test_repealed_documents_are_refused(self):
   check_in_force({"html":"<b>Utfärdad</b>: 1984-05-24<br><b>Ändrad</b>: t.o.m. SFS 2026:1<hr><a class=\"paragraf\">1 §</a>"})
   with self.assertRaises(ValueError):
-   check_in_force({"html":"<b>Utfärdad</b>: 2000-05-11<br><b>Upphävd</b>: 2017-07-01<hr>text"})
+   check_in_force({"html":"<b>Utfärdad</b>: 2000-05-11<br><b>Upphävd</b>: 2017-07-01<hr>text"},"2026-10-26")
+  self.assertEqual(check_in_force({"html":"<b>Upphävd</b>: 2030-07-01<hr>text"},"2026-10-26"),"2030-07-01")
 if __name__=="__main__":unittest.main()

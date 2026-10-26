@@ -35,7 +35,10 @@
       }
       known.add(law.sfs);
     }
-    sortTitles();for(const law of laws||[])known.add(law.sfs);
+    // Namn som pekar på författningar som inte längre finns i katalogen (t.ex. upphävda) tas bort.
+    const inCatalog=new Set((laws||[]).map(l=>l.sfs));
+    if(inCatalog.size)titles=titles.filter(([,sfs])=>inCatalog.has(sfs));
+    sortTitles();known=new Set(titles.map(t=>t[1]));for(const law of laws||[])known.add(law.sfs);
   }
   const NUM='\\d+(?:\\s?[a-z](?![\\p{L}]))?';
   const SEP='\\s*(?:,|och|eller|samt|-{1,2}|–)\\s*';

@@ -289,8 +289,11 @@
       '<button type="button" class="button'+(pref.watch[meta.sfs]?' active':'')+'" data-action="watch" data-key="'+attr(meta.sfs)+'">'+(pref.watch[meta.sfs]?'◉ Bevakas':'○ Bevaka ändringar')+'</button>'+
       '<a class="button" href="'+attr(sourceUrl(meta.sfs))+'" target="_blank" rel="noopener noreferrer">Officiell källa ↗</a></div>'+
       (readTarget(meta.sfs)&&readTarget(meta.sfs).label?'<a class="continue-row compact" data-link="1" href="'+attr(readTarget(meta.sfs).url)+'"><span class="continue-icon" aria-hidden="true">↻</span><div class="grow"><div class="row-title">Fortsätt där du var</div><div class="row-sub">'+html(readTarget(meta.sfs).label)+'</div></div><span class="chevron">›</span></a>':'')+
-      lawRelations(meta)+
+      repealNotice(data)+lawRelations(meta)+
       '<p class="small muted">Appen visar den lydelse som gäller i dag enligt källans markeringar. Kommande lydelser visas under respektive paragraf. Kontrollera alltid mot Riksdagen vid rättslig användning.</p></div>';
+  }
+  function repealNotice(data){
+    return data&&data.repealAt?'<div class="notice repeal-notice">Författningen upphör att gälla '+html(lawModel.formatDate(data.repealAt))+' enligt Riksdagen.</div>':'';
   }
   // Förordningar som ansluter till lagen, eller lagen som förordningen ansluter till.
   function lawRelations(meta){
@@ -496,7 +499,7 @@
       (state.focus?'<button type="button" class="focus-return" data-action="toggle-focus">Avsluta läsläge</button>':'')+
       findBar(meta)+'</div>'+
       '<main class="law-reader reading-mode-'+html(pref.readingMode)+'">'+
-      '<header class="reader-heading"><h1>'+html(ch.title||(ch.number==='0'?meta.name:'Kapitel '+ch.number))+'</h1>'+(hasRealChapters(data)?'':lawRelations(meta))+'</header>'+
+      '<header class="reader-heading"><h1>'+html(ch.title||(ch.number==='0'?meta.name:'Kapitel '+ch.number))+'</h1>'+(hasRealChapters(data)?'':repealNotice(data)+lawRelations(meta))+'</header>'+
       '<div class="statute-body">'+content+'</div>'+
       '<footer class="reader-end"><span class="small muted">Slut på '+html(short)+'.</span>'+
       (next?'<a class="reader-next" data-link="1" href="'+attr(urlFor(meta.sfs,next.number))+'"><span class="small muted">Nästa kapitel</span>'+

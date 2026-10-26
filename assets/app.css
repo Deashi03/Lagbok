@@ -463,3 +463,4 @@ mark.hl.hl-new{animation:marker .32s var(--ease-out) forwards}
 .chapter-jump a:active{scale:.94;background:var(--soft-green)}
 /* Pennans verktygsrad och ångra-rutan får inte överlappa */
 html[data-pen="on"] .toast{bottom:calc(150px + env(safe-area-inset-bottom))}
+.repeal-notice{border-left-color:var(--wine);color:var(--wine)}
