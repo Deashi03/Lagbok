@@ -18,7 +18,8 @@
     }
     // Bara förkortningen, lagens namn eller SFS-numret ("PL", "brottsbalken", "1984:387") öppnar författningens början.
     const whole=norm(q),abbr=a=>/^[A-ZÅÄÖ][A-Za-zÅÄÖåäö]{0,7}$/.test(a)&&/[A-ZÅÄÖ].*[A-ZÅÄÖa-zåäö]|^[A-ZÅÄÖ]{2,}$/.test(a);
-    const exact=(laws||[]).filter(l=>norm(l.name)===whole||l.sfs===q||(l.aliases||[]).some(a=>abbr(a)&&norm(a)===whole));
+    // Konventioner i en lag nås också med sitt vedertagna namn ("Barnkonventionen", "Europakonventionen").
+    const exact=(laws||[]).filter(l=>norm(l.name)===whole||l.sfs===q||(l.aliases||[]).some(a=>(abbr(a)||l.articleChapter)&&norm(a)===whole));
     if(exact.length){
       exact.sort((a,b)=>Number(norm(b.name)===whole)-Number(norm(a.name)===whole)||Number(b.type==='lag')-Number(a.type==='lag'));
       return {type:'law',meta:exact[0],chapter:null,para:null};
@@ -42,6 +43,8 @@
         return {type:'law',meta:item.meta,chapter:chapPara[1],para:paraKey(chapPara[2])};
       }
       const one=/^(\d+\s*[a-z]?)\s*(?:§|kap\.?)?$/i.exec(item.rest);
+      // "EKMR 8": lagen har konventionen som kapitel ("K"); ett ensamt nummer avser artikeln.
+      if(one&&item.meta.articleChapter&&!/(?:§|kap)/i.test(item.rest))return {type:'law',meta:item.meta,chapter:item.meta.articleChapter,para:paraKey(one[1])};
       if(one){
         if(item.meta.chaptered){
           if(/[a-z]/i.test(one[1]))return null;

@@ -37,7 +37,8 @@ def foreign(block):
     en=words(block,["the","of","shall","and","this","which","or"])
     fr=words(block,["le","la","les","des","et","du"])
     no=words(block,["og","ikke","skal","af","denne"])
-    return max(en,fr,no)>=2 and max(en,fr,no)>sv
+    de=words(block,["und","der","die","des","nicht","oder","wird","werden","dieses"])
+    return max(en,fr,no,de)>=2 and max(en,fr,no,de)>sv
 def tidy(t):
     # Avstavning vid radbrytning i källan: "rät-\ntigheter" blir "rättigheter", men "fri- och" behålls.
     t=re.sub(r"([a-zåäö])-[ \t]*\n[ \t]*(?!och\b|eller\b|samt\b|till\b)([a-zåäö])",r"\1\2",t)
@@ -51,7 +52,7 @@ def heading(m,nxt):
     if not rest and nxt and len(nxt)<120 and not HEAD.match(nxt) and not foreign(nxt) and not re.search(r"[.;,]$",nxt):rest=nxt
     return kind.capitalize()+" "+num+(" – "+cap(rest) if rest else "")
 def parse(text):
-    blocks=[tidy(b) for b in re.split(r"\n\s*\n",text or "") if b.strip()]
+    blocks=[tidy(b) for b in re.split(r"\n\s*\n",(text or "").replace("\r","")) if b.strip()]
     parts=[];part=None;art=None;gap=[];closed=False;i=0
     while i<len(blocks):
         b=blocks[i];nxt=blocks[i+1] if i+1<len(blocks) else ""
@@ -99,10 +100,15 @@ def parse(text):
     for p in parts:
         paras=[x for x in p["items"] if x["type"]=="para" and x["text"]]
         body=" ".join(x["text"] for x in paras)
-        if len(paras)<2 or words(body,["och"])<words(body,["og"]):continue  # dansk/norsk eller tom version
+        if len(paras)<2 or words(body,["och"])<max(words(body,["og"]),words(body,["und"])):continue  # dansk/norsk/tysk eller tom version
         for x in p["items"]:
             if x["type"]=="para" and not x["title"]:x.pop("title")
         p["items"]=[x for x in p["items"] if x["type"]=="heading" or x["text"]]
+        # Ändringsmarkering i slutet av en artikel ("Förordning (1991:1183).") blir ändringsuppgift, inte text.
+        for x in p["items"]:
+            if x["type"]!="para":continue
+            while (m:=re.search(r"\s*(?:Lag|Förordning)\s*\((\d{4}:\d+)\)\.?\s*$",x["text"])) and m.start()>0:
+                x.setdefault("amendedBy",m[1]);x["text"]=x["text"][:m.start()].rstrip()
         # Rubriker utan artiklar efter sig (t.ex. i slutet av en språkversion) tas bort.
         while p["items"] and p["items"][-1]["type"]=="heading":p["items"].pop()
         out.append(p)
@@ -116,39 +122,52 @@ def chapter_id(title,n,used):
     cid="P"+m.group(1) if m else "P1" if re.match(r"Tilläggsprotokoll",title or "") else "B"+str(n)
     while cid in used:cid+="b"
     used.add(cid);return cid
+def treaty_chapters(appendix,name):
+    """Konventionens svenska text som kapitel i lagen: huvudtexten "K", protokoll "P1", "P4" …, övriga bilagor "B1" ….
+    Kapitlen har unit "artikel" så att appen visar "Artikel 8" i stället för "8 §"."""
+    parts=parse(appendix or "")
+    if sum(1 for p in parts for x in p["items"] if x["type"]=="para")<5:return []
+    used={"K"};out=[]
+    for n,p in enumerate(parts):
+        cid="K" if n==0 else chapter_id(p["title"],n,used)
+        title=name if n==0 else (p["title"] or "Bilaga "+str(n))
+        out.append({"number":cid,"title":re.sub(r"\s+"," ",title)[:160],"unit":"artikel","items":p["items"]})
+    return out
+def name_for(law):return KNOWN.get(law["sfs"],(short_name(law),[]))[0]
 def run():
+    """Lägger in konventionstexten i de redan importerade lagarna (samma som importen gör), utan nätåtkomst."""
     catalog=json.loads(CATALOG.read_text(encoding="utf-8"))
+    # Tidigare versioner (1.6) hade konventionerna som egna poster ("…-K"); de ersätts av kapitel i lagen.
+    old=[l for l in catalog["laws"] if l["type"]=="konvention"]
+    for l in old:
+        f=LAWS/(l["sfs"].replace(":","-")+".json")
+        if f.exists():f.unlink()
     laws=[l for l in catalog["laws"] if l["type"]!="konvention"]
-    by={l["sfs"]:l for l in laws}
-    made=[]
+    made=0;arts=0
     for law in laws:
         f=LAWS/(law["sfs"].replace(":","-").replace(" ","-")+".json")
         if not f.exists():continue
         d=json.loads(f.read_text(encoding="utf-8"))
-        parts=parse(d.get("appendix") or "")
-        if sum(1 for p in parts for x in p["items"] if x["type"]=="para")<5:continue
-        name,aliases=KNOWN.get(law["sfs"],(short_name(law),[]))
-        used=set();chapters=[]
-        for n,p in enumerate(parts):
-            cid="0" if n==0 else chapter_id(p["title"],n,used)
-            title=(name if n==0 else (p["title"] or "Bilaga "+str(n)))
-            chapters.append({"number":cid,"title":re.sub(r"\s+"," ",title)[:160],"items":p["items"]})
-        id=law["sfs"]+"-K"
-        doc={"sfs":id,"title":name,"officialTitle":"Bilaga till "+(d.get("officialTitle") or law["name"]),"sourceUrl":d.get("sourceUrl"),
-             "parser":"KONVENTION","fetchedAt":d.get("fetchedAt"),"unit":"artikel","treatyOf":law["sfs"],"chapters":chapters}
-        (LAWS/(id.replace(":","-")+".json")).write_text(json.dumps(doc,ensure_ascii=False,indent=1)+"\n",encoding="utf-8")
-        made.append({"sfs":id,"name":name,"type":"konvention","aliases":aliases,"chaptered":False,"section":SECTION[0],"treatyOf":law["sfs"]})
-        # Förkortningen ska leda till konventionen, inte till lagen som inkorporerar den.
-        if aliases:law["aliases"]=[a for a in law.get("aliases",[]) if a not in aliases]
-    made.sort(key=lambda e:(ORDER.index(e["treatyOf"]) if e["treatyOf"] in ORDER else len(ORDER),e["name"].lower()))
+        own=[c for c in d["chapters"] if c.get("unit")!="artikel"]
+        treaty=treaty_chapters(d.get("appendix"),name_for(law))
+        if [c for c in d["chapters"] if c.get("unit")=="artikel"]!=treaty:
+            d["chapters"]=own+treaty
+            f.write_text(json.dumps(d,ensure_ascii=False,separators=(",",":"))+"\n",encoding="utf-8")
+        if treaty:
+            made+=1;arts+=sum(1 for c in treaty for x in c["items"] if x["type"]=="para")
+            law["articleChapter"]="K"
+            name,aliases=KNOWN.get(law["sfs"],(None,[]))
+            law["aliases"]=law.get("aliases",[])+[a for a in aliases if a not in law.get("aliases",[])]
+            if law["sfs"] in KNOWN:law["section"]=SECTION[0]
+        else:law.pop("articleChapter",None)
     if not any(s["id"]==SECTION[0] for s in catalog["sections"]):
         at=next((i+1 for i,s in enumerate(catalog["sections"]) if s["id"]=="grundlagar"),0)
         catalog["sections"].insert(at,{"id":SECTION[0],"name":SECTION[1]})
-    # Konventionerna placeras direkt efter grundlagarna.
-    at=max((i+1 for i,l in enumerate(laws) if l["section"]=="grundlagar"),default=0)
-    catalog["laws"]=laws[:at]+made+laws[at:]
+    # De kända konventionerna står först i sin avdelning, direkt efter grundlagarna.
+    known=sorted([l for l in laws if l["section"]==SECTION[0]],key=lambda l:ORDER.index(l["sfs"]) if l["sfs"] in ORDER else len(ORDER))
+    rest=[l for l in laws if l["section"]!=SECTION[0]]
+    at=max((i+1 for i,l in enumerate(rest) if l["section"]=="grundlagar"),default=0)
+    catalog["laws"]=rest[:at]+known+rest[at:]
     CATALOG.write_text(json.dumps(catalog,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
-    arts=sum(1 for e in made for c in json.loads((LAWS/(e["sfs"].replace(":","-")+".json")).read_text(encoding="utf-8"))["chapters"] for x in c["items"] if x["type"]=="para")
-    print(f"{len(made)} konventioner och avtal, {arts} artiklar")
-    for e in made[:12]:print(" ",e["sfs"],e["name"])
+    print(f"{made} lagar med konventionstext, {arts} artiklar")
 if __name__=="__main__":run()

@@ -22,7 +22,8 @@ const exists=(sfs,chapter,para)=>{
 };
 let total=0,linked=0;const misses=[];
 const external=/^[^.;]{0,160}?(?:lagen|förordningen|balken|kungörelsen|ordningen|grundlagen|förordning|lag)\s*\((\d{4}:\d+)\)|^\s*(?:i\s+|enligt\s+)?(?:\S+\s+){0,3}?(?:EU|EG|direktiv|förordning \()/i;
-for(const [sfs,doc] of laws)for(const ch of doc.chapters)for(const item of ch.items){
+// Konventionstext (kapitel med artiklar) har egen styckeindelning ("§ 1") som inte är svenska paragrafhänvisningar.
+for(const [sfs,doc] of laws)for(const ch of doc.chapters.filter(c=>c.unit!=='artikel'))for(const item of ch.items){
  if(item.type!=='para'||item.repealed)continue;
  for(const v of item.versions||[item]){
   const meta=catalog.laws.find(l=>l.sfs===sfs)||{},anchor=meta.parent||meta.anchor,text=v.text,refs=links.parseRefs(text,{sfs,chapter:ch.number,exists,anchor});

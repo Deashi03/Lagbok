@@ -32,8 +32,8 @@
   // Lägger till namn från katalogen: [{sfs,name,refNames}]
   function configure(laws){
     treaties=[];
-    for(const law of laws||[])if(law.type==='konvention')for(const name of [law.name,...(law.aliases||[])]){
-      const n=String(name||'').toLowerCase().trim();if(n.length>3)treaties.push([n,law.sfs]);
+    for(const law of laws||[])if(law.articleChapter)for(const name of (law.aliases||[])){
+      const n=String(name||'').toLowerCase().trim();if(n.length>3)treaties.push([n,law.sfs,law.articleChapter]);
     }
     treaties.sort((a,b)=>b[0].length-a[0].length);
     laws=(laws||[]).filter(l=>l.type!=='konvention');
@@ -205,7 +205,7 @@
       const after=s.slice(end,end+160).toLowerCase().replace(/^\s*(?:första|andra|tredje|fjärde|femte)?\s*(?:stycket|punkten|led(?:et)?)?\s*/,'');
       const via=/^\s*(?:\d+\s+)?i\s+(?:den\s+)?/.exec(after);
       let id=null,chapter='0';
-      if(via){const rest=after.slice(via[0].length);const t=treaties.find(([n])=>rest.startsWith(n));if(t)id=t[1];
+      if(via){const rest=after.slice(via[0].length);const t=treaties.find(([n])=>rest.startsWith(n));if(t){id=t[1];chapter=t[2];}
         else if(context.unit==='artikel'&&/^(?:denna|nämnda)\s+(?:konvention|avtal|överenskommelse|protokoll)/.test(rest)){id=context.sfs;chapter=context.chapter||'0';}}
       else if(context.unit==='artikel'&&!/^\s*i\s/.test(after)){id=context.sfs;chapter=context.chapter||'0';}
       if(!id)continue;

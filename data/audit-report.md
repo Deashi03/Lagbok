@@ -1,23 +1,22 @@
 # Granskning av lagtexten
 
-Datum: 2026-10-26. 5137 författningar.
+Datum: 2026-10-27. 5018 författningar.
 
 ## Siffror
 
-- författningar: 5137
+- författningar: 5018
 - förordningar med lag: 1863
-- länkade hänvisningar %: 96.9
+- länkade hänvisningar %: 97.2
 - kommande upphävande: 4
-- paragraf som ännu inte trätt i kraft: 442
-- senaste ändring inte inarbetad hos Riksdagen: 264
-- tidigare lydelse utan datum (visas som tidigare): 165
-- träder i kraft när regeringen bestämmer: 225
-- upphävd paragraf (visas förminskad): 3502
+- paragraf som ännu inte trätt i kraft: 2037
+- tidigare lydelse utan datum (visas som tidigare): 85
+- träder i kraft när regeringen bestämmer: 374
+- upphävd paragraf (visas förminskad): 3582
 - utgången lydelse sparad (visas inte): 2
 
 ## Upplysningar (inte fel)
 
-### upphävd paragraf (visas förminskad) (3502)
+### upphävd paragraf (visas förminskad) (3582)
 - 1949:105 4:7
 - 2014:801 13:19
 - 1991:1559 3:6 a
@@ -39,51 +38,52 @@ Datum: 2026-10-26. 5137 författningar.
 - 1949:381 5:2
 - 1949:381 5:3
 
-### paragraf som ännu inte trätt i kraft (442)
+### tidigare lydelse utan datum (visas som tidigare) (85)
+- 2014:801 13:7
+- 1949:381 11:17 a
+- 1949:381 19:3
+- 1998:899 0:24 a
+- 2013:319 0:7
+- 2014:509 0:20
+- 1962:700 34:11
+- 2023:541 0:3
+- 1974:182 0:16
+- 2010:110 27:55 a
+- 2010:110 35:4
+- 2026:786 6:1
+- 2026:786 6:2
+- 2026:786 6:3
+- 2005:716 1:3 c
+- 2005:716 10 a:11
+- 2009:47 5:4
+- 1946:727 0:4
+- 2008:206 0:1
+- 2011:1159 0:3
+
+### paragraf som ännu inte trätt i kraft (2037)
+- 2009:1514 0:1
 - 1949:381 2:10
 - 1949:381 11:12 b
 - 2026:667 3:7
 - 2026:667 3:9
-- 1970:994 3:13
-- 1970:994 8:12 c
-- 1970:994 12:22 a
-- 1970:994 13:20 a
-- 1998:808 12:6 b
-- 1998:808 12:6 c
-- 1998:808 19:2 a
-- 1998:808 26:34 a
-- 1998:808 31:15 a
-- 2007:845 0:5 a
-- 2007:845 0:6 b
-- 2007:845 0:9 a
-- 2007:845 0:9 b
-- 2007:845 0:15 e
-- 2007:845 0:15 f
-- 2020:614 3:15
+- 2026:667 4:1
+- 2026:667 4:2
+- 2026:667 4:3
+- 2026:667 4:4
+- 2026:667 4:5
+- 2026:667 4:6
+- 2026:667 4:7
+- 2026:667 4:8
+- 2026:667 5:1
+- 2026:667 5:2
+- 2026:667 5:3
+- 2026:667 5:4
+- 2026:667 5:5
+- 2026:667 5:6
+- 2026:667 5:7
 
-### tidigare lydelse utan datum (visas som tidigare) (165)
-- 1949:381 11:17 a
-- 1949:381 19:3
-- 1958:637 3:1
-- 1958:637 3:2
-- 1998:899 0:24 a
-- 2013:319 0:7
-- 2014:509 0:20
-- 1962:700 27:1
-- 1962:700 27:2
-- 1962:700 27:3
-- 1962:700 27:4
-- 1962:700 27:5
-- 1962:700 27:6
-- 1962:700 27:7
-- 1962:700 28:1
-- 1962:700 28:2
-- 1962:700 28:3
-- 1962:700 28:4
-- 1962:700 28:5
-- 1962:700 28:6
-
-### träder i kraft när regeringen bestämmer (225)
+### träder i kraft när regeringen bestämmer (374)
+- 2009:1514 0:1
 - 1998:808 10:19
 - 1998:808 12:6 b
 - 1998:808 31:4
@@ -103,29 +103,6 @@ Datum: 2026-10-26. 5137 författningar.
 - 1962:700 26:4 b
 - 1962:700 26:5
 - 1962:700 26:6
-- 1962:700 26:8
-
-### senaste ändring inte inarbetad hos Riksdagen (264)
-- 2004:660: t.o.m. 2026:1773, i texten 2026:1047
-- 1845:50 s.1: t.o.m. 2024:38, i texten 2022:970
-- 1987:822: t.o.m. 2012:602, i texten 2011:852
-- 1962:700: t.o.m. 2026:1656, i texten 2026:1654
-- 1992:1554: t.o.m. 2026:1109, i texten 2011:134
-- 1999:58: t.o.m. 2026:1110, i texten 2014:1292
-- 2007:979: t.o.m. 2026:1558, i texten 2026:1537
-- 2020:62: t.o.m. 2026:1563, i texten 2026:1562
-- 2012:278: t.o.m. 2026:1560, i texten 2026:1559
-- 2007:978: t.o.m. 2013:932, i texten 2010:402
-- 2018:1697: t.o.m. 2024:655, i texten 2024:470
-- 1990:746: t.o.m. 2020:924, i texten 2018:501
-- 1986:1042: t.o.m. 1988:118, i texten None
-- 2022:733: t.o.m. 2025:1174, i texten 2025:141
-- 1952:98: t.o.m. 2007:969, i texten 2004:405
-- 1996:517: t.o.m. 2025:158, i texten None
-- 2018:160: t.o.m. 2019:665, i texten None
-- 1979:103: t.o.m. 1986:1044, i texten 1985:1048
-- 2004:505: t.o.m. 2006:338, i texten None
-- 2001:25: t.o.m. 2008:648, i texten None
 
 ### kommande upphävande (4)
 - 1998:603 2030-07-01
