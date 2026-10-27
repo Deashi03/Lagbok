@@ -36,8 +36,7 @@ def run():
         if d.get("title")!=l["name"]:note("titel skiljer sig från katalogen",sfs+": "+str(d.get("title"))+" / "+l["name"])
         if d.get("repealAt") and d["repealAt"]<=TODAY:note("upphävd författning kvar",sfs+" (upphävd "+d["repealAt"]+")")
         elif d.get("repealAt"):note("kommande upphävande",sfs+" "+d["repealAt"],False)
-        # Riksdagens sammanställning saknar en ändring som Riksdagen redan anger (visas som varning i appen).
-        if d.get("unconsolidated"):note("senaste ändring inte inarbetad hos Riksdagen",sfs+": t.o.m. "+d["amendedTo"]+", i texten "+str(d.get("latestAmendment")),False)
+        if d.get("unconsolidated"):note("gammal varning om ej inarbetad ändring",sfs)
         chapters=collections.Counter(c["number"] for c in d["chapters"])
         for n,k in chapters.items():
             if k>1:note("dubblerat kapitel",sfs+" kap. "+n)
@@ -67,6 +66,10 @@ def run():
     out=subprocess.run(["node",str(ROOT/"tests/test_reference_coverage.js")],capture_output=True,text=True).stdout
     m=re.search(r"\(([\d.]+) %\)",out);linked=float(m.group(1)) if m else 0.0
     regs=[l for l in laws.values() if l["type"]=="förordning"]
+    # Fullständighet: ord i riksdagen.se:s text som saknas i den tolkade texten (från importen, data/completeness.json).
+    comp=ROOT/"data/completeness.json"
+    for sfs,c in (json.loads(comp.read_text(encoding="utf-8")) if comp.exists() else {}).items():
+        if sfs in laws:note("text som saknas jämfört med riksdagen.se",sfs+" ("+c["name"]+"): "+str(c["missing"])+" rader, t.ex. ”"+(c.get("lines") or [""])[0]+"”")
     numbers={"författningar":len(laws),"förordningar med lag":sum(1 for l in regs if l.get("anchor")),"länkade hänvisningar %":linked}
     numbers.update({k:info[k] for k in sorted(info)})
     lines=["# Granskning av lagtexten","",f"Datum: {TODAY}. {len(laws)} författningar.","","## Siffror",""]
@@ -79,7 +82,7 @@ def run():
     REPORT.write_text("\n".join(lines)+"\n",encoding="utf-8")
     print("\n".join(lines[:12+len(numbers)]))
     if "--update" in sys.argv:
-        BASE.write_text(json.dumps({k:v for k,v in numbers.items() if k in errors or k=="länkade hänvisningar %" or k=="senaste ändring inte inarbetad hos Riksdagen"},ensure_ascii=False,indent=1)+"\n",encoding="utf-8");return
+        BASE.write_text(json.dumps({k:v for k,v in numbers.items() if k in errors or k=="länkade hänvisningar %"},ensure_ascii=False,indent=1)+"\n",encoding="utf-8");return
     base=json.loads(BASE.read_text(encoding="utf-8")) if BASE.exists() else {}
     worse=[k for k,v in errors.items() if len(v)>base.get(k,0)]
     if linked+0.05<base.get("länkade hänvisningar %",0):worse.append("länkade hänvisningar %")

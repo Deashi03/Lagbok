@@ -393,7 +393,9 @@ html[data-reader-font="serif"] .paragraph-content,html[data-reader-font="serif"]
 mark.find-hit{background:#F2D27A;color:inherit;border-radius:2px;padding:0 1px}
 html[data-theme="dark"] mark.find-hit{background:#7A6527}
 .paragraph.find-current .paragraph-num{color:var(--wine)}
-.paragraph.find-current mark.find-hit{background:#E9A23B;box-shadow:0 0 0 1px #C5811C}
+/* 1.6.1: bara förekomsten i fokus är kraftigt markerad; övriga träffar är ljusare. */
+mark.find-hit.find-focus{background:#E58A1F;color:#1B1408;box-shadow:0 0 0 2px #B5650C;border-radius:3px}
+html[data-theme="dark"] mark.find-hit.find-focus{background:#F0A53A;color:#1B1408;box-shadow:0 0 0 2px #FFD08A}
 .find-bar .find-step{flex:0 0 36px;width:36px!important;min-width:0;height:36px}
 .find-bar .find-close{flex:0 0 auto;padding:6px 4px!important}
 .find-bar .find-count{flex:0 0 auto;min-width:0}
@@ -430,7 +432,7 @@ html[data-theme="dark"] mark.find-hit{background:#7A6527}
 .bump{animation:bump .22s var(--ease-out)}
 @keyframes bump{from{translate:0 6px;opacity:.2}to{translate:0 0;opacity:1}}
 /* Aktuell sökträff pulserar mjukt */
-.paragraph.find-current mark.find-hit{animation:hit-pulse .6s var(--ease-out)}
+mark.find-hit.find-focus{animation:hit-pulse .6s var(--ease-out)}
 @keyframes hit-pulse{0%{box-shadow:0 0 0 0 #E9A23B99}100%{box-shadow:0 0 0 6px #E9A23B00}}
 /* Märkpennedrag med mjukare kurva */
 mark.hl.hl-new{animation:marker .32s var(--ease-out) forwards}
@@ -582,3 +584,10 @@ html[data-theme="dark"] .topbar .law-tool.on{color:#0F1813}
 .fav-star-mini{font-size:.85em;color:#E9D9A8;margin-right:1px}
 html[data-theme="dark"] .fav-star-mini{color:#264D39}
 .fav-row.editing .fav-chip{background:var(--soft);color:var(--accent);border-color:var(--border)}
+.repealed-chapter{opacity:.6;cursor:default}
+/* 1.6.1: avdelningar ("Andra avdelningen – Om brotten") i kapitellistan, innehållet och ovanför kapitlet. */
+.division-title{margin-top:22px}
+.toc-division{font-size:11px;font-weight:750;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);margin:16px 0 6px}
+.reader-heading .division-label{margin-bottom:6px}
+.future-notice{border-left:3px solid var(--wine);background:var(--soft);color:var(--text)}
+.preamble{font-style:italic;color:var(--secondary);font-size:14px;margin:8px 0 4px}

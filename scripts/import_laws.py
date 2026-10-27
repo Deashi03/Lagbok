@@ -2,6 +2,7 @@
 """SFS-import: hämta kompletta författningar från Riksdagens öppna data."""
 import datetime as dt
 import html
+import collections
 import json
 import os
 from pathlib import Path
@@ -12,6 +13,8 @@ from urllib.request import Request,urlopen
 from urllib.error import HTTPError
 import urllib.parse
 from concurrent.futures import ThreadPoolExecutor
+sys.path.insert(0,str(Path(__file__).resolve().parent))
+import conventions
 
 ROOT=Path(__file__).resolve().parents[1]
 CATALOG=ROOT/"data/catalog.json"
@@ -25,8 +28,8 @@ HEAD=re.compile(r'<h4\b[^>]*>(.*?)</h4>',re.I|re.S)
 MARK=re.compile(r'^/\s*(Träder i kraft I|Upphör att gälla U)\s*:\s*([^/\n]*?)\s*/\s*',re.I)
 # Markeringar för rubriker och kapitel hamnar i föregående paragrafs text och tas bort därifrån.
 NOTE=re.compile(r'\s*/\s*(?:Rubriken|Kapitlet)\s+(?:träder i kraft|upphör att gälla)[^/\n]*/\s*',re.I)
-AMEND=re.compile(r'(?:(?<=[.\n])|^)\s*((?:Lag|Förordning) ?\((\d{4}:\d+)\)\.?)\s*$')
-REPEALED=re.compile(r'^(?:Har upphävts|Har upphört att gälla|Upphävd)\b',re.I)
+AMEND=re.compile(r'(?:(?<=[.\n])|^)\s*((?:Lag|Förordning)\s*\((\d{4}:\d+)\)\.?)\s*$')
+REPEALED=re.compile(r'^(?:Kapitlet\s+)?(?:Har upphävts|Har upphört att gälla|Upphävd|Ny beteckning)\b',re.I)
 LEGACY_SPLIT="\n\nALTERNATIV LYDELSE – KONTROLLERA IKRAFTTRÄDANDE:\n"
 DATE=re.compile(r'\d{4}-\d{2}-\d{2}')
 # Övergångsbestämmelser hamnar i Riksdagens text efter sista paragrafen och flyttas till en egen del.
@@ -70,9 +73,12 @@ def version(raw):
         out["inForce" if m[1].lower().startswith("träder") else "expires"]=when(m[2])
         text=text[m.end():]
     text=tidy(NOTE.sub("\n\n",text))
-    m=AMEND.search(text)
-    if m and m.start(1)>0:
-        out["amendedBy"]=m[2];text=text[:m.start()].rstrip()
+    # Källan har ibland flera markeringar efter varandra ("Förordning (2022:1480). Förordning (2024:1200)."):
+    # alla tas bort ur texten och den senaste blir ändringsuppgiften.
+    found=[]
+    while (m:=AMEND.search(text)) and m.start(1)>0:
+        found.append(m[2]);text=text[:m.start()].rstrip()
+    if found:out["amendedBy"]=max(found,key=amendment_key)
     out["text"]=text
     return out
 def single_current(versions):
@@ -110,7 +116,7 @@ def build_para(number,raws):
         item["amendedBy"]=first["amendedBy"]
     if all(REPEALED.match(v["text"]) for v in versions):item["repealed"]=True
     if transitions:item["_transitions"]=transitions[0]
-    if appendix:item["_appendix"]=appendix[0]
+    if appendix:item["_appendix"]="\n\n".join(dict.fromkeys(appendix))
     return item
 def split_transitions(block):
     """Delar övergångsbestämmelser per ändringsförfattning: [{"sfs":"2023:372","text":"…"}]."""
@@ -139,7 +145,19 @@ def num(s):
     m=re.fullmatch(r"(\d+)\s*([a-z]?)",s.strip().lower())
     if not m:raise ValueError("bad section "+s)
     return m[1]+(" "+m[2] if m[2] else "")
+CHAPLABEL=re.compile(r'^\s*/\s*Kapitlet\s+(träder i kraft|upphör att gälla)\s*(?:I|U)?\s*:\s*([^/\n]*?)\s*/\s*',re.I)
+CHAPLABEL_END=re.compile(r'/\s*Kapitlet\s+(träder i kraft|upphör att gälla)\s*(?:I|U)?\s*:\s*([^/\n]*?)\s*/\s*$',re.I)
+def chapter_labels(caps):
+    """Ett kapitel som i sin helhet träder i kraft eller upphör vid en viss tidpunkt: varje paragraf i kapitlet
+    får samma markering som om den stod vid paragrafen, så att den kommande lydelsen inte visas som gällande."""
+    for ch in caps:
+        lab=ch.pop("_label",None)
+        if not lab:continue
+        prefix=("/Träder i kraft I:" if lab[0].lower().startswith("träder") else "/Upphör att gälla U:")+lab[1]+"/ "
+        for item in ch["items"]:
+            if item["type"]=="para":item["raw"]=[r if MARK.match(r.strip()) else prefix+r for r in item["raw"]]
 def finish(caps):
+    chapter_labels(caps)
     # Riksdagen may repeat a whole chapter for alternative or future versions.
     # Merge duplicate chapter identifiers WITHOUT discarding any paragraph text.
     by_id={};merged=[]
@@ -148,12 +166,20 @@ def finish(caps):
             by_id[ch["number"]]=ch;merged.append(ch)
         else:
             target=by_id[ch["number"]]
+            # Kapitlet får en ny rubrik när en ändring träder i kraft: båda rubrikerna sparas.
+            if ch.get("title") and ch["title"]!=target.get("title"):target.setdefault("titles",[]).append(ch["title"])
+            if ch.get("division") and not target.get("division"):target["division"]=ch["division"]
             for item in ch["items"]:
                 if item["type"]=="para":
                     for raw in item["raw"]:add(target,item["number"],raw)
-                else:target["items"].append(item)
+                # Rubriker i en kommande version av kapitlet sparas för sig (de hör inte hemma bland de gällande).
+                elif item.get("text") not in [x.get("text") for x in target["items"] if x["type"]=="heading"]:target.setdefault("otherHeadings",[]).append(item["text"])
     caps=merged
+    # Upphävda kapitel ("11 kap. Har upphävts genom förordning (2026:678).") har inga paragrafer men sparas.
+    # Kapitel utan paragrafer (upphävda, "Ny beteckning …" eller i äldre balkar bara rubriken) sparas med sin rubrik.
+    gone=[{"number":c["number"],"title":c["title"]} for c in caps if not any(p["type"]=="para" for p in c["items"]) and (c.get("title") or "").strip()]
     caps=[c for c in caps if any(p["type"]=="para" for p in c["items"])]
+    if gone and caps:caps[0]["_repealedChapters"]=gone
     for c in caps:
         c["items"]=[build_para(x["number"],x["raw"]) if x["type"]=="para" else x for x in c["items"]]
         waiting=[]
@@ -162,6 +188,9 @@ def finish(caps):
             else:
                 for h in waiting:h["nextPara"]=p["number"]
                 waiting=[]
+        # Rubriker utan paragraf efter sig (t.ex. en rubrik som hör till en kommande lydelse sist i kapitlet) sparas för sig.
+        stray=[x["text"] for x in c["items"] if x["type"]=="heading" and not x.get("nextPara")]
+        if stray:c.setdefault("otherHeadings",[]).extend(h for h in stray if h not in c.get("otherHeadings",[]))
         c["items"]=[x for x in c["items"] if x["type"]!="heading" or x.get("nextPara")]
     return caps
 def add(c,n,text):
@@ -169,33 +198,223 @@ def add(c,n,text):
     prev=next((i for i in reversed(c["items"]) if i["type"]=="para" and i["number"]==n),None)
     if prev:prev["raw"].append(text)
     else:c["items"].append({"type":"para","number":n,"raw":[text]})
+ORPHAN=re.compile(r"^(?:/[^/\n]{0,160}/\s*)?(\d+\s*[a-z]?)\s*§\s+(.+)$",re.S)
+def orphan(cur,text,heading=None):
+    """Paragraf utan ankare i källan ("1 § Fängelse döms ut …" direkt efter kapitelrubriken): läggs in som paragraf.
+    Etiketter som "/Rubriken upphör att gälla …/" före eller efter numret tas bort."""
+    text=re.sub(r"^\s*(?:/[^/\n]{0,160}/\s*)+","",text or "")
+    m=ORPHAN.match(text)
+    if not m:return False
+    body=re.sub(r"^\s*/Rubriken[^/\n]{0,160}/\s*","",m[2]).strip()
+    if len(body)<4:return False
+    if heading:cur["items"].append({"type":"heading","text":heading,"editorial":False})
+    add(cur,num(m[1]),body);return True
+HEAD2=re.compile(r'<h2\b[^>]*>(.*?)</h2>',re.I|re.S)
+# Riksdagsordningens tilläggsbestämmelser: "Tilläggsbestämmelse 4.3.1" följt av texten.
+TB=re.compile(r"^\s*Tilläggsbestämmelse\s+(\d+(?:\.\d+)+)\s*$")
+def plain_block(cur,text,heading=None):
+    """Text utan paragrafankare i källan ("Registreringsmyndighet\n1 § Bolagsverket …" direkt efter en kapitel-
+    rubrik): rader som börjar med "N §" blir paragrafer och korta rader före dem rubriker. Används bara när texten
+    börjar med en paragraf (eventuellt efter korta rubrikrader); annars returneras False."""
+    text=re.sub(r"^\s*(?:/[^/\n]{0,160}/\s*)+","",text or "")
+    lines=[l for l in text.split("\n")]
+    for l in lines:
+        if re.match(r"^\s*\d+\s*[a-z]?\s*§\s+\S",l) or TB.match(l):break
+        if len(l.strip())>=150:return False
+    else:return False
+    pend=[heading] if heading else [];para=None
+    for l in lines:
+        t=TB.match(l)
+        if t:
+            for h in pend:cur["items"].append({"type":"heading","text":h,"editorial":False})
+            pend=[];cur["items"].append({"type":"para","number":t[1],"raw":[""]});para=cur["items"][-1];continue
+        m=re.match(r"^\s*(\d+\s*[a-z]?)\s*§\s+(.*)$",l)
+        if m:
+            for h in pend:cur["items"].append({"type":"heading","text":h,"editorial":False})
+            pend=[];n=num(m[1])
+            add(cur,n,re.sub(r"^\s*/Rubriken[^/\n]{0,160}/\s*","",m[2]) or " ")
+            para=next(x for x in reversed(cur["items"]) if x["type"]=="para" and x["number"]==n)
+        elif para is None:
+            if l.strip():pend.append(l.strip())
+        else:para["raw"][-1]+="\n"+l
+    return True
+def division_name(text):
+    t=re.sub(r"\s+"," ",text).strip()
+    if t.upper()==t:t=t[:1]+t[1:].lower()
+    t=re.sub(r"\b(avdelning|avd\.)\s+([ivxlc]+)\b",lambda m:m[1]+" "+m[2].upper(),t,flags=re.I)
+    return re.sub(r"([.:]\s+)([a-zåäö])",lambda m:m[1]+m[2].upper(),t)
+def annex_html(fragment):
+    return re.sub(r"[ \t]*\r","",clear(re.sub(r"</h[234]>","\n\n",re.sub(r"<h[234]\b[^>]*>","\n\n",fragment,flags=re.I),flags=re.I)))
+def chapter_no(n):
+    m=re.match(r"\d+",str(n or ""));return int(m.group()) if m else None
 def parse_html(source):
     match=re.search(r"<hr\b[^>]*>",source,re.I)
     if match:source=source[match.end():]
+    source=re.sub(r'<div\s+class="sfstoc"[^>]*>.*?</ul>\s*</div>',"",source,flags=re.S|re.I)
     source=re.sub(r'<div\s+class="sfstoc"[^>]*>.*?</div>',"",source,flags=re.S|re.I)
-    markers=[]
-    for m in CAP.finditer(source):markers.append((m.start(),m.end(),"cap",num(m[1]),clear(m[2])))
-    for m in PAR.finditer(source):markers.append((m.start(),m.end(),"para",num(m[1]) if m[1] else "0",num(m[3])))
-    for m in HEAD.finditer(source):
-        h=clear(m[1])
-        if h and len(h)<150:markers.append((m.start(),m.end(),"heading","",h))
-    markers.sort(key=lambda x:x[0])
-    chapters=[];cur=None
-    for i,(_,end,typ,key,value) in enumerate(markers):
+    # Bilagor ("<h3>Bilaga 2</h3>" efter övergångsbestämmelserna) är lagtext men inga paragrafer. De sparas i sin
+    # helhet som bilaga, med sina rubriker, i stället för att tolkas som paragrafer och rubriker.
+    # Övergångsbestämmelserna har ett eget ankare ("overgang"); de sparas för sig även när sista kapitlet är
+    # upphävt, och även när de står efter bilagorna.
+    BILAGA=r"<h3\b[^>]*>\s*(?:<a\b[^>]*>\s*)?Bilag(?:a|or)\b"
+    ov=re.search(r'<h3\b[^>]*name="overgang"|<a\s+name="overgang"',source,re.I)
+    trans_text=None
+    if ov:
+        after=re.compile(BILAGA,re.I).search(source,ov.end())
+        stop=after.start() if after else len(source)
+        trans_text=tidy(re.sub(r"^\s*(?:Ikraftträdande- och )?[ÖO]vergångsbestämmelser\s*","",clear(source[ov.start():stop])))
+        source=source[:ov.start()]+source[stop:]
+    # En "Bilaga"-rubrik som följs av paragrafer är en vanlig rubrik; bilagan börjar vid den första som inte gör det.
+    annex=next((m for m in re.finditer(BILAGA,source,re.I) if not re.search(r'class="paragraf"',source[m.end():])),None)
+    annex_text=None
+    if annex:
+        annex_text=annex_html(source[annex.start():]);source=source[:annex.start()]
+    def find_markers(src):
+        out=[]
+        for m in CAP.finditer(src):out.append((m.start(),m.end(),"cap",num(m[1]),clear(m[2])))
+        for m in PAR.finditer(src):out.append((m.start(),m.end(),"para",num(m[1]) if m[1] else None,num(m[3])))
+        for m in HEAD.finditer(src):
+            h=clear(m[1])
+            if h and len(h)<150:out.append((m.start(),m.end(),"heading","",h))
+        for m in HEAD2.finditer(src):
+            h=clear(m[1])
+            if h and len(h)<200:out.append((m.start(),m.end(),"division","",h))
+        return sorted(out,key=lambda x:x[0])
+    markers=find_markers(source)
+    # Text med rubriker efter lagens sista paragraf (t.ex. en konvention på franska med "Article 2" som rubriker)
+    # är en bilaga, inte rubriker utan text.
+    # Kapitelrubriker som egentligen är rader i en uppräkning ("14 kap. jordabalken i 1734 års lag;") är text.
+    markers=[mk for mk in markers if not (mk[2]=="cap" and re.search(r"[;,]\s*$",mk[4]))]
+    last_para=max((i for i,mk in enumerate(markers) if mk[2] in ("para","cap")),default=-1)
+    for i in range(last_para+1,len(markers)):
+        mk=markers[i];nxt=markers[i+1][0] if i+1<len(markers) else len(source)
+        if mk[2]=="heading" and (re.match(r"Bilaga\b",mk[4]) or clear(source[mk[1]:nxt]) and not plain_block({"items":[]},clear(source[mk[1]:nxt]))):
+            tail=annex_html(source[mk[0]:])
+            annex_text=tail+("\n\n"+annex_text if annex_text else "")
+            source=source[:mk[0]];markers=[x for x in markers if x[0]<mk[0]];break
+    chapters=[];cur=None;pending=None;division=None;remap=None
+    # Text före första paragrafen/kapitlet: märkning av hela författningen ("/Träder i kraft I:2027-01-01/"),
+    # ingressen ("Regeringen föreskriver följande.") och inledande rubriker.
+    head=clear(source[:markers[0][0]]) if markers else ""
+    whole=None;preamble=[];lead=[]
+    for m in re.finditer(r"/\s*(Träder i kraft|Upphör att gälla)\s*(?:I|U)?\s*:\s*([^/\n]*?)\s*(?:/|$)",head,re.I|re.M):
+        if not whole:whole=(m[1],m[2])
+    head=re.sub(r"/[^/\n]{0,160}(?:/|$)","",re.sub(r"^\s*/r\d+/\s*","",head,flags=re.M),flags=re.M)
+    for line in [l.strip() for l in head.split("\n") if l.strip()]:
+        if re.search(r"(?:föreskriver|förordnar|föreskrivs|stadgar|förordna[rt]?)\b[^.]*följande|^Utkom från trycket|^Kungl\. Maj:t|^KM:t",line,re.I) or len(line)>=150:preamble.append(line)
+        else:lead.append(line)
+    for i,(start,end,typ,key,value) in enumerate(markers):
         nxt=markers[i+1][0] if i+1<len(markers) else len(source)
+        if typ=="division":
+            # En avdelningsrad följd av text (t.ex. innehållsförteckningen i 1 kap. 1 § skatteförfarandelagen) hör
+            # till paragrafen; annars är det en avdelning som nästa kapitel tillhör.
+            trailing=clear(source[end:nxt])
+            last=next((x for x in reversed(cur["items"]) if x["type"]=="para"),None) if cur else None
+            if trailing and last is not None and not (i+1<len(markers) and markers[i+1][2]=="cap" and len(trailing)<200 and "§" not in trailing):
+                last["raw"][-1]=last["raw"][-1].rstrip()+"\n\n"+value.strip()+"\n\n"+trailing;continue
+            # Undertitlar som står som text efter avdelningsrubriken ("Om rättegången i allmänhet").
+            division=" – ".join([division_name(value)]+[re.sub(r"\s+"," ",l).strip() for l in trailing.split("\n") if l.strip()]);continue
         if typ=="cap":
+            remap=None
+            # En kapitelrubrik med lägre nummer än det aktuella kapitlet (t.ex. inne i en tabell) är text, inte ett kapitel.
+            if cur is not None and chapter_no(key) is not None and chapter_no(cur["number"]) is not None and chapter_no(key)<chapter_no(cur["number"]) and any(c["number"]==key for c in chapters):
+                last=next((x for x in reversed(cur["items"]) if x["type"]=="para"),None)
+                if last is not None:last["raw"][-1]+="\n"+clear(source[start:nxt])
+                continue
+            # "/Kapitlet träder i kraft I:…/" står i källan direkt före kapitelrubriken (eller direkt efter den).
             cur={"number":key,"title":value,"items":[]};chapters.append(cur)
+            if division:cur["division"]=division;division=None
+            trailing=clear(source[end:nxt]);m=CHAPLABEL.match(trailing)
+            if m:pending=(m[1],m[2]);trailing=trailing[m.end():]
+            if pending:cur["_label"]=pending;pending=None
+            if not plain_block(cur,trailing):
+                # Rubrikrader som står som text direkt efter kapitelrubriken. Efter ett upphävt kapitel
+                # ("16 A kap. Har upphävts …") är det nästa avdelning ("Avd. 2. Förfarandet …").
+                lines=[l.strip() for l in trailing.split("\n") if l.strip()]
+                if lines and REPEALED.match(value or "") and i+1<len(markers) and markers[i+1][2]=="cap" and all(len(l)<200 and "§" not in l for l in lines):
+                    division=" – ".join(lines)
+                elif lines and all(len(l)<250 and "§" not in l for l in lines):
+                    for h in lines:cur["items"].append({"type":"heading","text":h,"editorial":False})
         elif typ=="heading":
             if cur is None:
                 cur={"number":"0","title":"","items":[]};chapters.append(cur)
+            # Källan märker ibland ett stycke mitt i en paragraf som rubrik (<h4>), följt av resten av stycket.
+            # En riktig rubrik följs direkt av nästa paragraf; finns text emellan hör allt till föregående paragraf.
+            trailing=clear(source[end:nxt]);last=cur["items"][-1] if cur["items"] else None
+            # Riksdagsordningens tilläggsbestämmelser ("Tilläggsbestämmelse 4.3.1") är bestämmelser, inte rubriker.
+            # Rubriker direkt före en kapitelrubrik hör till avdelningen ("ANDRA AVDELNINGEN" / "Om brotten").
+            j=i+1
+            while j<len(markers) and markers[j][2] in ("heading","division") and not clear(source[markers[j][1]:markers[j+1][0] if j+1<len(markers) else len(source)]):j+=1
+            if not trailing and j<len(markers) and markers[j][2]=="cap" and (division or cur["number"]!="0" or not any(x["type"]=="para" for x in cur["items"])):
+                division=(division+" – " if division else "")+value;continue
+            # Avdelningsrubrik med undertitel som text, direkt före en kapitelrubrik ("Första avdelningen" / "Om dragna växlar").
+            sub=[l.strip() for l in trailing.split("\n") if l.strip()]
+            if sub and i+1<len(markers) and markers[i+1][2]=="cap" and all(len(l)<150 and "§" not in l for l in sub):
+                division=" – ".join(([division] if division else [])+[value]+sub);continue
+            if division:cur["items"].append({"type":"heading","text":division,"editorial":False});division=None
+            if trailing and plain_block(cur,trailing,value):continue
+            # Underrubriker som står som text direkt efter rubriken ("När ska kontoavgift tas ut?").
+            lines=[l.strip() for l in trailing.split("\n") if l.strip()]
+            if lines and lines[0][:1].isupper() and all(len(l)<150 and "§" not in l for l in lines) and i+1<len(markers) and markers[i+1][2] in ("para","heading"):
+                for h in [value]+lines:cur["items"].append({"type":"heading","text":h,"editorial":False})
+                continue
+            if trailing and not (last and last["type"]=="para"):
+                # Text efter en rubrik som inte följer direkt på en paragraf: hör till närmast föregående paragraf.
+                prior=next((x for x in reversed(cur["items"]) if x["type"]=="para"),None)
+                if prior is not None:last=prior
+                else:
+                    for h in [value]+[l.strip() for l in trailing.split("\n") if l.strip()]:cur["items"].append({"type":"heading","text":h,"editorial":False})
+                    continue
+            if trailing and last and last["type"]=="para":
+                before=last["raw"][-1].rstrip()
+                last["raw"][-1]=before+"\n\n"+value.strip()+("\n\n" if re.search(r"[.:;]$",value.strip()) else " ")+trailing
+                continue
             cur["items"].append({"type":"heading","text":value,"editorial":False})
         else:
+            # Paragrafankare utan kapitelnummer ("P1") inne i ett kapitel hör till det kapitlet.
+            if key is None:key=cur["number"] if cur is not None else "0"
+            # Ankare utan kapitlets bokstav ("K4P1" i 4 a kap.) hör till det aktuella kapitlet.
+            if cur is not None and key!=cur["number"] and re.fullmatch(re.escape(key)+r"\s*[a-z]",cur["number"]):key=cur["number"]
+            # Kapitel vars rubrik saknar ankare ("<pre>2 kap. Hyran</pre>") och vars paragrafer har föregående kapitels ankare.
+            if remap and key==remap[0]:key=remap[1]
             if cur is None or cur["number"]!=key:
                 cur=next((c for c in chapters if c["number"]==key),None)
                 if cur is None:
                     cur={"number":key,"title":"","items":[]};chapters.append(cur)
-            add(cur,value,clear(source[end:nxt]))
-    return finish(chapters)
+            if division and key=="0":cur["items"].append({"type":"heading","text":division,"editorial":False});division=None
+            text=clear(source[end:nxt])
+            tbm=re.search(r"\n\s*Tilläggsbestämmelse\s+\d+(?:\.\d+)+\s*\n",text)
+            if tbm:
+                add(cur,value,text[:tbm.start()].rstrip());plain_block(cur,text[tbm.start():]);continue
+            hidden=re.search(r"\n\s*(\d+\s*[a-z]?)\s*kap\.[ \t]*([^\n]{0,150})(?:\n|$)",text)
+            nextpara=next((mk for mk in markers[i+1:] if mk[2] in ("para","cap")),None)
+            restarts=nextpara is not None and nextpara[2]=="para" and nextpara[3]==cur["number"] and chapter_no(nextpara[4]) is not None and chapter_no(value) is not None and chapter_no(nextpara[4])<=chapter_no(value) and chapter_no(nextpara[4])<=2
+            tail_ok=hidden is not None and "§" not in hidden[2] and len(hidden[2])<120 and all(len(l.strip())<150 and "§" not in l for l in text[hidden.end():].split("\n"))
+            nextno=hidden is not None and (chapter_no(hidden[1])==(chapter_no(cur["number"]) or 0)+1 or (chapter_no(hidden[1])==chapter_no(cur["number"]) and num(hidden[1])!=cur["number"] and re.search(r"[a-z]$",num(hidden[1]))))
+            if hidden and tail_ok and restarts and nextno:
+                rest=text[hidden.end():].strip();text=text[:hidden.start()].rstrip()
+                add(cur,value,text)
+                old=cur["number"];cur={"number":num(hidden[1]),"title":hidden[2].strip(),"items":[]};chapters.append(cur);remap=(old,cur["number"])
+                for line in [l.strip() for l in rest.split("\n") if l.strip()]:cur["items"].append({"type":"heading","text":line,"editorial":False})
+                continue
+            m=CHAPLABEL_END.search(text)
+            if m and i+1<len(markers) and markers[i+1][2]=="cap":pending=(m[1],m[2]);text=text[:m.start()].rstrip()
+            add(cur,value,text)
+    if whole and chapters:
+        for c in chapters:c.setdefault("_label",whole)
+    if lead and chapters:
+        first=chapters[0]
+        first["items"]=[{"type":"heading","text":l,"editorial":False} for l in lead if l not in [x.get("text") for x in first["items"]]]+first["items"]
+    chs=finish(chapters)
+    if chs and (preamble or whole):
+        chs[0]["_preamble"]=preamble;chs[0]["_whole"]=whole
+    if trans_text and chs:
+        last=next((p for c in reversed(chs) for p in reversed(c["items"]) if p["type"]=="para"),None)
+        if last is not None:last["_transitions"]=((last["_transitions"]+"\n") if last.get("_transitions") else "")+trans_text
+    if annex_text and chs:
+        last=next((p for c in reversed(chs) for p in reversed(c["items"]) if p["type"]=="para"),None)
+        if last is not None:last["_appendix"]=(last["_appendix"]+"\n\n" if "_appendix" in last else "")+annex_text
+    return chs
 def parse_text(raw):
     chapters=[];cur={"number":"0","title":"","items":[]};chapters.append(cur);p=None
     for line in raw.splitlines():
@@ -281,6 +500,8 @@ def check_title(meta,official):
         raise ValueError("titelkontroll: väntade '"+expected+"' i '"+str(official)+"'")
 def document(id,name,method,chs,official=None):
     transitions=take_transitions(chs)
+    gone=[g for c in chs for g in c.pop("_repealedChapters",[])]
+    preamble=[l for c in chs for l in c.pop("_preamble",[])];whole=next((w for c in chs for w in [c.pop("_whole",None)] if w),None)
     appendix=[p.pop("_appendix") for c in chs for p in c["items"] if "_appendix" in p]
     out={"sfs":id,"title":name,"officialTitle":official,"sourceUrl":"https://data.riksdagen.se/dokument/sfs-"+slug(id)+".html","parser":method,
             "fetchedAt":dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds"),"latestAmendment":latest_amendment(chs),"chapters":chs}
@@ -289,8 +510,15 @@ def document(id,name,method,chs,official=None):
         annex=re.search(r"\n\s*Bilaga\b[^\n]{0,80}\n",t["text"])
         if annex and len(t["text"])>LONG_PARAGRAPH and not appendix:
             appendix=[t["text"][annex.start():].strip()];t["text"]=t["text"][:annex.start()].strip()
+    if gone:out["repealedChapters"]=gone
+    if preamble:out["preamble"]="\n\n".join(preamble)
+    if whole:out["inForce" if whole[0].lower().startswith("träder") else "expires"]=when(whole[1])
     if transitions:out["transitions"]=[t for t in transitions if t["text"]]
-    if appendix:out["appendix"]=appendix[0]
+    if appendix:
+        # Alla bilagor sparas (en lag kan ha bilagor på flera ställen), i källans ordning.
+        out["appendix"]="\n\n".join(dict.fromkeys(appendix))
+        # En konvention i bilagan (t.ex. Europakonventionen) läggs in i lagen artikel för artikel, som lagtext.
+        out["chapters"]=chs+conventions.treaty_chapters(out["appendix"],conventions.name_for({"sfs":id,"name":name}))
     return out
 def quality_warnings(old,new):
     """Tecken på tolkningsfel: kraftigt minskat antal paragrafer, tappade kapitel eller sammanklistrad text."""
@@ -361,6 +589,39 @@ def record_history(sfs,name,old,new):
         log.append({"date":today,"sfs":sfs,"name":name,"new":old is None,"amendedBy":new.get("latestAmendment"),
                     "added":[list(k) for k in added][:200],"changed":[list(k) for k in changed][:200],"removed":[list(k) for k in removed][:200]})
         CHANGES.write_text(json.dumps(log[-3000:],ensure_ascii=False,indent=0)+"\n",encoding="utf-8")
+def flat(text):return re.sub(r"[^0-9a-zåäöéüæø]+","",str(text or "").lower())
+def missing_words(source_html,doc):
+    """Rader i riksdagen.se:s text som inte finns i den tolkade författningen (tappad text vid tolkningen).
+    Jämförelsen görs utan mellanslag och skiljetecken, så att radbrytningar och tabeller inte spelar roll.
+    Ändringsmarkeringar ("Lag (2014:588).") och etiketter ("/Träder i kraft …/") flyttas till egna fält och räknas inte."""
+    body=source_html or ""
+    hr=re.search(r"<hr\b[^>]*>",body,re.I);body=body[hr.end():] if hr else body
+    body=re.sub(r'<div\s+class="sfstoc"[^>]*>.*?</ul>\s*</div>',"",body,flags=re.S|re.I)
+    text=clear(body)
+    # Ändringsmarkering som är radbruten i källan ("… nivå. Lag\n(2010:1408).") räknas som en markering.
+    text=re.sub(r"\b(Lag|Förordning)\s*\n\s*(\(\d{4}:\d+\)\.?)",r"\1 \2",text)
+    parts=[]
+    for c in doc.get("chapters",[]):
+        parts+=[c.get("title"),c.get("division"),*(c.get("titles") or []),*(c.get("otherHeadings") or [])]
+        for i in c["items"]:
+            if i["type"]=="heading":parts.append(i["text"])
+            else:
+                for v in i.get("versions") or [i]:parts+=[v.get("text"),(v.get("inForce") or {}).get("label"),(v.get("expires") or {}).get("label")]
+    parts+=[t.get("text") for t in doc.get("transitions") or []]+[doc.get("appendix"),doc.get("preamble")]+[g["title"] for g in doc.get("repealedChapters") or []]
+    parts+=[t.get("sfs") for t in doc.get("transitions") or []]
+    have=flat(" ".join(str(p) for p in parts if p))
+    lost=[]
+    for line in text.split("\n"):
+        l=re.sub(r"/\s*(?:Träder|Upphör|Rubriken|Kapitlet|Ersätts)[^/\n]{0,160}(?:/|$)","",line)
+        l=re.sub(r"(?:\s*(?:Lag|Förordning|Kungörelse)\s*\(\d{4}:\d+\)\s*\.?)+\s*$","",l)
+        l=re.sub(r"^\s*\d+\s*[a-z]?\s*(?:§|kap\.)\s*","",l)
+        if TB.match(l):continue
+        if re.match(r"\s*Utkom från trycket\b",l):continue
+        f=flat(l)
+        if len(f)<15 or re.fullmatch(r"(?:övergångsbestämmelser|innehåll|ikraftträdande)+",f):continue
+        probe=f[5:45]
+        if probe not in have:lost.append(line.strip()[:120])
+    return len(lost),lost[:5]
 def unconsolidated(doc):
     """Riksdagen anger en senare ändring (amendedTo) än den som finns inarbetad i texten, bilagan eller
     övergångsbestämmelserna. Då har källans sammanställning ännu inte uppdaterats."""
@@ -389,7 +650,7 @@ def fetch(sfs):
                 if attempt==2:raise
                 time.sleep(attempt+1)
 def run():
-    catalog=json.loads(CATALOG.read_text(encoding="utf-8"));changed=False;fail=[];report=[];repealed=[]
+    catalog=json.loads(CATALOG.read_text(encoding="utf-8"));changed=False;fail=[];report=[];repealed=[];completeness={}
     # ONLY=new hämtar bara författningar som ännu saknar lagtext; ONLY=2010:1932,2011:154 bara de angivna.
     only=os.environ.get("ONLY","").strip()
     # Konventionerna (typ "konvention") byggs av scripts/conventions.py ur lagarnas bilagor och hämtas inte här.
@@ -423,10 +684,10 @@ def run():
             editorial(chs,id)
             output=document(id,meta["name"],method,chs,official)
             if repeal_at:output["repealAt"]=repeal_at
-            if amended_to:
-                output["amendedTo"]=amended_to
-                gap=unconsolidated(output)
-                if gap:output["unconsolidated"]=gap
+            # "Ändrad: t.o.m. SFS …" i riksdagen.se:s huvud anger hur långt texten är uppdaterad.
+            if amended_to:output["amendedTo"]=amended_to
+            lost,sample=missing_words(doc.get("html"),output) if method=="HTML" else (0,[])
+            if lost:completeness[id]={"name":meta["name"],"missing":lost,"lines":sample}
             chaptered=any(c["number"]!="0" for c in chs)
             if meta.get("chaptered")!=chaptered:meta["chaptered"]=chaptered;changed=True
             file=OUT/(slug(id)+".json")
@@ -462,6 +723,13 @@ def run():
         CATALOG.write_text(json.dumps(catalog,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
     if changed and not report:report.append("Katalogen uppdaterad (kapitelindelning).")
     write_report(report,fail,repealed)
+    # Fullständighetskontroll: författningar där ord ur källan saknas i den tolkade texten.
+    cfile=ROOT/"data/completeness.json"
+    old=json.loads(cfile.read_text(encoding="utf-8")) if cfile.exists() else {}
+    done={m["sfs"] for m in metas}
+    merged={k:v for k,v in old.items() if k not in done};merged.update(completeness)
+    cfile.write_text(json.dumps(dict(sorted(merged.items())),ensure_ascii=False,indent=1)+"\n",encoding="utf-8")
+    print("Fullständighet:",len(completeness),"av",len(metas),"författningar har text som saknas jämfört med riksdagen.se")
     # Misslyckade författningar stoppar inte övriga; arbetsflödet markeras som misslyckat efter granskningsförslaget.
     if fail and not os.environ.get("CHANGE_REPORT"):sys.exit("Manual review needed: "+", ".join(fail))
 if __name__=="__main__":run()
