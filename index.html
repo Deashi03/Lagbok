@@ -24,7 +24,15 @@
   <link rel="apple-touch-startup-image" media="screen and (device-width: 360px) and (device-height: 780px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="splash/splash-1080x2340.png">
   <link rel="apple-touch-startup-image" media="screen and (device-width: 402px) and (device-height: 874px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="splash/splash-1206x2622.png">
   <link rel="apple-touch-startup-image" media="screen and (device-width: 440px) and (device-height: 956px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="splash/splash-1320x2868.png">
-  <style>html,body{background:#FFFDF9}</style>
+  <style>html,body{background:#FFFDF9}html[data-theme=dark],html[data-theme=dark] body{background:#131D17}</style>
+  <script>
+    // Startar direkt, innan skripten har lästs in: mörkt läge utan vit blinkning, och katalogen hämtas parallellt med skripten.
+    (function(){
+      try{var p=JSON.parse(localStorage.getItem('lagboken-settings')||'{}'),dark=p.theme==='dark'||(p.theme==='system'&&p.themeChosen&&window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches);
+        document.documentElement.dataset.theme=dark?'dark':'light';}catch(e){}
+      window.LAGBOK_EARLY={catalog:window.fetch?fetch('data/index/catalog.json').catch(function(){return null;}):null};
+    })();
+  </script>
   <meta property="og:title" content="Lagboken – svensk lagtext i fickformat">
   <meta property="og:description" content="Balkarna, grundlagarna och lagarna för rättsväsendet med hänvisningar, kopplingar och sökning.">
   <meta property="og:image" content="https://deashi03.github.io/Lagbok/icon-512.png">
@@ -55,14 +63,13 @@
   <div class="scrim" id="scrim" hidden></div>
   <aside class="sheet" id="sheet" role="dialog" aria-modal="true" aria-label="Snabbmeny" hidden></aside>
   <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
-  <script src="assets/search-core.js" defer></script>
-  <script src="assets/legal-links.js" defer></script>
-  <script src="assets/editorial.js" defer></script>
-  <script src="assets/law-model.js" defer></script>
-  <script src="assets/search-index.js" defer></script>
-  <script src="assets/highlights.js" defer></script>
-  <script src="assets/toc-model.js" defer></script>
-  <script src="assets/tutorial.js" defer></script>
-  <script src="assets/app.js" defer></script>
+  <script>
+    // Katalogen från förra besöket visas direkt; appen ritar om den när skripten är inlästa.
+    (function(){
+      try{var h=location.hash;if(h&&h!=='#/catalog'&&h!=='#/home'&&h!=='#/search')return;
+        var snap=localStorage.getItem('lagboken-snapshot');if(snap){document.getElementById('view').innerHTML=snap;window.LAGBOK_SNAPSHOT=snap;document.getElementById('top-title').textContent='Lagbok';}}catch(e){}
+    })();
+  </script>
+  <script src="assets/lagboken.js" defer></script>
 </body>
 </html>

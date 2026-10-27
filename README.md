@@ -178,3 +178,14 @@ Läsaren har en enda innehållsknapp, utan föregående/nästa länkar eller ver
   - Listor under "följande bestämmelser i 23 kap. rättegångsbalken: – 4 § …, – 6 § …" och "bestämmelserna i 1 kap. om 1. … i 6–10 §§" avser det kapitlet och den lagen. Tidigare pekade de på samma nummer i den egna lagen.
   - Lagar med löpande paragrafnumrering över kapitlen, till exempel upphovsrättslagen och växellagen: "enligt 8 §" leder till rätt kapitel.
   - "10 kap. 18 respektive 19 §", "24 kap. 3 § respektive 5 § i skollagen" och bokstavsintervall som "8 b–d §§".
+
+## Version 1.6.3
+- **Snabbare start:** katalogen syns direkt när appen öppnas.
+  - Katalogsidan sparas i telefonen och visas innan skripten har lästs in. Appen tar sedan över utan att rita om den.
+  - Appen väntar inte längre på nätet. I 1.6.2 hämtades katalogen först från nätet, vilket kunde ge upp till 4 sekunders väntan på ett svagt nät. Nu visas den sparade kopian direkt, och en ny hämtas i bakgrunden.
+  - Katalogen börjar hämtas redan i `index.html`, samtidigt som skripten läses in.
+  - Appens tio skript är sammanslagna till en fil, `assets/lagboken.js`, som byggs med `node scripts/bundle.js`. Testerna kontrollerar att filen är aktuell.
+  - Mörkt läge sätts innan sidan ritas, så att det inte blinkar vitt.
+  - Lagtexten och hänvisningarna hit hämtas samtidigt. Hänvisningstolken och de övriga hämtningarna (status, Nytt i lagen, kopplingar) väntar tills första bilden är ritad.
+  - I en simulerad långsam telefon syns katalogen efter omkring 100 ms i stället för omkring 230 ms.
+- **Uppdateringar når fram:** när en ny kopia av en lag eller av dess hänvisningar har hämtats ritas den öppna lagen om på plats. Ett fel gjorde tidigare att den sparade kopian aldrig jämfördes med den nya. Raden "Ny version" och den uppdaterade katalogen kunde därför utebli, och en ändrad lag syntes först vid nästa öppning.

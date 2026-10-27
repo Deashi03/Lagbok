@@ -1,7 +1,7 @@
 /* Lagboken: snabb offlinevänlig juridisk läsapp utan externa JavaScript-beroenden. */
 (function () {
   'use strict';
-  const APP_VERSION='1.6.2';
+  const APP_VERSION='1.6.3';
   const $ = (sel, root=document) => root.querySelector(sel);
   const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
   const view = $('#view');
@@ -367,12 +367,14 @@
   async function loadLaw(id) {
     if(state.laws.has(id)) return state.laws.get(id);
     if(state.loading.has(id)) return state.loading.get(id);
+    // Lagtexten och hänvisningarna hit hämtas samtidigt.
+    const back=fetchJson('data/index/backlinks/'+sfsFile(id)+'.json').catch(()=>({}));
     const promise=fetch('data/laws/'+sfsFile(id)+'.json',{cache:'no-store'}).then(async res=>{
       if(!res.ok) throw new Error('Författningstext ännu inte importerad');
       const data = await res.json();
       if(!Array.isArray(data.chapters)||!data.chapters.length) throw new Error('Ofullständigt dataformat');
       tocModel.registerDoc(id,data);
-      try{state.backlinks.set(id,await fetchJson('data/index/backlinks/'+sfsFile(id)+'.json'));}catch(_){state.backlinks.set(id,{});}
+      state.backlinks.set(id,await back);
       state.laws.set(id,data); return data;
     }).finally(()=>state.loading.delete(id));
     state.loading.set(id,promise); return promise;
@@ -481,7 +483,11 @@
     return !!ch&&(ch.items||[]).some(p=>p.type==='para'&&searchCore.paraKey(p.number)===searchCore.paraKey(paragraph));
   }
   const refLocate=legalLinks.locator(id=>state.laws.get(id));
+  // Hänvisningstolken får katalogens namn först när den behövs (eller när appen är ledig efter start).
+  let linksReady=false;
+  function prepareLinks(){if(!linksReady&&legalLinks.configure){legalLinks.configure(state.catalog);linksReady=true;}}
   function linkify(input,sfs,chapter){
+    prepareLinks();
     return legalLinks.linkify(input,{
       unit:isArt(sfs,chapter)?'artikel':'',
       sfs,chapter,anchor:(lawById(sfs)||{}).parent||(lawById(sfs)||{}).anchor,
@@ -1147,7 +1153,10 @@
       default: markup=home();
     }
     if(state.current!==r)return;
-    view.innerHTML=markup+(r.page==='law'?returnChip():'');
+    // Vid start visas katalogen redan från en sparad ögonblicksbild (index.html); är den likadan behöver den inte ritas om.
+    const snap=window.LAGBOK_SNAPSHOT;window.LAGBOK_SNAPSHOT=null;
+    if(!(snap&&snap===markup))view.innerHTML=markup+(r.page==='law'?returnChip():'');
+    if(r.page==='catalog'&&!state.query&&!state.editFavs)saveSnapshot(markup);
     syncLawTools(r,meta);
     animateView(keep?'':state.navDir);state.navDir='';
     const tb=$('.topbar');if(tb&&tb.classList&&!keep)tb.classList.toggle('titled',!(typeof view.querySelector==='function'&&view.querySelector('.page-title,.law-head h1,.reader-heading h1')));
@@ -1743,6 +1752,12 @@
     return '<div class="skeleton" aria-label="Hämtar författning" role="status"><span class="sk-title"></span>'+
       [0,1,2].map(()=>'<div class="sk-para"><span class="sk-num"></span>'+line(96)+line(92)+line(98)+line(64)+'</div>').join('')+'</div>';
   }
+  // Katalogsidan sparas så att nästa start kan visa den innan skripten har lästs in.
+  let snapTimer=null;
+  function saveSnapshot(markup){
+    clearTimeout(snapTimer);
+    snapTimer=setTimeout(()=>{try{localStorage.setItem('lagboken-snapshot',markup);}catch(_){}},800);
+  }
   function renderKeep(){const position=view.scrollTop;return Promise.resolve(render(false,true)).then(()=>{view.scrollTop=position;});}
   // ---------- 0.6: svep mellan kapitel ----------
   let swipe=null;
@@ -2025,6 +2040,13 @@
       const msg=e.data||{};
       if(msg.type==='shell-updated')showUpdateBanner();
       if(msg.type==='catalog-updated')loadCatalog().then(()=>renderKeep()).catch(()=>{});
+      // En lag eller dess hänvisningar har ändrats sedan den sparade kopian visades: läs om och rita om på plats.
+      const changed=msg.type==='data-updated'&&/^data\/(?:laws|index\/backlinks)\/(.+)\.json$/.exec(msg.path||'');
+      if(changed){
+        const id=[...state.laws.keys(),...state.loading.keys()].find(x=>sfsFile(x)===changed[1]);
+        if(id)Promise.resolve(state.loading.get(id)).catch(()=>{}).then(()=>{state.laws.delete(id);return loadLaw(id);})
+          .then(()=>{if(route().page==='law'&&route().sfs===id)renderKeep();}).catch(()=>{});
+      }
     });
     const go=()=>navigator.serviceWorker.register('sw.js').then(reg=>{
       // Leta efter uppdateringar när appen öppnas igen från hemskärmen.
@@ -2040,12 +2062,14 @@
     document.body.appendChild(b);
   }
   async function loadCatalog(){
-    let resp=await fetch('data/index/catalog.json').catch(()=>null);
+    // Första gången används hämtningen som index.html startade direkt, parallellt med skripten.
+    const early=window.LAGBOK_EARLY&&window.LAGBOK_EARLY.catalog;if(early)window.LAGBOK_EARLY.catalog=null;
+    let resp=await (early||fetch('data/index/catalog.json')).catch(()=>null);
     if(!resp||!resp.ok)resp=await fetch('data/catalog.json');
     if(!resp.ok)throw Error('Katalog saknas');
     const data=await resp.json();
     state.catalog=(data.laws||[]).filter(l=>l.available!==false);state.fap=data.fap||[];state.version=data.version||'';state.sections=data.sections||[];state.coverage=data.coverage||null;window.LAGBOK_GENERATED=data.generated;
-    legalLinks.configure&&legalLinks.configure(state.catalog);
+    linksReady=false;
   }
   // Sökfältet i katalogen stannar under toppfältet när man scrollar; skugga när det ligger över listan.
   view.addEventListener('scroll',()=>{
@@ -2063,12 +2087,14 @@
       return;
     }
     if(!location.hash||location.hash==='#/home'||location.hash==='#/search')history.replaceState(null,'','#/catalog');
-    render(true);
+    // Första bilden ritas innan något annat hämtas eller tolkas.
+    await Promise.resolve(render(true)).catch(()=>{});
+    await new Promise(r=>{requestAnimationFrame(()=>setTimeout(r,0));setTimeout(r,100);});
     fetchJson('data/index/status.json').then(st=>{state.status=st;updateNavBadge();}).catch(()=>{});
     loadChanges().then(()=>{updateNavBadge();if(unseenNews()&&route().page==='catalog')renderKeep();}).catch(()=>{});
     // Sökindexets bas läses in i bakgrunden så att första sökningen svarar direkt.
     const idle=window.requestIdleCallback||(fn=>setTimeout(fn,1200));
-    idle(()=>{if(searchIndex&&searchIndex.warm)searchIndex.warm();});
+    idle(()=>{if(searchIndex&&searchIndex.warm)searchIndex.warm();prepareLinks();});
     fetchJson('data/index/relations.json').then(r=>{state.relations=r;if(route().page==='law')renderKeep();}).catch(()=>{});
     registerWorker();
     // Första gången: introduktionen. Den visas aldrig igen när man har tryckt "Jag förstår".
