@@ -32,6 +32,7 @@ for(const [sfs,doc] of docs)toc.registerDoc(sfs,doc);
 const key=search.paraKey;
 const known=new Map();
 for(const [sfs,doc] of docs)for(const ch of doc.chapters)known.set(sfs+'|'+ch.number,new Set(ch.items.filter(i=>i.type==='para').map(i=>key(i.number))));
+const locate=links.locator(sfs=>docs.get(sfs));
 const exists=(sfs,chapter,para)=>{const s=known.get(sfs+'|'+chapter);return !!s&&(para==null||s.has(key(para)));};
 // Paragrafer och kapitel i ett intervall ("7–9 §§", "24–28 kap.") i lagtextens ordning.
 const order=new Map();
@@ -74,7 +75,7 @@ laws.forEach((law,li)=>{
       const terms=new Set(words([...texts,title,heading,ch.title].join(' ')));
       for(const t of terms){if(!postings.has(t))postings.set(t,[]);postings.get(t).push(ordinal);}
       for(const text of texts){
-        for(const ref of links.parseRefs(text,{sfs:law.sfs,chapter:ch.number,exists,members,chapters,unit:ch.unit||'',anchor:law.parent||law.anchor})){
+        for(const ref of links.parseRefs(text,{sfs:law.sfs,chapter:ch.number,exists,locate,members,chapters,unit:ch.unit||'',anchor:law.parent||law.anchor})){
           if(ref.id===law.sfs&&ref.chapter===ch.number&&ref.numbers.includes(key(item.number)))continue;
           const target=typeOf.get(ref.id);
           const complements=law.type==='förordning'&&target==='lag'&&ref.id!==law.sfs;

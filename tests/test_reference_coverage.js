@@ -20,13 +20,14 @@ const exists=(sfs,chapter,para)=>{
  const set=index.get(sfs+'|'+chapter);
  return !!set&&(para==null||set.has(key(para)));
 };
+const locate=links.locator(sfs=>laws.get(sfs));
 let total=0,linked=0;const misses=[];
 const external=/^[^.;]{0,160}?(?:lagen|förordningen|balken|kungörelsen|ordningen|grundlagen|förordning|lag)\s*\((\d{4}:\d+)\)|^\s*(?:i\s+|enligt\s+)?(?:\S+\s+){0,3}?(?:EU|EG|direktiv|förordning \()/i;
 // Konventionstext (kapitel med artiklar) har egen styckeindelning ("§ 1") som inte är svenska paragrafhänvisningar.
 for(const [sfs,doc] of laws)for(const ch of doc.chapters.filter(c=>c.unit!=='artikel'))for(const item of ch.items){
  if(item.type!=='para'||item.repealed)continue;
  for(const v of item.versions||[item]){
-  const meta=catalog.laws.find(l=>l.sfs===sfs)||{},anchor=meta.parent||meta.anchor,text=v.text,refs=links.parseRefs(text,{sfs,chapter:ch.number,exists,anchor});
+  const meta=catalog.laws.find(l=>l.sfs===sfs)||{},anchor=meta.parent||meta.anchor,text=v.text,refs=links.parseRefs(text,{sfs,chapter:ch.number,exists,locate,anchor});
   for(const m of text.matchAll(/§/g)){
    if(text[m.index-1]==='§')continue;
    const after=text.slice(m.index+1,m.index+200).replace(/^§/,'');

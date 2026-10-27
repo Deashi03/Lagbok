@@ -6,7 +6,7 @@ Datum: 2026-10-27. 5018 författningar.
 
 - författningar: 5018
 - förordningar med lag: 1863
-- länkade hänvisningar %: 97.2
+- länkade hänvisningar %: 97.8
 - kommande upphävande: 4
 - paragraf som ännu inte trätt i kraft: 2037
 - tidigare lydelse utan datum (visas som tidigare): 85

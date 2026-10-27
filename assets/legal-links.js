@@ -51,14 +51,16 @@
     sortTitles();known=new Set(titles.map(t=>t[1]));for(const law of laws||[])known.add(law.sfs);
   }
   const NUM='\\d+(?:\\s?[a-z](?![\\p{L}]))?';
-  const SEP='\\s*(?:,|och|eller|samt|-{1,2}|–)\\s*';
-  const pattern=new RegExp('(?<![\\p{L}\\p{N}\\-–:])(?:(\\d{1,3}(?:\\s?[a-z](?=\\s*kap))?)\\s*kap(?:itel)?\\.?\\s*)?('+NUM+'(?:'+SEP+NUM+')*)\\s*(§{1,2})(?![\\p{L}\\p{N}])','giu');
+  const SEP='\\s*(?:,|och|eller|samt|respektive|-{1,2}|–)\\s*';
+  // "18 a-c §§": bokstavsintervall inom samma paragrafnummer.
+  const LETTERS='(?:\\s*(?:-{1,2}|–)\\s*[a-z](?![\\p{L}]))?';
+  const pattern=new RegExp('(?<![\\p{L}\\p{N}\\-–:])(?:(\\d{1,3}(?:\\s?[a-z](?=\\s*kap))?)\\s*kap(?:itel)?\\.?\\s*)?('+NUM+LETTERS+'(?:'+SEP+NUM+LETTERS+')*)\\s*(§{1,2})(?![\\p{N}]|[\\p{L}]\\s*§)','giu');
   // Kapitel skrivs som i lagtexten: "3 a", inte "3a".
   const chap=c=>String(c).replace(/\s*([a-z])$/i,' $1').toLowerCase();
   const NOTPARA='(?!\\s*'+NUM+'(?:'+SEP+NUM+')*\\s*§)';
   const chapterOnly=new RegExp('(?<![\\p{L}\\p{N}\\-–:§])(\\d{1,3}(?:\\s?[a-z])?)\\s*kap\\.'+NOTPARA,'giu');
   // Kapitel i uppräkning eller intervall: "24–28 kap.", "1, 2 och 5 kap.", "3 och 4 kap. brottsbalken".
-  const CSEP='\\s*(?:,|och|eller|samt|-{1,2}|–)\\s*';
+  const CSEP='\\s*(?:,|och|eller|samt|respektive|-{1,2}|–)\\s*';
   const CNUM='\\d{1,3}(?:\\s?[a-z](?![\\p{L}]))?';
   const chapterList=new RegExp('(?<![\\p{L}\\p{N}\\-–:§])('+CNUM+'(?:'+CSEP+CNUM+')+)\\s*kap\\.'+NOTPARA,'giu');
   const DASH=/^\s*(?:-{1,2}|–)\s*$/;
@@ -68,7 +70,7 @@
   const PUNKT='(?:\\d+|[a-z]\\)?)(?![\\p{L}\\p{N}]|\\s*[a-z]?\\s*§)';
   const qualifier=new RegExp('^\\s*(?:'+ORD+'(?:\\s*(?:,|och)\\s*'+ORD+')*\\s+(?:stycket|styckena|meningen|meningarna|punkten|punkterna)(?:\\s+'+PUNKT+'(?:\\s*(?:,|och|eller)\\s*'+PUNKT+')*)?(?:\\s*,?\\s*'+ORD+'\\s+meningen)?\\s*)*','iu');
   // Följande hänvisningar i samma uppräkning, t.ex. "2 kap. 4 § eller 6 kap. 2 § kustbevakningslagen".
-  const chained=new RegExp('^(?:'+SEP+'(?:(?:\\d{1,3}(?:\\s?[a-z])?\\s*kap\\.?\\s*)?'+NUM+'(?:'+SEP+NUM+')*\\s*§{1,2}'+qualifier.source.slice(1)+'|\\d{1,3}(?:\\s?[a-z])?(?:'+SEP+'\\d{1,3}(?:\\s?[a-z])?)*\\s*kap\\.))*','iu');
+  const chained=new RegExp('^(?:'+SEP.replace('|respektive','')+'(?:(?:\\d{1,3}(?:\\s?[a-z])?\\s*kap\\.?\\s*)?'+NUM+'(?:'+SEP+NUM+')*\\s*§{1,2}'+qualifier.source.slice(1)+'|\\d{1,3}(?:\\s?[a-z])?(?:'+SEP+'\\d{1,3}(?:\\s?[a-z])?)*\\s*kap\\.))*','iu');
   const bySfs=/^\s*(?:i\s+|av\s+|enligt\s+)?[\p{L}-]*(?:lagen|förordningen|kungörelsen|balken|ordningen|grundlagen)\s*\((\d{4}:\d+)\)/iu;
   // Returnerar {id,explicit} eller null när hänvisningen avser en författning som inte finns i appen.
   function targetLaw(after,context,last){
@@ -100,6 +102,28 @@
   function exists(context,id,chapter,para){
     return typeof context.exists!=='function'||context.exists(id,chapter,para);
   }
+  // Kapitlet där paragrafen finns i den aktuella lagen, om lagen numrerar paragraferna löpande.
+  function locate(context,para){
+    return typeof context.locate==='function'?context.locate(context.sfs,para):null;
+  }
+  // Bygger en locate-funktion: docFor(sfs) ger lagens dokument. Bara lagar där inget paragrafnummer
+  // förekommer i mer än ett kapitel räknas som löpande numrerade.
+  function locator(docFor){
+    const cache=new Map();
+    return (sfs,para)=>{
+      if(!cache.has(sfs)){
+        const doc=docFor(sfs);let map=null;
+        if(doc&&doc.chapters&&doc.chapters.filter(c=>c.number!=='0'&&!c.unit).length>1){
+          map=new Map();
+          for(const ch of doc.chapters){if(ch.unit)continue;for(const i of ch.items||[]){if(i.type!=='para')continue;const k=key(i.number);
+            if(map.has(k)){map=null;break;}map.set(k,String(ch.number));}if(!map)break;}
+        }
+        if(!doc)return null;
+        cache.set(sfs,map);
+      }
+      const map=cache.get(sfs);return map&&map.get(key(para))||null;
+    };
+  }
   function parseRefs(text,context){
     const s=String(text||''),refs=[];
     let last=null,prev=null;
@@ -121,9 +145,24 @@
       const num=/lagen\s*\((\d{4}:\d+)\)[^()]*$/.exec(head);if(num&&known.has(num[1])&&(best<0||num.index>best)){best=num.index;id=num[1];}
       if(best<0||!/(?:bestämmelse\w*|paragraf\w*)\s+i\s+$/.test(head.slice(Math.max(0,best-40),best)))return null;
       return id&&id!==context.sfs?id:null;};
+    // "Bestämmelserna i 1 kap. om 1. ekonomisk reglering i 6–10 §§, …" och "Följande bestämmelser i 1 kap.
+    // årsredovisningslagen ska tillämpas: 3 § …": paragrafer utan kapitel i listan avser det kapitlet.
+    const listChapter=pos=>{
+      const before=s.slice(Math.max(0,pos-1200),pos);let cut=-1;for(const b of before.matchAll(/[.;]\s+(?=[A-ZÅÄÖ])/g))cut=b.index;
+      const sentence=before.slice(cut+1);let hit=null;
+      for(const h of sentence.matchAll(/bestämmelse\w*\s+i\s+(\d{1,3}(?:\s?[a-z](?![\p{L}]))?)\s*kap\.(?!\s*\d)/giu))hit=h;
+      if(!hit)return null;
+      const rest=sentence.slice(hit.index+hit[0].length);
+      if(/\d\s*kap\./.test(rest)||!/[:\n]/.test(rest))return null;
+      // Står kapitlet i en numrerad punkt gäller det inte efter nästa punkt ("5. … i 5 kap.: - 44 § … 6. 31 §").
+      if(/(?:^|\n)\s*\d+\s*[a-z]?\.\s/.test(sentence.slice(0,hit.index))&&/\n\s*\d+\s*[a-z]?\.\s/.test(rest))return null;
+      const t=targetLaw(rest,context,null);
+      return t?{id:t.id,chapter:chap(hit[1])}:null;};
     for(const m of s.matchAll(pattern)){
       const body=m[0],start=m.index,after=s.slice(start+body.length,start+body.length+260);
-      let target=targetLaw(after,context,last||lastBefore(start));
+      let target=targetLaw(after,context,last||lastBefore(start)),listCh=null;
+      if(target&&!target.explicit&&!m[1]){const lc=listChapter(start);
+        if(lc&&exists(context,lc.id,lc.chapter,key((m[2].match(numberIn)||[''])[0]))){target={id:lc.id,explicit:true};listCh=lc.chapter;}}
       if(target&&!target.explicit){const c=colonLaw(start);if(c&&exists(context,c,m[1]?chap(m[1]):'0',key((m[2].match(numberIn)||[''])[0])))target={id:c,explicit:true};}
       // Uppräkningar som avslutas med "…, allt jordabalken" avser den namngivna lagen.
       if(target&&!target.explicit){
@@ -133,7 +172,7 @@
         // Lång uppräkning där paragrafen inte finns i den egna lagen ("… 5 kap. 1 §, 7 kap. 1 § … lagen (2018:1200)"):
         // den första författning som namnges längre fram i samma uppräkning avses.
         const firstNum=(m[2].match(numberIn)||[''])[0];
-        if(!target.explicit&&!exists(context,context.sfs,m[1]?chap(m[1]):(context.chapter||'0'),key(firstNum))){
+        if(!target.explicit&&!exists(context,context.sfs,m[1]?chap(m[1]):(context.chapter||'0'),key(firstNum))&&!(!m[1]&&locate(context,key(firstNum)))){
           const stop=tail.search(/;|\n\s*\d+\s*[a-z]?\.\s|\.\s+[A-ZÅÄÖ]/);
           const span=stop<0?tail:tail.slice(0,stop);
           const nm=/(?<![\p{L}])(?:[\p{L}-]*(?:lagen|balken|förordningen|kungörelsen|ordningen)|lagen|förordningen)(?![\p{L}])/u.exec(span);
@@ -154,13 +193,25 @@
       // Följer hänvisningen direkt på en annan i en uppräkning ärver den dess kapitel.
       const between=prev?s.slice(prev.end,start):null;
       const inChain=between!=null&&new RegExp('^(?:'+qualifier.source.slice(1)+')?'+SEP+'$','iu').test(between);
-      prev={end:start+body.length,chapter:m[1]?chap(m[1]):(inChain?prev.chapter:null)};
+      // "24 kap. 3 § respektive 5 § i den nya skollagen": samma författning och kapitel som föregående led.
+      if(inChain&&target&&!target.explicit&&prev.explicit&&prev.id!==context.sfs&&!m[1]&&exists(context,prev.id,prev.chapter,key((m[2].match(numberIn)||[''])[0])))
+        target={id:prev.id,explicit:true};
+      prev={end:start+body.length,chapter:m[1]?chap(m[1]):(listCh||(inChain?prev.chapter:null)),id:target&&target.id,explicit:!!(target&&target.explicit)};
       if(!target)continue;
       const id=target.id;
       if(target.explicit&&id!==context.sfs)last=id;
-      const chapter=prev.chapter||(id===context.sfs?(context.chapter||'0'):'0');
+      let chapter=prev.chapter||(id===context.sfs?(context.chapter||'0'):'0');
       const listStart=body.indexOf(m[2]);
-      const raw=[...m[2].matchAll(numberIn)].map(n=>({num:key(n[0]),start:start+listStart+n.index,end:start+listStart+n.index+n[0].length}));
+      const raw=[];
+      for(const n of m[2].matchAll(numberIn)){
+        const at=start+listStart+n.index;raw.push({num:key(n[0]),start:at,end:at+n[0].length});
+        const letter=/^\s*(?:-{1,2}|–)\s*([a-z])(?![\p{L}])/iu.exec(m[2].slice(n.index+n[0].length));
+        if(letter&&/[a-z]$/i.test(n[0])){const pos=at+n[0].length+letter[0].length-1;raw.push({num:key(n[0]).replace(/[a-z]$/i,'')+letter[1].toLowerCase(),start:pos,end:pos+1});}
+      }
+      // Lag med löpande paragrafnumrering över kapitlen ("enligt 8 §" i 4 kap. avser 8 § i 2 kap.).
+      if(id===context.sfs&&!prev.chapter&&raw.length&&!raw.some(n=>exists(context,id,chapter,n.num))){
+        const c=locate(context,raw[0].num);if(c){chapter=c;prev.chapter=c;}
+      }
       const numbers=[],members=[];
       for(let i=0;i<raw.length;i++){
         const n=raw[i],next=raw[i+1];
@@ -250,5 +301,5 @@
     }
     return out+escape(s.slice(at));
   }
-  return {parseRefs,linkify,configure,targetLaw};
+  return {parseRefs,linkify,configure,targetLaw,locator};
 });
