@@ -25,11 +25,17 @@ const B=process.env.LAGBOK_URL||'http://localhost:8765/';
  assert.ok(await page.locator('.law-tree .tree-row').first().isVisible());
  // Kopplingar lag ↔ förordning
  await page.goto(B+'#/law/1942%3A740/23/1');await wait(900);
- assert.match((await page.locator('#p-1 .link-chip').allTextContents()).join(' '),/Kompletteras av FuK 1 §/);
+ assert.match((await page.locator('#p-1 .link-chip').allTextContents()).join(' '),/Kompletteras av \d+ förordning(?:ar)?/);
  // Menyn glider upp utan att hoppa i sidled
  await page.locator('#p-1 .link-chip').first().click();
  const lefts=new Set();for(let i=0;i<6;i++){lefts.add(await page.evaluate(()=>Math.round(document.querySelector('#sheet').getBoundingClientRect().left)));await wait(50);}
  assert.equal(lefts.size,1,'menyn får inte flytta sig i sidled under animationen');
+ assert.match(await page.locator('#sheet').textContent(),/FuK 1 §/,'förordningarna står i menyn');
+ await page.keyboard.press('Escape');
+ // BrB 3:10 hänvisar till 7–9 §§ och syns därför som hänvisning under 3:8
+ await page.goto(B+'#/law/1962%3A700/3/8');await wait(900);
+ await page.locator('#p-8 .link-chip',{hasText:'hit'}).click();await wait(300);
+ assert.match(await page.locator('#sheet').textContent(),/BrB 3:10/);
  await page.keyboard.press('Escape');
  // Sök i författningen, även över kapitelgränser
  await page.goto(B+'#/law/1942%3A740/24/1');await wait(900);

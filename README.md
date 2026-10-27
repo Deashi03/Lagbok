@@ -170,3 +170,11 @@ Läsaren har en enda innehållsknapp, utan föregående/nästa länkar eller ver
 - **Sökpilarna går ord för ord:** varje förekomst är ett steg ("3 av 48"). Pilen scrollar så att ordet hamnar mitt på skärmen, och ordet i fokus har en egen, kraftigare markering.
 - **Konventioner som lagtext:** Europakonventionen, barnkonventionen, CISG och andra konventioner och avtal på svenska ligger nu i själva lagen, efter lagens paragrafer, med protokoll som egna delar. Det gäller 139 lagar och 3 580 artiklar. Snabbkoderna fungerar fortfarande (*EKMR 8*, *Barnkonventionen*).
 
+
+## Version 1.6.2
+- **Kortare koppling till förordningar:** under en lagparagraf står nu bara antalet, till exempel "§ Kompletteras av 2 förordningar", på samma sätt som "2 hänvisningar hit". Ett tryck visar vilka förordningar och paragrafer det gäller.
+- **Hänvisningar hit syns direkt efter en uppdatering:** lagtext och hänvisningsindex hämtas nu först från nätet, och den sparade kopian används bara utan nät. Tidigare visades den gamla sparade kopian vid första öppningen efter en uppdatering. Därför stod det till exempel inte under BrB 3:8 att 3:10 hänvisar dit ("7–9 §§"), trots att kopplingen redan fanns.
+- **Fler hänvisningar tolkas rätt** (omkring 800 länkar nya eller rättade, täckning 97,8 %):
+  - Listor under "följande bestämmelser i 23 kap. rättegångsbalken: – 4 § …, – 6 § …" och "bestämmelserna i 1 kap. om 1. … i 6–10 §§" avser det kapitlet och den lagen. Tidigare pekade de på samma nummer i den egna lagen.
+  - Lagar med löpande paragrafnumrering över kapitlen, till exempel upphovsrättslagen och växellagen: "enligt 8 §" leder till rätt kapitel.
+  - "10 kap. 18 respektive 19 §", "24 kap. 3 § respektive 5 § i skollagen" och bokstavsintervall som "8 b–d §§".

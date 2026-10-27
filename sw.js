@@ -1,8 +1,8 @@
-// Lagboken 1.6.1. Appen startar direkt från sparade kopior (stale-while-revalidate): allt som redan finns
-// i cachen visas utan att vänta på nätet, och en ny kopia hämtas samtidigt i bakgrunden. Ändras appens
+// Lagboken 1.6.2. Appens filer visas direkt från sparade kopior (stale-while-revalidate) och en ny kopia
+// hämtas samtidigt i bakgrunden. Lagtext och index hämtas först från nätet (se nedan). Ändras appens
 // filer meddelas sidan, som visar raden "Ny version". Ändras katalogen läses den in på nytt utan omstart.
 // Lagtexten ligger i en separat cache som behålls mellan versioner så att nedladdade lagar finns kvar offline.
-const VERSION='lagboken-shell-v19';
+const VERSION='lagboken-shell-v20';
 const DATA='lagboken-data';
 const CORE=['./','./index.html','./assets/app.css','./assets/app.js','./assets/search-core.js','./assets/legal-links.js','./assets/editorial.js','./assets/law-model.js','./assets/search-index.js','./assets/highlights.js','./assets/toc-model.js','./assets/tutorial.js','./icon.svg','./icon-180.png','./icon-192.png','./manifest.webmanifest'];
 // Filer vars ändring ska meddelas sidan.
@@ -37,6 +37,9 @@ self.addEventListener('fetch',event=>{
   event.respondWith((async()=>{
     const hit=await (await caches.open(cacheName)).match(key)||(!isData&&await caches.match(request,{ignoreSearch:true}));
     const fresh=refresh(request,cacheName,key,hit||null);
+    // Lagtext och index hämtas i första hand från nätet, så att en rättad lag eller nya hänvisningar syns
+    // direkt efter en uppdatering. Utan nät (eller efter 4 s) visas den sparade kopian.
+    if(hit&&isData){try{return await withTimeout(fresh,4000);}catch(_){event.waitUntil(fresh.catch(()=>{}));return hit;}}
     if(hit){event.waitUntil(fresh.catch(()=>{}));return hit;}
     try{return await withTimeout(fresh,isData?15000:8000);}
     catch(_){return (!isData&&await caches.match(new URL('./index.html',location).href))||Response.error();}

@@ -1,7 +1,7 @@
 /* Lagboken: snabb offlinevänlig juridisk läsapp utan externa JavaScript-beroenden. */
 (function () {
   'use strict';
-  const APP_VERSION='1.6.1';
+  const APP_VERSION='1.6.2';
   const $ = (sel, root=document) => root.querySelector(sel);
   const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
   const view = $('#view');
@@ -480,11 +480,12 @@
     if(paragraph==null)return !!ch;
     return !!ch&&(ch.items||[]).some(p=>p.type==='para'&&searchCore.paraKey(p.number)===searchCore.paraKey(paragraph));
   }
+  const refLocate=legalLinks.locator(id=>state.laws.get(id));
   function linkify(input,sfs,chapter){
     return legalLinks.linkify(input,{
       unit:isArt(sfs,chapter)?'artikel':'',
       sfs,chapter,anchor:(lawById(sfs)||{}).parent||(lawById(sfs)||{}).anchor,
-      exists:refExists,
+      exists:refExists,locate:refLocate,
       href:urlFor
     });
   }
@@ -545,11 +546,16 @@
     const names=list.slice(0,3).map(([s,c,n])=>shortRef(s,c,n));
     return names.join(', ')+(list.length>3?' +'+(list.length-3):'');
   }
+  // "2 förordningar": antal författningar som kompletterar paragrafen; namnen visas när chippet öppnas.
+  function countLabel(list){
+    const ids=[...new Set(list.map(e=>e[0]))],all=ids.every(id=>(lawById(id)||{}).type==='förordning');
+    return ids.length+' '+(all?(ids.length===1?'förordning':'förordningar'):(ids.length===1?'författning':'författningar'));
+  }
   function linksRow(key,back){
     if(!back.length)return '';
     const reg=back.filter(e=>e[3]==='föreskrift'),comp=back.filter(e=>e[3]==='kompletterar'),refs=back.filter(e=>!e[3]||e[3]==='ref');
     return '<div class="links-row">'+
-      (reg.length?'<button type="button" class="link-chip regulation" data-action="backlinks" data-key="'+attr(key)+'">§ Kompletteras av '+html(linkLabel(reg))+'</button>':'')+
+      (reg.length?'<button type="button" class="link-chip regulation" data-action="backlinks" data-key="'+attr(key)+'">§ Kompletteras av '+html(countLabel(reg))+'</button>':'')+
       (comp.length?'<button type="button" class="link-chip complements" data-action="backlinks" data-key="'+attr(key)+'">↗\uFE0E Kompletterar '+html(linkLabel(comp))+'</button>':'')+
       (refs.length?'<button type="button" class="link-chip" data-action="backlinks" data-key="'+attr(key)+'">'+refs.length+(refs.length===1?' hänvisning':' hänvisningar')+' hit</button>':'')+
       '</div>';
