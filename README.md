@@ -189,3 +189,10 @@ Läsaren har en enda innehållsknapp, utan föregående/nästa länkar eller ver
   - Lagtexten och hänvisningarna hit hämtas samtidigt. Hänvisningstolken och de övriga hämtningarna (status, Nytt i lagen, kopplingar) väntar tills första bilden är ritad.
   - I en simulerad långsam telefon syns katalogen efter omkring 100 ms i stället för omkring 230 ms.
 - **Uppdateringar når fram:** när en ny kopia av en lag eller av dess hänvisningar har hämtats ritas den öppna lagen om på plats. Ett fel gjorde tidigare att den sparade kopian aldrig jämfördes med den nya. Raden "Ny version" och den uppdaterade katalogen kunde därför utebli, och en ändrad lag syntes först vid nästa öppning.
+
+## Version 1.6.4
+- **Ännu kortare start:** appens skript körs först när katalogen redan syns, och skriptfilen hämtas samtidigt som sidan ritas (`preload`).
+  - Katalogfilen är en tredjedel mindre (548 kB i stället för 761 kB). Lagarna lagras i kolumner, och appen packar upp dem.
+  - Status, kopplingar, Nytt i lagen och sökindexet hämtas först efter starten, så att de inte konkurrerar med de första trycken.
+- **Starttid i appen:** under Inställningar → Om appen står hur lång tid den senaste starten tog i telefonen, dels tills katalogen syntes, dels tills appen var klar. Tiden räknas från att sidan börjar laddas. Tiden innan dess, när iOS startar själva appen, kan inte mätas inifrån appen.
+- Prövat och förkastat: att lägga in stilarna direkt i `index.html` gjorde starten omkring 40 ms långsammare i mätningarna.

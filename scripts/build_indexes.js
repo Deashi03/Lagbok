@@ -165,11 +165,18 @@ for(const [f,rel] of Object.entries(relations)){
     }
   }
 }
-// Kompakt katalog för appen: bara de fält appen använder, utan indrag (data/catalog.json är källan).
-const slim=Object.assign({},catalog,{laws:catalog.laws.map(l=>{
+// Kompakt katalog för appen (data/catalog.json är källan). Lagarna lagras i kolumner: "cols" anger fälten och
+// varje rad i "rows" värdena i samma ordning (null när fältet saknas). Fält vars värden upprepas (typ, avdelning)
+// pekar på en lista i "values". Ungefär en tredjedel mindre att läsa och tolka vid start; appen packar upp den.
+const rowsOf=catalog.laws.map(l=>{
   const o={};for(const [k,v] of Object.entries(l)){if(k==='check'||v===false||v===''||v==null||(Array.isArray(v)&&!v.length))continue;o[k]=v;}
   return o;
-})});
+});
+const cols=[...new Set(rowsOf.flatMap(o=>Object.keys(o)))];
+const values={};
+for(const c of ['type','section'])if(cols.includes(c))values[c]=[...new Set(rowsOf.map(o=>o[c]).filter(v=>v!=null))];
+const rows=rowsOf.map(o=>{const r=cols.map(c=>o[c]===undefined?null:values[c]?values[c].indexOf(o[c]):o[c]);while(r.length&&r[r.length-1]===null)r.pop();return r;});
+const slim=Object.assign({},catalog,{laws:undefined,cols,values,rows});
 fs.writeFileSync(path.join(out,'catalog.json'),JSON.stringify(slim));
 // Förarbeten per ändringsförfattning (scripts/forarbeten.py), uppdelat på år: forarbeten/<år>.json.
 const forarbetenFile=path.join(root,'data/forarbeten.json');

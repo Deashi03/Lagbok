@@ -37,6 +37,7 @@
   <meta property="og:description" content="Balkarna, grundlagarna och lagarna för rättsväsendet med hänvisningar, kopplingar och sökning.">
   <meta property="og:image" content="https://deashi03.github.io/Lagbok/icon-512.png">
   <meta property="og:type" content="website">
+  <link rel="preload" href="assets/lagboken.js" as="script">
   <link rel="stylesheet" href="assets/app.css">
   <title>Lagboken</title>
 </head>
@@ -67,9 +68,16 @@
     // Katalogen från förra besöket visas direkt; appen ritar om den när skripten är inlästa.
     (function(){
       try{var h=location.hash;if(h&&h!=='#/catalog'&&h!=='#/home'&&h!=='#/search')return;
-        var snap=localStorage.getItem('lagboken-snapshot');if(snap){document.getElementById('view').innerHTML=snap;window.LAGBOK_SNAPSHOT=snap;document.getElementById('top-title').textContent='Lagbok';}}catch(e){}
+        var snap=localStorage.getItem('lagboken-snapshot');if(snap){document.getElementById('view').innerHTML=snap;window.LAGBOK_SNAPSHOT=snap;document.getElementById('top-title').textContent='Lagbok';
+          window.LAGBOK_T={snapshot:performance.now()};if(window.requestAnimationFrame)requestAnimationFrame(function(){window.LAGBOK_T.paint=performance.now();});}}catch(e){}
     })();
   </script>
-  <script src="assets/lagboken.js" defer></script>
+  <script>
+    // Appen körs först när första bilden är ritad; filen hämtas redan (preload ovan).
+    (function(){
+      function load(){var s=document.createElement('script');s.src='assets/lagboken.js';document.body.appendChild(s);}
+      if(window.requestAnimationFrame)requestAnimationFrame(function(){setTimeout(load,0);});else setTimeout(load,0);
+    })();
+  </script>
 </body>
 </html>
