@@ -22,6 +22,7 @@ jobs:
 
       - name: Testa snabbkoder och appflöden
         run: |
+          node tests/test_bundle.js
           node tests/test_search.js
           node tests/test_app_smoke.js
           node tests/test_legal_links.js
