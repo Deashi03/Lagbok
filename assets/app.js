@@ -1,7 +1,7 @@
 /* Lagboken: snabb offlinevänlig juridisk läsapp utan externa JavaScript-beroenden. */
 (function () {
   'use strict';
-  const APP_VERSION='1.6.3';
+  const APP_VERSION='1.6.4';
   const $ = (sel, root=document) => root.querySelector(sel);
   const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
   const view = $('#view');
@@ -833,7 +833,7 @@
       '<div class="actions"><button type="button" class="button" data-action="export">Exportera</button>'+
       '<button type="button" class="button" data-action="import">Importera</button>'+
       '<input type="file" id="import-file" accept="application/json,.json" hidden></div>'+
-      '<div class="section-title">Om appen</div><p class="small muted">Lagboken version '+APP_VERSION+' · Lagtext hämtad från riksdagen.se '+html(String(window.LAGBOK_GENERATED||'').slice(0,10)||'okänt datum')+' · '+state.catalog.length+' författningar.</p>'+
+      '<div class="section-title">Om appen</div><p class="small muted">'+html(startTime())+'</p><p class="small muted">Lagboken version '+APP_VERSION+' · Lagtext hämtad från riksdagen.se '+html(String(window.LAGBOK_GENERATED||'').slice(0,10)||'okänt datum')+' · '+state.catalog.length+' författningar.</p>'+
       '<div class="actions"><button type="button" class="button" data-action="check-update">Leta efter ny version</button></div></div>';
   }
   // Påminnelse om säkerhetskopia när det finns egna markeringar eller anteckningar.
@@ -1758,6 +1758,16 @@
     clearTimeout(snapTimer);
     snapTimer=setTimeout(()=>{try{localStorage.setItem('lagboken-snapshot',markup);}catch(_){}},800);
   }
+  // Starttid mätt i telefonen (från att appen öppnas tills katalogen syns och tills appen är klar); visas under Inställningar.
+  function noteStart(){
+    const t=window.LAGBOK_T||{},ready=Math.round(performance.now());
+    const shown=Math.round(t.paint||ready);
+    try{localStorage.setItem('lagboken-start',JSON.stringify({shown,ready,snapshot:!!t.snapshot,at:new Date().toISOString()}));}catch(_){}
+  }
+  function startTime(){
+    let s=null;try{s=JSON.parse(localStorage.getItem('lagboken-start')||'null');}catch(_){}
+    return s?'Senaste start: katalogen syntes efter '+s.shown+' ms, appen klar efter '+s.ready+' ms.':'';
+  }
   function renderKeep(){const position=view.scrollTop;return Promise.resolve(render(false,true)).then(()=>{view.scrollTop=position;});}
   // ---------- 0.6: svep mellan kapitel ----------
   let swipe=null;
@@ -2068,6 +2078,8 @@
     if(!resp||!resp.ok)resp=await fetch('data/catalog.json');
     if(!resp.ok)throw Error('Katalog saknas');
     const data=await resp.json();
+    // Den kompakta katalogen lagrar lagarna i kolumner (scripts/build_indexes.js).
+    if(data.rows&&data.cols)data.laws=data.rows.map(r=>{const o={};data.cols.forEach((c,i)=>{const v=r[i];if(v!=null)o[c]=data.values&&data.values[c]?data.values[c][v]:v;});return o;});
     state.catalog=(data.laws||[]).filter(l=>l.available!==false);state.fap=data.fap||[];state.version=data.version||'';state.sections=data.sections||[];state.coverage=data.coverage||null;window.LAGBOK_GENERATED=data.generated;
     linksReady=false;
   }
@@ -2090,13 +2102,17 @@
     // Första bilden ritas innan något annat hämtas eller tolkas.
     await Promise.resolve(render(true)).catch(()=>{});
     await new Promise(r=>{requestAnimationFrame(()=>setTimeout(r,0));setTimeout(r,100);});
-    fetchJson('data/index/status.json').then(st=>{state.status=st;updateNavBadge();}).catch(()=>{});
-    loadChanges().then(()=>{updateNavBadge();if(unseenNews()&&route().page==='catalog')renderKeep();}).catch(()=>{});
-    // Sökindexets bas läses in i bakgrunden så att första sökningen svarar direkt.
-    const idle=window.requestIdleCallback||(fn=>setTimeout(fn,1200));
-    idle(()=>{if(searchIndex&&searchIndex.warm)searchIndex.warm();prepareLinks();});
-    fetchJson('data/index/relations.json').then(r=>{state.relations=r;if(route().page==='law')renderKeep();}).catch(()=>{});
+    noteStart();
+    // Det som inte behövs för första bilden hämtas när appen har startat klart, utan att konkurrera med de första trycken.
+    const later=(fn,ms)=>setTimeout(()=>(window.requestIdleCallback||(f=>f()))(fn,{timeout:2000}),ms);
+    later(()=>fetchJson('data/index/relations.json').then(r=>{state.relations=r;if(route().page==='law')renderKeep();}).catch(()=>{}),route().page==='law'?0:600);
+    later(()=>{
+      fetchJson('data/index/status.json').then(st=>{state.status=st;updateNavBadge();}).catch(()=>{});
+      loadChanges().then(()=>{updateNavBadge();if(unseenNews()&&route().page==='catalog')renderKeep();}).catch(()=>{});
+    },900);
     registerWorker();
+    // Sökindexets bas läses in i bakgrunden så att första sökningen svarar direkt.
+    later(()=>{if(searchIndex&&searchIndex.warm)searchIndex.warm();prepareLinks();},2500);
     // Första gången: introduktionen. Den visas aldrig igen när man har tryckt "Jag förstår".
     if(!pref.tutorialDone&&window.LagbokTutorial&&!/[?&]notutorial\b/.test(location.search))
       window.LagbokTutorial.show(()=>{pref.tutorialDone=new Date().toISOString();savePrefs();});
