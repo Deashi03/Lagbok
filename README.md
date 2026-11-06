@@ -207,3 +207,8 @@ Läsaren har en enda innehållsknapp, utan föregående/nästa länkar eller ver
 - Den stora egna sifferpanelen på iPhone är ersatt av Apples inbyggda siffertangentbord. En kompakt rad vid sökfältet innehåller kolon, a/b/c för bokstavsparagrafer, ABC/123 och Gå.
 - Sökfältets fokus behålls när en lagförkortning känns igen och vid kolontryck. Efter förkortningen sätts ett mellanslag automatiskt.
 - Lagbok Desktop påverkas inte av de mobila tangentbordsfunktionerna.
+
+## Version 1.7.2
+- iOS använder enbart Apples inbyggda tangentbord med automatisk växling från bokstäver till siffror när en lagförkortning känns igen. Ingen specialbyggd tangentbordspanel finns kvar.
+- Endast ett diskret kolon-/ABC-val och Gå inuti sökfältet, för kapitel-, paragraf- och bokstavsbeteckningar.
+- Cacheversion och resurser uppdaterade för att undvika att nya skript blandas med gammal CSS i installerade webbappen. Desktop har oförändrad tangentbordshantering.
