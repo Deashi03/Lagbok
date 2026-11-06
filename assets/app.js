@@ -127,8 +127,8 @@
       ['a','b','c'].map(k=>'<button type="button" class="quick-keypad-letter" data-action="jump-letter" data-value="'+k+'" aria-label="Lägg till '+k+'" hidden>'+k+'</button>').join('')+
       '<button type="button" class="quick-keypad-mode" data-action="jump-hide" aria-label="Växla till bokstavstangentbord">ABC</button>'+
       '<button type="button" class="quick-keypad-go" data-action="jump-go">Gå</button></div>'+
-      '<input id="quick-keyboard-bridge" class="quick-keyboard-bridge" type="text" tabindex="-1" aria-hidden="true" autocomplete="off" inputmode="numeric">'+
-      '<div id="search-suggest" class="suggestions" role="listbox" hidden></div></form>';
+      '<div id="search-suggest" class="suggestions" role="listbox" hidden></div></form>'+
+      '<input id="quick-keyboard-bridge" class="quick-keyboard-bridge" type="text" tabindex="-1" aria-hidden="true" autocomplete="off" inputmode="numeric">';
   }
   function listRow(title,subtitle,go,badge) {
     return '<a class="list-row" href="' + attr(go) + '" data-link="1">' +
