@@ -1946,28 +1946,31 @@
     const sel=window.getSelection&&window.getSelection();
     if(dt<600&&Math.abs(dx)>90&&Math.abs(dy)<45&&(!sel||sel.isCollapsed))chapterStep(dx<0?1:-1);
   },{passive:true});
-  // Tangenterna i raden ovanför iOS-tangentbordet får inte ta bort fokus från sökfältet.
-  document.addEventListener('pointerdown',e=>{
-    if(e.target.closest&&e.target.closest('#ios-keyboard-tools button'))e.preventDefault();
-  },{passive:false});
-  document.addEventListener('click',e=>{
-    const btn=e.target.closest&&e.target.closest('#ios-keyboard-tools button');
-    if(!btn)return;
-    e.preventDefault();
-    if(btn.dataset.action==='ios-colon'){jumpColon();return;}
-    if(btn.dataset.action==='ios-abc'){
-      jumpTextMode=!jumpTextMode;
-      const field=$('#query');
-      if(field){updateJumpPad(field.value);field.focus({preventScroll:true});queueKeyboardTools();}
-      return;
-    }
-    if(btn.dataset.action==='ios-go'){
-      const field=$('#query');if(!field)return;
-      const q=field.value.trim();
-      const bar=$('#ios-keyboard-tools');if(bar)bar.hidden=true;
-      if(q)goQuick(q).then(done=>{if(!done){toast('Ange ett giltigt lagrum.');queueKeyboardTools();}});
-    }
-  });
+  // Lyssna direkt på extraraden; ändra inte ordningen på övriga document.click-delegater.
+  const keyboardToolsElement=$('#ios-keyboard-tools');
+  if(keyboardToolsElement){
+    keyboardToolsElement.addEventListener('pointerdown',e=>{
+      if(e.target.closest&&e.target.closest('button'))e.preventDefault();
+    },{passive:false});
+    keyboardToolsElement.addEventListener('click',e=>{
+      const btn=e.target.closest&&e.target.closest('button[data-action]');
+      if(!btn)return;
+      e.preventDefault();
+      if(btn.dataset.action==='ios-colon'){jumpColon();return;}
+      if(btn.dataset.action==='ios-abc'){
+        jumpTextMode=!jumpTextMode;
+        const field=$('#query');
+        if(field){updateJumpPad(field.value);field.focus({preventScroll:true});queueKeyboardTools();}
+        return;
+      }
+      if(btn.dataset.action==='ios-go'){
+        const field=$('#query');if(!field)return;
+        const q=field.value.trim();
+        keyboardToolsElement.hidden=true;
+        if(q)goQuick(q).then(done=>{if(!done){toast('Ange ett giltigt lagrum.');queueKeyboardTools();}});
+      }
+    });
+  }
   view.addEventListener('focusin',e=>{if(e.target.id==='query')queueKeyboardTools();});
   view.addEventListener('focusout',e=>{if(e.target.id==='query')queueKeyboardTools();});
   if(window.visualViewport){
