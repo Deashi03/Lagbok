@@ -137,6 +137,27 @@ const B=process.env.LAGBOK_URL||'http://localhost:8765/';
  // Nytt i lagen
  await page.goto(B+'#/nytt');await wait(800);
  assert.match(await page.textContent('#view h1'),/Nytt i lagen/);
+
+ // 1.7: efter lagförkortningen visas sifferpanelen på iPhone och mobilens kolonknapp används.
+ await page.goto(B+'#/catalog');await page.waitForSelector('#query');await page.fill('#query','BrB');
+ await page.waitForSelector('#quick-keypad:visible');
+ await page.locator('#quick-keypad [data-action="jump-digit"][data-value="2"]').click();
+ await page.locator('#quick-keypad [data-action="jump-digit"][data-value="4"]').click();
+ assert.equal(await page.inputValue('#query'),'BrB 24');
+ await page.locator('#quick-keypad [data-action="jump-colon"]').click();
+ await page.locator('#quick-keypad [data-action="jump-digit"][data-value="1"]').click();
+ assert.equal(await page.inputValue('#query'),'BrB 24:1');
+ await page.locator('#quick-keypad [data-action="jump-go"]').click();
+ await page.waitForURL(/#\/law\/1962%3A700\/24\/1$/);
+ assert.equal(await page.evaluate(()=>location.hash),'#/law/1962%3A700/24/1');
+ await page.goto(B+'#/catalog');await page.fill('#query','PL');
+ await page.waitForSelector('#quick-keypad:visible');
+ await page.locator('#quick-keypad [data-action="jump-digit"][data-value="1"]').click();
+ await page.locator('#quick-keypad [data-action="jump-digit"][data-value="0"]').click();
+ await page.locator('#quick-keypad [data-action="jump-go"]').click();
+ await page.waitForURL(/#\/law\/1984%3A387\/0\/10$/);
+ await page.goto(B+'#/catalog');await page.fill('#query','skjutlagen');await page.press('#query','Enter');
+ await page.waitForURL(/#\/law\/2025%3A1062$/);
  assert.deepEqual(errors,[]);
  console.log('Webbläsartest: katalog, kopplingar, meny, sök, penna, ångra, snabbhopp, Sparat, introduktion, favoriter, anslutande förordningar, Om Lagboken, intervall, snabbkoder, konventioner, sökpilar, lydelse vid datum och Nytt i lagen godkända');
  await browser.close();
