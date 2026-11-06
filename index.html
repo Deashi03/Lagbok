@@ -75,7 +75,7 @@
   <script>
     // Appen körs först när första bilden är ritad; filen hämtas redan (preload ovan).
     (function(){
-      function load(){var s=document.createElement('script');s.src='assets/lagboken.js';document.body.appendChild(s);}
+      function load(){var s=document.createElement('script');s.src='assets/lagboken.js?v=1.7.2';document.body.appendChild(s);}
       if(window.requestAnimationFrame)requestAnimationFrame(function(){setTimeout(load,0);});else setTimeout(load,0);
     })();
   </script>
