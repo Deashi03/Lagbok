@@ -175,4 +175,4 @@ const B=process.env.LAGBOK_URL||'http://localhost:8765/';
  assert.deepEqual(errors,[]);
  console.log('Webbläsartest: katalog, kopplingar, meny, sök, penna, ångra, snabbhopp, Sparat, introduktion, favoriter, anslutande förordningar, Om Lagboken, intervall, snabbkoder, konventioner, sökpilar, lydelse vid datum och Nytt i lagen godkända');
  await browser.close();
-})().catch(e=>{console.error(e);process.exitCode=1;});
+})().catch(e=>{console.error(e);process.exit(1);});
