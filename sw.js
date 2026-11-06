@@ -1,9 +1,9 @@
-// Lagboken 1.7. Appen startar direkt från sparade kopior (stale-while-revalidate): allt som redan finns
+// Lagboken 1.7.1. Appen startar direkt från sparade kopior (stale-while-revalidate): allt som redan finns
 // i cachen visas utan att vänta på nätet, och en ny kopia hämtas samtidigt i bakgrunden. Ändras appens
 // filer meddelas sidan, som visar raden "Ny version". Ändras katalogen läses den in på nytt utan omstart,
 // och ändras en lag eller dess hänvisningar ritas den om på plats (meddelandet "data-updated").
 // Lagtexten ligger i en separat cache som behålls mellan versioner så att nedladdade lagar finns kvar offline.
-const VERSION='lagboken-shell-v23';
+const VERSION='lagboken-shell-v24';
 const DATA='lagboken-data';
 const CORE=['./','./index.html','./assets/lagboken.js','./data/law-aliases.json','./icon.svg','./icon-180.png','./icon-192.png','./manifest.webmanifest'];
 // Filer vars ändring ska meddelas sidan.
