@@ -1,7 +1,7 @@
 /* Lagboken: snabb offlinevänlig juridisk läsapp utan externa JavaScript-beroenden. */
 (function () {
   'use strict';
-  const APP_VERSION='1.7.1';
+  const APP_VERSION='1.7.2';
   const $ = (sel, root=document) => root.querySelector(sel);
   const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
   const view = $('#view');
@@ -118,15 +118,13 @@
   }
   function iconSearch() {return '<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="10.8" cy="10.8" r="7.2"/><path d="m16.2 16.2 5 5"/></svg>';}
   function searchBox(placeholder) {
+    jumpTextMode=false;activeJumpLaw=null; // Ny sökning ärver aldrig föregående tangentbordsläge.
     return '<form id="global-search" class="searchbar-wrap" role="search" autocomplete="off"><div class="searchbox">'+iconSearch()+
       '<input id="query" name="q" type="search" inputmode="search" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="search-suggest" enterkeyhint="search" autocomplete="off" spellcheck="false" autocorrect="off" autocapitalize="off" placeholder="'+html(placeholder||'Sök författning, begrepp eller lagrum')+'" value="'+attr(state.query)+'">'+
+      // Enbart två små funktioner inuti sökfältet. Inga egna tangentbord eller knappaneler.
+      '<button type="button" id="quick-symbol" class="quick-inline-symbol" data-action="jump-colon" aria-label="Skriv kolon" hidden>:</button>'+
+      '<button type="submit" id="quick-go" class="quick-inline-go" aria-label="Öppna lagrummet" hidden>Gå</button>'+
       '<button type="button" class="search-clear" data-action="clear-search" aria-label="Rensa sökning">×</button></div>'+
-      '<div id="quick-keypad" class="quick-keypad" role="group" aria-label="Gå till kapitel och paragraf" hidden>'+
-      '<span id="quick-keypad-status" class="quick-keypad-status">Kapitel</span>'+
-      '<button type="button" class="quick-keypad-colon" data-action="jump-colon" aria-label="Skriv kolon för paragraf">:</button>'+
-      ['a','b','c'].map(k=>'<button type="button" class="quick-keypad-letter" data-action="jump-letter" data-value="'+k+'" aria-label="Lägg till '+k+'" hidden>'+k+'</button>').join('')+
-      '<button type="button" class="quick-keypad-mode" data-action="jump-hide" aria-label="Växla till bokstavstangentbord">ABC</button>'+
-      '<button type="button" class="quick-keypad-go" data-action="jump-go">Gå</button></div>'+
       '<div id="search-suggest" class="suggestions" role="listbox" hidden></div></form>'+
       '<input id="quick-keyboard-bridge" class="quick-keyboard-bridge" type="text" tabindex="-1" aria-hidden="true" autocomplete="off" inputmode="numeric">';
   }
@@ -1069,8 +1067,8 @@
     }).catch(()=>{}));
   }
 
-  // Native keyboard only: Apple's keyboard cannot contain custom web buttons.
-  let jumpTextMode=false;
+  // iPhone använder uteslutande Apples inbyggda tangentbord; inga HTML-tangentbord byggs.
+  let jumpTextMode=false,activeJumpLaw=null;
   function jumpPadMeta(query){
     if(window.LAGBOK_DESKTOP||!window.matchMedia||!window.matchMedia('(pointer: coarse) and (max-width: 860px)').matches)return null;
     const m=/^([^\d:]+?)(?:\s+(\d{0,3}(?::\d{0,3}\s*[a-z]?)?))?$/i.exec(String(query||'').trim());
@@ -1087,8 +1085,7 @@
     try{caret=field.selectionStart;}catch(_){}
     field.inputMode=mode;
     field.setAttribute('enterkeyhint',mode==='numeric'?'go':'search');
-    // Safari may require a change of focused input to display a new keyboard layout.
-    // Switch focus immediately between inputs without deliberately dismissing the keyboard.
+    // iOS kan kräva ett omedelbart fokusbyte innan systemtangentbordet uppdaterar inputmode.
     if(focused&&/(iPad|iPhone|iPod)/i.test(String(navigator.userAgent||''))){
       const bridge=$('#quick-keyboard-bridge');
       if(bridge){bridge.inputMode=mode;bridge.focus({preventScroll:true});}
@@ -1097,31 +1094,42 @@
     }
   }
   function updateJumpPad(value){
-    const pad=$('#quick-keypad'),field=$('#query');
-    if(!pad||!field)return value;
+    const field=$('#query'),symbol=$('#quick-symbol'),go=$('#quick-go');
+    if(!field)return value;
     const info=jumpPadMeta(value);
-    pad.hidden=!info;
-    if(!info){jumpTextMode=false;changeJumpKeyboard(field,'search');return value;}
-    // "BrB" -> "BrB ": no manual space is needed before the chapter number.
+    if(!info){
+      jumpTextMode=false;activeJumpLaw=null;
+      if(symbol)symbol.hidden=true;
+      if(go)go.hidden=true;
+      changeJumpKeyboard(field,'search');
+      return value;
+    }
+    // Ett nytt lagval ska alltid starta med iOS siffertangentbord, även efter ABC i en annan lag.
+    if(activeJumpLaw!==info.law.sfs){activeJumpLaw=info.law.sfs;jumpTextMode=false;}
+    // Efter 'BrB' behövs inget eget mellanslag innan siffrorna.
     if(!info.tail&&!/\s$/.test(value)){value=value.trimEnd()+' ';field.value=value;}
-    const hasColon=info.tail.includes(':'),typed=info.tail,status=$('#quick-keypad-status');
-    if(status)status.textContent=info.prefix+' · '+(info.law.chaptered?(hasColon?'§':'Kap.'):'§')+(typed?' '+typed:'');
-    const colon=pad.querySelector('[data-action="jump-colon"]');
-    if(colon){colon.hidden=!info.law.chaptered;colon.disabled=!/^\d{1,3}$/.test(typed);}
-    const allowed=(!info.law.chaptered||hasColon)&&/\d$/.test(typed);
-    pad.querySelectorAll('[data-action="jump-letter"]').forEach(b=>{b.hidden=!allowed;b.disabled=!allowed;});
-    const mode=pad.querySelector('[data-action="jump-hide"]');
-    if(mode){mode.textContent=jumpTextMode?'123':'ABC';mode.setAttribute('aria-label',jumpTextMode?'Växla till siffertangentbord':'Växla till bokstavstangentbord');}
+    if(go)go.hidden=false;
+    const canColon=info.law.chaptered&&/^\d{1,3}$/.test(info.tail);
+    const canLetters=(!info.law.chaptered||info.tail.includes(':'))&&/\d[a-z]?$/.test(info.tail);
+    if(symbol){
+      symbol.hidden=!(canColon||canLetters||jumpTextMode);
+      symbol.disabled=false;
+      if(canColon&&!jumpTextMode){
+        symbol.dataset.action='jump-colon';symbol.textContent=':';symbol.setAttribute('aria-label','Skriv kolon före paragraf');
+      }else{
+        symbol.dataset.action='jump-letters';
+        symbol.textContent=jumpTextMode?'123':'ABC';
+        symbol.setAttribute('aria-label',jumpTextMode?'Växla till iPhones siffertangentbord':'Växla till iPhones bokstavstangentbord');
+      }
+    }
     changeJumpKeyboard(field,jumpTextMode?'search':'numeric');
     return value;
   }
-  function jumpKey(action,value){
+  function jumpColon(){
     const field=$('#query');if(!field)return;
-    const info=jumpPadMeta(field.value);if(!info)return;
-    let next=field.value.trimEnd();
-    if(action==='jump-colon'&&info.law.chaptered&&/^\d{1,3}$/.test(info.tail))next+=':';
-    if(action==='jump-letter'&&(!info.law.chaptered||info.tail.includes(':'))&&/\d$/.test(info.tail)&&/^[a-c]$/.test(value))next+=value;
-    if(next===field.value)return;
+    const info=jumpPadMeta(field.value);
+    if(!info||!info.law.chaptered||!/^\d{1,3}$/.test(info.tail))return;
+    const next=field.value.trimEnd()+':';
     field.value=next;onSearch(next);
     field.focus({preventScroll:true});
     try{field.setSelectionRange(field.value.length,field.value.length);}catch(_){}
@@ -1925,7 +1933,7 @@
   },{passive:true});
   // A tap on the compact controls should not steal the iOS keyboard focus.
   view.addEventListener('pointerdown',e=>{
-    if(e.target.closest&&e.target.closest('#quick-keypad button'))e.preventDefault();
+    if(e.target.closest&&e.target.closest('#quick-symbol, #quick-go'))e.preventDefault();
   },{passive:false});
   view.addEventListener('input',e=>{
     if(e.target.id==='find-input'){clearTimeout(runFind.t);const v=e.target.value;
@@ -2014,9 +2022,8 @@
     if(!btn)return;
     const a=btn.dataset.action,k=btn.dataset.key;
     if(a==='clear-search'){const field=$('#query');if(field){field.value='';onSearch('');field.focus();}return;}
-    if(a==='jump-colon'||a==='jump-letter'){jumpKey(a,btn.dataset.value||'');return;}
-    if(a==='jump-go'){const f=$('#query');if(f)goQuick(f.value.trim()).then(done=>{if(!done)toast('Ange ett giltigt kapitel eller lagrum.');});return;}
-    if(a==='jump-hide'){jumpTextMode=!jumpTextMode;const f=$('#query');if(f){updateJumpPad(f.value);f.focus({preventScroll:true});}return;}
+    if(a==='jump-colon'){jumpColon();return;}
+    if(a==='jump-letters'){jumpTextMode=!jumpTextMode;const f=$('#query');if(f){updateJumpPad(f.value);f.focus({preventScroll:true});}return;}
     if(a==='para-menu'){paraMenu(k);return;}
     if(a==='source-info'){sourceInfo();return;}
     if(a==='read-mode'){changeReaderMode(btn.dataset.mode);return;}
