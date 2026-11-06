@@ -196,3 +196,9 @@ Läsaren har en enda innehållsknapp, utan föregående/nästa länkar eller ver
   - Status, kopplingar, Nytt i lagen och sökindexet hämtas först efter starten, så att de inte konkurrerar med de första trycken.
 - **Starttid i appen:** under Inställningar → Om appen står hur lång tid den senaste starten tog i telefonen, dels tills katalogen syntes, dels tills appen var klar. Tiden räknas från att sidan börjar laddas. Tiden innan dess, när iOS startar själva appen, kan inte mätas inifrån appen.
 - Prövat och förkastat: att lägga in stilarna direkt i `index.html` gjorde starten omkring 40 ms långsammare i mätningarna.
+
+## Version 1.7
+- Smeknamn och alternativa lagnamn i `data/law-aliases.json`, även för snabbkoder (t.ex. skjutlagen).
+- Länkar till namngivna lagar och SFS-nummer utan paragrafnummer, bl.a. BrB 24:2.
+- iPhone får en separat sifferpanel med kolon, bokstavstillägg och Gå efter exakt lagförkortning. Desktop visar inte panelen.
+- Avstängd autokorrigering för globala sökfältet; ny serviceworker-version för uppdateringen.
