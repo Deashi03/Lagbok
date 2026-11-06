@@ -202,3 +202,8 @@ Läsaren har en enda innehållsknapp, utan föregående/nästa länkar eller ver
 - Länkar till namngivna lagar och SFS-nummer utan paragrafnummer, bl.a. BrB 24:2.
 - iPhone får en separat sifferpanel med kolon, bokstavstillägg och Gå efter exakt lagförkortning. Desktop visar inte panelen.
 - Avstängd autokorrigering för globala sökfältet; ny serviceworker-version för uppdateringen.
+
+## Version 1.7.1
+- Den stora egna sifferpanelen på iPhone är ersatt av Apples inbyggda siffertangentbord. En kompakt rad vid sökfältet innehåller kolon, a/b/c för bokstavsparagrafer, ABC/123 och Gå.
+- Sökfältets fokus behålls när en lagförkortning känns igen och vid kolontryck. Efter förkortningen sätts ett mellanslag automatiskt.
+- Lagbok Desktop påverkas inte av de mobila tangentbordsfunktionerna.

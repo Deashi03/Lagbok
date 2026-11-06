@@ -980,7 +980,7 @@
 /* Lagboken: snabb offlinevänlig juridisk läsapp utan externa JavaScript-beroenden. */
 (function () {
   'use strict';
-  const APP_VERSION='1.7';
+  const APP_VERSION='1.7.1';
   const $ = (sel, root=document) => root.querySelector(sel);
   const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
   const view = $('#view');
@@ -1098,16 +1098,16 @@
   function iconSearch() {return '<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="10.8" cy="10.8" r="7.2"/><path d="m16.2 16.2 5 5"/></svg>';}
   function searchBox(placeholder) {
     return '<form id="global-search" class="searchbar-wrap" role="search" autocomplete="off"><div class="searchbox">'+iconSearch()+
-      '<input id="query" name="q" type="search" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="search-suggest" enterkeyhint="search" autocomplete="off" spellcheck="false" autocorrect="off" autocapitalize="off" placeholder="'+html(placeholder||'Sök författning, begrepp eller lagrum')+'" value="'+attr(state.query)+'">'+
+      '<input id="query" name="q" type="search" inputmode="search" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="search-suggest" enterkeyhint="search" autocomplete="off" spellcheck="false" autocorrect="off" autocapitalize="off" placeholder="'+html(placeholder||'Sök författning, begrepp eller lagrum')+'" value="'+attr(state.query)+'">'+
       '<button type="button" class="search-clear" data-action="clear-search" aria-label="Rensa sökning">×</button></div>'+
-      '<div id="search-suggest" class="suggestions" role="listbox" hidden></div>'+
-      '<div id="quick-keypad" class="quick-keypad" role="group" aria-label="Snabbval av kapitel och paragraf" hidden>'+
-      '<div class="quick-keypad-head"><strong id="quick-keypad-status">Välj lagrum</strong><button type="button" data-action="jump-hide" aria-label="Använd vanligt tangentbord">ABC</button></div>'+
-      '<div class="quick-keypad-grid">'+
-      ['1','2','3','4','5','6','7','8','9',':','0','⌫'].map(k=>'<button type="button" data-action="'+(k===':'?'jump-colon':k==='⌫'?'jump-back':'jump-digit')+'" data-value="'+(k==='⌫'?'':k)+'">'+k+'</button>').join('')+
-      '</div><div class="quick-keypad-footer"><span>Paragraf med bokstav:</span>'+
-      ['a','b','c'].map(k=>'<button type="button" data-action="jump-letter" data-value="'+k+'">'+k+'</button>').join('')+
-      '<button type="button" class="quick-keypad-go" data-action="jump-go">Gå till →</button></div></div></form>';
+      '<div id="quick-keypad" class="quick-keypad" role="group" aria-label="Gå till kapitel och paragraf" hidden>'+
+      '<span id="quick-keypad-status" class="quick-keypad-status">Kapitel</span>'+
+      '<button type="button" class="quick-keypad-colon" data-action="jump-colon" aria-label="Skriv kolon för paragraf">:</button>'+
+      ['a','b','c'].map(k=>'<button type="button" class="quick-keypad-letter" data-action="jump-letter" data-value="'+k+'" aria-label="Lägg till '+k+'" hidden>'+k+'</button>').join('')+
+      '<button type="button" class="quick-keypad-mode" data-action="jump-hide" aria-label="Växla till bokstavstangentbord">ABC</button>'+
+      '<button type="button" class="quick-keypad-go" data-action="jump-go">Gå</button></div>'+
+      '<div id="search-suggest" class="suggestions" role="listbox" hidden></div></form>'+
+      '<input id="quick-keyboard-bridge" class="quick-keyboard-bridge" type="text" tabindex="-1" aria-hidden="true" autocomplete="off" inputmode="numeric">';
   }
   function listRow(title,subtitle,go,badge) {
     return '<a class="list-row" href="' + attr(go) + '" data-link="1">' +
@@ -2048,7 +2048,8 @@
     }).catch(()=>{}));
   }
 
-  // Snabbnumerisk inmatning används bara på mobila pekskärmar, aldrig i Lagbok Desktop.
+  // Native keyboard only: Apple's keyboard cannot contain custom web buttons.
+  let jumpTextMode=false;
   function jumpPadMeta(query){
     if(window.LAGBOK_DESKTOP||!window.matchMedia||!window.matchMedia('(pointer: coarse) and (max-width: 860px)').matches)return null;
     const m=/^([^\d:]+?)(?:\s+(\d{0,3}(?::\d{0,3}\s*[a-z]?)?))?$/i.exec(String(query||'').trim());
@@ -2058,30 +2059,55 @@
     if(![...(direct.meta.aliases||[]),...(direct.meta.searchAliases||[])].some(a=>a.length<=16&&!/\s/.test(a)&&norm(a)===norm(prefix)))return null;
     return {law:direct.meta,tail:m[2]||'',prefix};
   }
-  function updateJumpPad(query){
-    const pad=$('#quick-keypad');if(!pad)return;
-    const info=jumpPadMeta(query);pad.hidden=!info;
-    if(!info)return;
-    const typed=info.tail,colon=typed.includes(':');
-    const title=$('#quick-keypad-status');
-    if(title)title.textContent=info.prefix+' · '+(info.law.chaptered?(colon?'Paragraf':'Kapitel'):'Paragraf')+(typed?' '+typed:'');
-    const colonButton=pad.querySelector('[data-action="jump-colon"]');
-    if(colonButton)colonButton.disabled=!info.law.chaptered||!typed||colon;
-    pad.querySelectorAll('[data-action="jump-letter"]').forEach(b=>b.disabled=!(colon||!info.law.chaptered)||!/\d$/.test(typed));
+  function changeJumpKeyboard(field,mode){
+    if(!field||field.inputMode===mode)return;
+    const focused=document.activeElement===field;
+    let caret=null;
+    try{caret=field.selectionStart;}catch(_){}
+    field.inputMode=mode;
+    field.setAttribute('enterkeyhint',mode==='numeric'?'go':'search');
+    // Safari may require a change of focused input to display a new keyboard layout.
+    // Switch focus immediately between inputs without deliberately dismissing the keyboard.
+    if(focused&&/(iPad|iPhone|iPod)/i.test(String(navigator.userAgent||''))){
+      const bridge=$('#quick-keyboard-bridge');
+      if(bridge){bridge.inputMode=mode;bridge.focus({preventScroll:true});}
+      field.focus({preventScroll:true});
+      if(caret!=null)try{field.setSelectionRange(caret,caret);}catch(_){}
+    }
+  }
+  function updateJumpPad(value){
+    const pad=$('#quick-keypad'),field=$('#query');
+    if(!pad||!field)return value;
+    const info=jumpPadMeta(value);
+    pad.hidden=!info;
+    if(!info){jumpTextMode=false;changeJumpKeyboard(field,'search');return value;}
+    // "BrB" -> "BrB ": no manual space is needed before the chapter number.
+    if(!info.tail&&!/\s$/.test(value)){value=value.trimEnd()+' ';field.value=value;}
+    const hasColon=info.tail.includes(':'),typed=info.tail,status=$('#quick-keypad-status');
+    if(status)status.textContent=info.prefix+' · '+(info.law.chaptered?(hasColon?'§':'Kap.'):'§')+(typed?' '+typed:'');
+    const colon=pad.querySelector('[data-action="jump-colon"]');
+    if(colon){colon.hidden=!info.law.chaptered;colon.disabled=!/^\d{1,3}$/.test(typed);}
+    const allowed=(!info.law.chaptered||hasColon)&&/\d$/.test(typed);
+    pad.querySelectorAll('[data-action="jump-letter"]').forEach(b=>{b.hidden=!allowed;b.disabled=!allowed;});
+    const mode=pad.querySelector('[data-action="jump-hide"]');
+    if(mode){mode.textContent=jumpTextMode?'123':'ABC';mode.setAttribute('aria-label',jumpTextMode?'Växla till siffertangentbord':'Växla till bokstavstangentbord');}
+    changeJumpKeyboard(field,jumpTextMode?'search':'numeric');
+    return value;
   }
   function jumpKey(action,value){
     const field=$('#query');if(!field)return;
     const info=jumpPadMeta(field.value);if(!info)return;
-    let next=field.value.trim();
-    if(action==='jump-digit'&&/^\d$/.test(value))next+=(info.tail?'':' ')+value;
+    let next=field.value.trimEnd();
     if(action==='jump-colon'&&info.law.chaptered&&/^\d{1,3}$/.test(info.tail))next+=':';
-    if(action==='jump-letter'&&(info.tail.includes(':')||!info.law.chaptered)&&/\d$/.test(info.tail))next+=value;
-    if(action==='jump-back'&&info.tail)next=next.slice(0,-1).trimEnd();
+    if(action==='jump-letter'&&(!info.law.chaptered||info.tail.includes(':'))&&/\d$/.test(info.tail)&&/^[a-c]$/.test(value))next+=value;
+    if(next===field.value)return;
     field.value=next;onSearch(next);
+    field.focus({preventScroll:true});
+    try{field.setSelectionRange(field.value.length,field.value.length);}catch(_){}
   }
   function onSearch(val){
+    val=updateJumpPad(val);
     state.query=val;
-    updateJumpPad(val);
     const r=route();
     if(r.page==='fap'){
       const box=$('#fap-results');if(box)box.innerHTML=fapResults(state.fap.filter(f=>norm([f.name,f.id,f.code,(f.tags||[]).join(' ')].join(' ')).includes(norm(val))));
@@ -2876,6 +2902,10 @@
     const sel=window.getSelection&&window.getSelection();
     if(dt<600&&Math.abs(dx)>90&&Math.abs(dy)<45&&(!sel||sel.isCollapsed))chapterStep(dx<0?1:-1);
   },{passive:true});
+  // A tap on the compact controls should not steal the iOS keyboard focus.
+  view.addEventListener('pointerdown',e=>{
+    if(e.target.closest&&e.target.closest('#quick-keypad button'))e.preventDefault();
+  },{passive:false});
   view.addEventListener('input',e=>{
     if(e.target.id==='find-input'){clearTimeout(runFind.t);const v=e.target.value;
       if(state.find&&state.find.scope==='all'){state.find.q=v;runFind.t=setTimeout(()=>runAll(v),180);return;}
@@ -2884,7 +2914,7 @@
       const k=e.target.dataset.noteKey,v=e.target.value;clearTimeout(saveNote.t);saveNote.t=setTimeout(()=>saveNote(k,v,true),400);return;
     }
     if(e.target.id==='marks-query'){state.marksQuery=e.target.value;const box=$('#marks-list');if(box)box.innerHTML=marksHtml();return;}
-    if(e.target.id==='query'){onSearch(e.target.value);if(jumpPadMeta(e.target.value))e.target.blur();return;}
+    if(e.target.id==='query'){onSearch(e.target.value);return;}
     if(e.target.id==='fap-query')onSearch(e.target.value);
   });
   view.addEventListener('submit',async e=>{
@@ -2963,9 +2993,9 @@
     if(!btn)return;
     const a=btn.dataset.action,k=btn.dataset.key;
     if(a==='clear-search'){const field=$('#query');if(field){field.value='';onSearch('');field.focus();}return;}
-    if(a==='jump-digit'||a==='jump-colon'||a==='jump-letter'||a==='jump-back'){jumpKey(a,btn.dataset.value||'');return;}
+    if(a==='jump-colon'||a==='jump-letter'){jumpKey(a,btn.dataset.value||'');return;}
     if(a==='jump-go'){const f=$('#query');if(f)goQuick(f.value.trim()).then(done=>{if(!done)toast('Ange ett giltigt kapitel eller lagrum.');});return;}
-    if(a==='jump-hide'){const pad=$('#quick-keypad'),f=$('#query');if(pad)pad.hidden=true;if(f)f.focus();return;}
+    if(a==='jump-hide'){jumpTextMode=!jumpTextMode;const f=$('#query');if(f){updateJumpPad(f.value);f.focus({preventScroll:true});}return;}
     if(a==='para-menu'){paraMenu(k);return;}
     if(a==='source-info'){sourceInfo();return;}
     if(a==='read-mode'){changeReaderMode(btn.dataset.mode);return;}
