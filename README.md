@@ -212,3 +212,9 @@ Läsaren har en enda innehållsknapp, utan föregående/nästa länkar eller ver
 - iOS använder enbart Apples inbyggda tangentbord med automatisk växling från bokstäver till siffror när en lagförkortning känns igen. Ingen specialbyggd tangentbordspanel finns kvar.
 - Endast ett diskret kolon-/ABC-val och Gå inuti sökfältet, för kapitel-, paragraf- och bokstavsbeteckningar.
 - Cacheversion och resurser uppdaterade för att undvika att nya skript blandas med gammal CSS i installerade webbappen. Desktop har oförändrad tangentbordshantering.
+
+## Version 1.7.3
+- På iPhone används fortfarande **Apples egna siffertangentbord**, utan HTML-sifferknappar.
+- Kolon och Gå/Enter har flyttats till en smal, skärmfast tillbehörsrad **direkt ovanför** iOS-tangentbordet. `ABC` visas endast när bokstavsparagrafer är aktuella.
+- Positioneringen följer `visualViewport` när iOS öppnar, flyttar eller stänger tangentbordet. Raden döljs när sökfältet inte längre är aktivt.
+- Desktop får inte tillbehörsraden. Ny serviceworker-cache och versionsstyrda resurser för att förhindra blandade versioner i installerad iPhone-app.
