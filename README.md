@@ -218,3 +218,9 @@ Läsaren har en enda innehållsknapp, utan föregående/nästa länkar eller ver
 - Kolon och Gå/Enter har flyttats till en smal, skärmfast tillbehörsrad **direkt ovanför** iOS-tangentbordet. `ABC` visas endast när bokstavsparagrafer är aktuella.
 - Positioneringen följer `visualViewport` när iOS öppnar, flyttar eller stänger tangentbordet. Raden döljs när sökfältet inte längre är aktivt.
 - Desktop får inte tillbehörsraden. Ny serviceworker-cache och versionsstyrda resurser för att förhindra blandade versioner i installerad iPhone-app.
+
+## Version 1.7.4
+- Återställer helt den vanliga sökrutan från före 1.7, med iPhones ordinarie tangentbord och manuell inmatning av t.ex. `BrB 24:1`.
+- Tar bort specialbyggd sifferpanel, extra `:`/`Gå`-rader, inbyggda sökknappar, fokusbryggor och automatisk växling till numeriskt tangentbord. Sök med iOS ordinarie Retur/Sök.
+- Behåller övriga nyheter från 1.7: registrerade lagsmeknamn och förbättrade juridiska hänvisningar. Ingen särskild Desktop-ändring behövs.
+- Ny version och serviceworker-cache för att befintliga iPhone-installationer ska få uppdateringen.

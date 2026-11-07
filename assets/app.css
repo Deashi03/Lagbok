@@ -591,26 +591,3 @@ html[data-theme="dark"] .fav-star-mini{color:#264D39}
 .reader-heading .division-label{margin-bottom:6px}
 .future-notice{border-left:3px solid var(--wine);background:var(--soft);color:var(--text)}
 .preamble{font-style:italic;color:var(--secondary);font-size:14px;margin:8px 0 4px}
-
-
-/* 1.7.3 – en tunn tangentbordstillbehörsrad; iOS ritar fortfarande samtliga siffertangenter. */
-.ios-keyboard-tools[hidden],.ios-keyboard-tools button[hidden]{display:none!important}
-.ios-keyboard-tools{
-  position:fixed;top:0;left:0;width:100%;height:49px;z-index:250;
-  display:flex;align-items:center;gap:9px;box-sizing:border-box;
-  padding:5px max(12px,env(safe-area-inset-right,0px)) 5px max(12px,env(safe-area-inset-left,0px));
-  background:#e6e6e9;color:#25272b;border-top:1px solid #cccdd1;
-  box-shadow:0 -1px 5px #00000013;pointer-events:auto;
-}
-.ios-keyboard-caption{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px;font-weight:650;color:#45474b}
-.ios-keyboard-tools button{height:39px;min-width:54px;flex-shrink:0;border-radius:9px;border:1px solid #acadb2;background:#fafafb;color:#1d2024;font-size:20px;font-weight:700;touch-action:manipulation}
-.ios-keyboard-tools button:disabled{opacity:.4}
-.ios-keyboard-tools .ios-keyboard-abc{min-width:48px;font-size:14px}
-.ios-keyboard-tools .ios-keyboard-go{min-width:86px;background:#285b47;border-color:#285b47;color:#fff;font-size:16px}
-.quick-keyboard-bridge{position:fixed;left:0;top:0;width:1px;height:1px;padding:0;opacity:0;border:0;pointer-events:none;z-index:-1}
-@media(prefers-color-scheme:dark){
-  .ios-keyboard-tools{background:#38383a;color:#f8f8f8;border-top-color:#535358}
-  .ios-keyboard-caption{color:#e1e1e6}
-  .ios-keyboard-tools button{background:#626268;border-color:#77777f;color:white}
-  .ios-keyboard-tools .ios-keyboard-go{background:#32765b;border-color:#32765b}
-}
