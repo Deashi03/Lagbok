@@ -37,8 +37,8 @@
   <meta property="og:description" content="Balkarna, grundlagarna och lagarna för rättsväsendet med hänvisningar, kopplingar och sökning.">
   <meta property="og:image" content="https://deashi03.github.io/Lagbok/icon-512.png">
   <meta property="og:type" content="website">
-  <link rel="preload" href="assets/lagboken.js?v=1.7.3" as="script">
-  <link rel="stylesheet" href="assets/app.css?v=1.7.3">
+  <link rel="preload" href="assets/lagboken.js?v=1.7.4" as="script">
+  <link rel="stylesheet" href="assets/app.css?v=1.7.4">
   <title>Lagboken</title>
 </head>
 <body>
@@ -64,12 +64,6 @@
   <div class="scrim" id="scrim" hidden></div>
   <aside class="sheet" id="sheet" role="dialog" aria-modal="true" aria-label="Snabbmeny" hidden></aside>
   <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
-  <div id="ios-keyboard-tools" class="ios-keyboard-tools" role="group" aria-label="Snabbknappar ovanför iPhones tangentbord" hidden>
-    <span id="ios-keyboard-caption" class="ios-keyboard-caption">Lagrum</span>
-    <button type="button" id="ios-keyboard-colon" data-action="ios-colon" aria-label="Skriv kolon">:</button>
-    <button type="button" id="ios-keyboard-abc" class="ios-keyboard-abc" data-action="ios-abc" aria-label="Byt till bokstavstangentbord" hidden>ABC</button>
-    <button type="button" id="ios-keyboard-go" class="ios-keyboard-go" data-action="ios-go" aria-label="Öppna angivet lagrum">Gå ↵</button>
-  </div>
   <script>
     // Katalogen från förra besöket visas direkt; appen ritar om den när skripten är inlästa.
     (function(){
@@ -81,7 +75,7 @@
   <script>
     // Appen körs först när första bilden är ritad; filen hämtas redan (preload ovan).
     (function(){
-      function load(){var s=document.createElement('script');s.src='assets/lagboken.js?v=1.7.3';document.body.appendChild(s);}
+      function load(){var s=document.createElement('script');s.src='assets/lagboken.js?v=1.7.4';document.body.appendChild(s);}
       if(window.requestAnimationFrame)requestAnimationFrame(function(){setTimeout(load,0);});else setTimeout(load,0);
     })();
   </script>

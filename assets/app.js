@@ -1,7 +1,7 @@
 /* Lagboken: snabb offlinevänlig juridisk läsapp utan externa JavaScript-beroenden. */
 (function () {
   'use strict';
-  const APP_VERSION='1.7.3';
+  const APP_VERSION='1.7.4';
   const $ = (sel, root=document) => root.querySelector(sel);
   const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
   const view = $('#view');
@@ -118,12 +118,10 @@
   }
   function iconSearch() {return '<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="10.8" cy="10.8" r="7.2"/><path d="m16.2 16.2 5 5"/></svg>';}
   function searchBox(placeholder) {
-    jumpTextMode=false;activeJumpLaw=null;
     return '<form id="global-search" class="searchbar-wrap" role="search" autocomplete="off"><div class="searchbox">'+iconSearch()+
-      '<input id="query" name="q" type="search" inputmode="search" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="search-suggest" enterkeyhint="search" autocomplete="off" spellcheck="false" autocorrect="off" autocapitalize="off" placeholder="'+html(placeholder||'Sök författning, begrepp eller lagrum')+'" value="'+attr(state.query)+'">'+
+      '<input id="query" name="q" type="search" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="search-suggest" enterkeyhint="search" autocomplete="off" spellcheck="false" placeholder="'+html(placeholder||'Sök författning, begrepp eller lagrum')+'" value="'+attr(state.query)+'">'+
       '<button type="button" class="search-clear" data-action="clear-search" aria-label="Rensa sökning">×</button></div>'+
-      '<div id="search-suggest" class="suggestions" role="listbox" hidden></div></form>'+
-      '<input id="quick-keyboard-bridge" class="quick-keyboard-bridge" type="text" tabindex="-1" aria-hidden="true" autocomplete="off" inputmode="numeric">';
+      '<div id="search-suggest" class="suggestions" role="listbox" hidden></div></form>';
   }
   function listRow(title,subtitle,go,badge) {
     return '<a class="list-row" href="' + attr(go) + '" data-link="1">' +
@@ -1064,93 +1062,7 @@
     }).catch(()=>{}));
   }
 
-  // iPhone använder uteslutande Apples inbyggda tangentbord; inga HTML-tangentbord byggs.
-  let jumpTextMode=false,activeJumpLaw=null;
-  function jumpPadMeta(query){
-    if(window.LAGBOK_DESKTOP||!window.matchMedia||!window.matchMedia('(pointer: coarse) and (max-width: 860px)').matches)return null;
-    const m=/^([^\d:]+?)(?:\s+(\d{0,3}(?::\d{0,3}\s*[a-z]?)?))?$/i.exec(String(query||'').trim());
-    if(!m)return null;
-    const prefix=m[1].trim(),direct=searchCore.parseQuick(prefix,state.catalog,[]);
-    if(!direct||direct.type!=='law'||direct.chapter!=null)return null;
-    if(![...(direct.meta.aliases||[]),...(direct.meta.searchAliases||[])].some(a=>a.length<=16&&!/\s/.test(a)&&norm(a)===norm(prefix)))return null;
-    return {law:direct.meta,tail:m[2]||'',prefix};
-  }
-  function changeJumpKeyboard(field,mode){
-    if(!field||field.inputMode===mode)return;
-    const focused=document.activeElement===field;
-    let caret=null;
-    try{caret=field.selectionStart;}catch(_){}
-    field.inputMode=mode;
-    field.setAttribute('enterkeyhint',mode==='numeric'?'go':'search');
-    // iOS kan kräva ett omedelbart fokusbyte innan systemtangentbordet uppdaterar inputmode.
-    if(focused&&/(iPad|iPhone|iPod)/i.test(String(navigator.userAgent||''))){
-      const bridge=$('#quick-keyboard-bridge');
-      if(bridge){bridge.inputMode=mode;bridge.focus({preventScroll:true});}
-      field.focus({preventScroll:true});
-      if(caret!=null)try{field.setSelectionRange(caret,caret);}catch(_){}
-    }
-  }
-  // Endast två hjälptangenter i en rad placerad ovanför det vanliga iOS-tangentbordet.
-  // visualViewport följer även tangentbordets höjd när iOS har ändrat den synliga skärmen.
-  let keyboardToolsFrame=0;
-  function positionKeyboardTools(){
-    keyboardToolsFrame=0;
-    const tools=$('#ios-keyboard-tools'),field=$('#query');
-    if(!tools)return;
-    const info=field&&jumpPadMeta(field.value);
-    if(!info||document.activeElement!==field){
-      tools.hidden=true;return;
-    }
-    tools.hidden=false;
-    const vv=window.visualViewport;
-    const viewBottom=vv?vv.offsetTop+vv.height:window.innerHeight;
-    const top=Math.max(0,Math.round(viewBottom-(tools.offsetHeight||49)));
-    tools.style.top=top+'px';
-    tools.style.left=Math.round(vv?vv.offsetLeft:0)+'px';
-    tools.style.width=Math.round(vv?vv.width:window.innerWidth)+'px';
-  }
-  function queueKeyboardTools(){
-    if(keyboardToolsFrame||!window.requestAnimationFrame)return;
-    keyboardToolsFrame=requestAnimationFrame(positionKeyboardTools);
-  }
-  function updateJumpPad(value){
-    const field=$('#query'),tools=$('#ios-keyboard-tools');
-    if(!field)return value;
-    const info=jumpPadMeta(value);
-    if(!info){
-      jumpTextMode=false;activeJumpLaw=null;
-      if(tools)tools.hidden=true;
-      changeJumpKeyboard(field,'search');
-      queueKeyboardTools();
-      return value;
-    }
-    if(activeJumpLaw!==info.law.sfs){activeJumpLaw=info.law.sfs;jumpTextMode=false;}
-    if(!info.tail&&!/\s$/.test(value)){value=value.trimEnd()+' ';field.value=value;}
-    const canColon=info.law.chaptered&&/^\d{1,3}$/.test(info.tail);
-    const canLetters=(!info.law.chaptered||info.tail.includes(':'))&&/\d[a-z]?$/.test(info.tail);
-    const colon=$('#ios-keyboard-colon'),letters=$('#ios-keyboard-abc'),status=$('#ios-keyboard-caption');
-    if(status)status.textContent=info.prefix+' · '+(info.law.chaptered?(info.tail.includes(':')?'Paragraf':'Kapitel'):'Paragraf');
-    if(colon){colon.hidden=!info.law.chaptered;colon.disabled=!canColon;}
-    if(letters){
-      letters.hidden=!(canLetters||jumpTextMode);
-      letters.textContent=jumpTextMode?'123':'ABC';
-      letters.setAttribute('aria-label',jumpTextMode?'Byt till iPhones siffertangentbord':'Byt till iPhones bokstavstangentbord');
-    }
-    changeJumpKeyboard(field,jumpTextMode?'search':'numeric');
-    queueKeyboardTools();
-    return value;
-  }
-  function jumpColon(){
-    const field=$('#query');if(!field)return;
-    const info=jumpPadMeta(field.value);
-    if(!info||!info.law.chaptered||!/^\d{1,3}$/.test(info.tail))return;
-    const next=field.value.trimEnd()+':';
-    field.value=next;onSearch(next);
-    field.focus({preventScroll:true});
-    try{field.setSelectionRange(field.value.length,field.value.length);}catch(_){}
-  }
   function onSearch(val){
-    val=updateJumpPad(val);
     state.query=val;
     const r=route();
     if(r.page==='fap'){
@@ -1946,38 +1858,6 @@
     const sel=window.getSelection&&window.getSelection();
     if(dt<600&&Math.abs(dx)>90&&Math.abs(dy)<45&&(!sel||sel.isCollapsed))chapterStep(dx<0?1:-1);
   },{passive:true});
-  // Lyssna direkt på extraraden; ändra inte ordningen på övriga document.click-delegater.
-  const keyboardToolsElement=$('#ios-keyboard-tools');
-  if(keyboardToolsElement){
-    keyboardToolsElement.addEventListener('pointerdown',e=>{
-      if(e.target.closest&&e.target.closest('button'))e.preventDefault();
-    },{passive:false});
-    keyboardToolsElement.addEventListener('click',e=>{
-      const btn=e.target.closest&&e.target.closest('button[data-action]');
-      if(!btn)return;
-      e.preventDefault();
-      if(btn.dataset.action==='ios-colon'){jumpColon();return;}
-      if(btn.dataset.action==='ios-abc'){
-        jumpTextMode=!jumpTextMode;
-        const field=$('#query');
-        if(field){updateJumpPad(field.value);field.focus({preventScroll:true});queueKeyboardTools();}
-        return;
-      }
-      if(btn.dataset.action==='ios-go'){
-        const field=$('#query');if(!field)return;
-        const q=field.value.trim();
-        keyboardToolsElement.hidden=true;
-        if(q)goQuick(q).then(done=>{if(!done){toast('Ange ett giltigt lagrum.');queueKeyboardTools();}});
-      }
-    });
-  }
-  view.addEventListener('focusin',e=>{if(e.target.id==='query')queueKeyboardTools();});
-  view.addEventListener('focusout',e=>{if(e.target.id==='query')queueKeyboardTools();});
-  if(window.visualViewport){
-    window.visualViewport.addEventListener('resize',queueKeyboardTools);
-    window.visualViewport.addEventListener('scroll',queueKeyboardTools);
-  }
-  window.addEventListener('resize',queueKeyboardTools);
   view.addEventListener('input',e=>{
     if(e.target.id==='find-input'){clearTimeout(runFind.t);const v=e.target.value;
       if(state.find&&state.find.scope==='all'){state.find.q=v;runFind.t=setTimeout(()=>runAll(v),180);return;}
